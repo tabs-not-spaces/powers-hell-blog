@@ -1,0 +1,24 @@
+---
+layout: default
+---
+
+<main class="-mt-32">
+  {%- if site.posts.size > 0 -%} {%- for post in site.posts -%}
+  <div class="max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <a href="{{ post.url | relative_url }}">
+      <div
+        class="drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+      >
+        {%- assign date_format = site.date_format | default: "%-d %b" -%}
+        <h2 class="drac-heading drac-heading-xl drac-text-white">
+          {{ post.title | escape }}
+        </h2>
+        <div class="drac-text-black-secondary">Published on: <font class="drac-text-orange">{{ post.date | date: date_format }}</font></div>
+        <div>
+          <p>{{ post.excerpt }}</p>
+        </div>
+      </div>
+    </a>
+    </div>
+  {%- endfor -%} {%- endif -%}
+</main>

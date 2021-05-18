@@ -1,0 +1,7 @@
+@import "https://cdn.rawgit.com/google/code-prettify/master/styles/desert.css";
+@import "./body.css";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "../../node_modules/@dracula/dracula-ui/styles/dracula-ui.css";
+

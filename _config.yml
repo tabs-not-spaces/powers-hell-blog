@@ -1,0 +1,22 @@
+title: Powers Hell
+description: Great Power Is Great Fun
+permalink: /:slugified_categories/:title/
+
+twitter_username: powers_hell
+github_username: tabs-not-spaces
+date_format: "%-d %b"
+
+excerpt_separator: <!--more-->
+
+theme: minima
+
+include:
+  - node_modules
+
+exclude:
+  - "package*.json"
+  - "*.config.js"
+  - netlify.toml
+  - README.md
+  - LICENSE
+  - Makefile

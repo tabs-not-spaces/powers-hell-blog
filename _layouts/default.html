@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}" class="antialiased">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- seo -%}
+  <link rel="stylesheet" href="{% link /assets/css/app.css %}">
+</head>
+  {%- include header.html -%}
+  <header class="py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% if page.title == "Welcome" %}
+        <div class="md:container md:mx-auto content-center">
+            <img class="object-scale-down h-48 w-full" src="https://i.imgur.com/D6GoPDW.png">
+        </div>
+        {% else %}
+          <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-orange">{{ page.title }}</h1>
+          {% endif %}
+      </div>
+    </header>
+  </div>
+
+  {{ content }}
+</div>
+
+  {%- include footer.html -%}
+</html

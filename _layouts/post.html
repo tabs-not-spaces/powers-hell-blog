@@ -1,0 +1,18 @@
+---
+layout: default
+---
+
+<main class="-mt-32">
+  <div class="max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class=" break-normal md:break-all drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+    >
+        <p>
+          {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
+          Published: {{ page.date | date: date_format }}
+        </p>
+        <br />
+        {{ content }}
+    </div>
+  </div>
+</main>
