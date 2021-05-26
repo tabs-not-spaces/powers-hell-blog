@@ -1,13 +1,14 @@
 module.exports = {
   corePlugins: {
     preflight: true,
+    listStyleType: false,
    },
   purge: [
     './**/*.html',
     './**/*.md',
     './_assets/**/*.js',
   ],
-  darkMode: 'media', // or 'class' or false
+  darkMode: 'class', // or 'class' or false
   theme: {
     extend: {
       zIndex: {
