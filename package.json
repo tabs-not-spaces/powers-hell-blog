@@ -4,6 +4,7 @@
         "start": "concurrently -k --restart-tries 3 --restart-after 3000 -p [{name}] -n webpack,jekyll -c yellow,cyan npm:watch:webpack npm:watch:jekyll",
         "dev": "encore dev",
         "prod": "encore prod",
+        "build": "bundle exec jekyll build",
         "watch:webpack": "encore dev --watch",
         "watch:jekyll": "bundle exec jekyll serve --host=0.0.0.0",
         "lint": "eslint --cache .",
