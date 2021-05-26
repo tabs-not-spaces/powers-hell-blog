@@ -10,7 +10,9 @@ Encore
   .setOutputPath('assets/')
   .setPublicPath('/assets')
   .addStyleEntry('css/app', './_assets/css/app.css')
+  .addStyleEntry('css/prism-dracula', './_assets/css/prism-dracula.css')
   .addEntry('js/app', './_assets/js/app.js')
+  .addEntry('js/prism', './_assets/js/prism.js')
   .enablePostCssLoader()
   .disableSingleRuntimeChunk()
   .enableSourceMaps(!Encore.isProduction());
