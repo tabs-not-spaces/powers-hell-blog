@@ -1,0 +1,24 @@
+{
+  "entrypoints": {
+    "js/app": {
+      "js": [
+        "/assets/js/app.js"
+      ]
+    },
+    "js/prism": {
+      "js": [
+        "/assets/js/prism.js"
+      ]
+    },
+    "css/app": {
+      "css": [
+        "/assets/css/app.css"
+      ]
+    },
+    "css/prism-dracula": {
+      "css": [
+        "/assets/css/prism-dracula.css"
+      ]
+    }
+  }
+}

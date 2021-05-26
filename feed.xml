@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-26T06:33:47+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great Power Is Great Fun</subtitle><entry><title type="html">First Post!</title><link href="/first-post/pretty-cool/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/first-post/pretty-cool/first-post</id><content type="html" xml:base="/first-post/pretty-cool/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
+
+&lt;p&gt;Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.&lt;br /&gt;
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;first-post&quot;&gt;First Post!!!&lt;/h2&gt;
+
+&lt;p&gt;Labore sunt dolore ea sint elit reprehenderit magna. Deserunt sint elit et ut consequat deserunt. Velit reprehenderit eu dolor exercitation sint exercitation.&lt;/p&gt;
+
+&lt;p&gt;Quis labore est ut nulla commodo eiusmod reprehenderit. Eu ad sit minim excepteur eu Lorem eiusmod in ad laborum aute. Ullamco exercitation et cillum minim ea laboris reprehenderit sunt ea pariatur esse. Occaecat quis eiusmod nulla dolor elit nostrud reprehenderit pariatur ea minim irure.&lt;/p&gt;
+
+&lt;h3 id=&quot;code-snippet&quot;&gt;Code snippet&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Invoke-Death&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;code-block&quot;&gt;Code block&lt;/h3&gt;
+
+&lt;div class=&quot;language-powershell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$policyId&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$configPolicies&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$restParam&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Method&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Get'&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Uri&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$baseUri&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/configurationPolicies('&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$policyId&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;')/settings&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Headers&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$authHeaders&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ContentType&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Application/json'&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$configPolicySettings&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Invoke-RestMethod&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;restParam&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$configPolicySettings&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;lists&quot;&gt;Lists&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;test&lt;/li&gt;
+  &lt;li&gt;this should be a thing&lt;/li&gt;
+  &lt;li&gt;hell0&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;what about this?&lt;/li&gt;
+  &lt;li&gt;or this?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;tables&quot;&gt;Tables&lt;/h3&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;name&lt;/th&gt;
+      &lt;th&gt;age&lt;/th&gt;
+      &lt;th&gt;thing&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Ben&lt;/td&gt;
+      &lt;td&gt;35&lt;/td&gt;
+      &lt;td&gt;hates himself&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</content><author><name></name></author><category term="First-Post" /><category term="Pretty-Cool" /><summary type="html">Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.</summary></entry><entry><title type="html">Second Post!</title><link href="/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/second-post</id><content type="html" xml:base="/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
+
+&lt;!--more--&gt;
+&lt;h2 id=&quot;first-title&quot;&gt;First Title&lt;/h2&gt;
+
+&lt;p&gt;Cupidatat labore ipsum irure duis. Irure reprehenderit deserunt proident aliquip. Commodo qui quis adipisicing nostrud non magna. Culpa nostrud enim consequat ipsum nulla. Cillum aliqua qui eu excepteur ipsum nulla sint veniam dolore id deserunt anim mollit ea. Cillum nisi labore ea ullamco consequat enim ex dolor proident. Ullamco dolore do occaecat anim ut sunt amet amet.&lt;/p&gt;
+
+&lt;h2 id=&quot;second-title&quot;&gt;Second Title&lt;/h2&gt;
+
+&lt;p&gt;Reprehenderit veniam eiusmod quis dolore exercitation cupidatat enim. Labore commodo exercitation eu exercitation cillum id aute qui occaecat voluptate sit tempor aute. Reprehenderit voluptate culpa ullamco labore nulla aliquip laborum velit sunt incididunt minim elit mollit. Non eiusmod consequat non ex.&lt;/p&gt;
+
+&lt;h2 id=&quot;some-code&quot;&gt;Some Code&lt;/h2&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
+  { for post in site.posts }
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Title&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+  { endfor }
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><category term="test" /><category term="second" /><category term="blog" /><summary type="html">Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.</summary></entry></feed>
