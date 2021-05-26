@@ -4,11 +4,12 @@ title:  First Post!
 date:   2021-05-14 11:55:30 +1000
 categories: First-Post Pretty-Cool
 ---
-
-## First Post!!!
+<link href="http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css" rel="stylesheet">
 
 Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.  
 <!--more-->
+
+## First Post!!!
 
 Labore sunt dolore ea sint elit reprehenderit magna. Deserunt sint elit et ut consequat deserunt. Velit reprehenderit eu dolor exercitation sint exercitation.  
 
@@ -32,3 +33,19 @@ $restParam = @{
 $configPolicySettings = Invoke-RestMethod @restParam
 $configPolicySettings.value
 ```
+
+### Lists
+
+1. test
+2. this should be a thing
+3. hell0
+
+- what about this?
+- or this?
+
+### Tables
+
+| name  | age   | thing |
+|---    |---    |---    |
+| Ben   | 35    | hates himself |
+

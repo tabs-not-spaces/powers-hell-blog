@@ -1,0 +1,32 @@
+@tailwind base;
+@layer base {
+  .markdown-body {
+    font-family: Fira Code, monospace !important;
+  }
+  ol {
+    list-style: decimal !important;
+  }
+  ul {
+    list-style: circle-inside !important;
+  }
+  .markdown-body h2 {
+    font-size: var(--font-2xl);
+    border-bottom: 0px !important;
+  }
+  .markdown-body h3 {
+    font-size: 1.75em;
+  }
+
+  .markdown-body h4 {
+    font-size: 1.5em;
+  }
+
+  .markdown-body h5 {
+    font-size: 1.25em;
+  }
+
+  .markdown-body h6 {
+    color: #c8c8c8;
+    font-size: 1em;
+  }
+}

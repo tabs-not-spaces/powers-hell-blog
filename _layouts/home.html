@@ -14,7 +14,7 @@ layout: default
           {{ post.title | escape }}
         </h2>
         <div class="drac-text-black-secondary">Published on: <font class="drac-text-orange">{{ post.date | date: date_format }}</font></div>
-        <div>
+        <div class="markdown-body drac-text drac-line-height">
           <p>{{ post.excerpt }}</p>
         </div>
       </div>

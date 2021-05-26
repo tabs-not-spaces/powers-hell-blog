@@ -1,2 +1,1 @@
-import 'alpinejs';
-import 'jquery';
+import './highlight.pack.js';
