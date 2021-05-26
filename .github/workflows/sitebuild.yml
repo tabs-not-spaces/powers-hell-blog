@@ -18,10 +18,13 @@ jobs:
         with:
           persist-credentials: false
           
-      - uses: actions/setup-node@v2.1.5 🔌
+      - name: Setup node 🔌
+        uses: actions/setup-node@v2.1.5
         with:
           node-version: '14'
-      - uses: actions/setup-ruby@v1.1.3 🔌
+          
+      - name: Setup Ruby 🔌
+        uses: actions/setup-ruby@v1.1.3
         with:
           ruby-version: 2.7
           
