@@ -2,7 +2,7 @@
 layout: default
 ---
 <main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
-  {%- if site.posts.size > 0 -%} {%- for post in site.posts -%}
+  {%- for post in paginator.posts -%}
   <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
     <a href="{{ post.url | relative_url }}">
       <div
@@ -19,5 +19,5 @@ layout: default
       </div>
     </a>
     </div>
-  {%- endfor -%} {%- endif -%}
+  {%- endfor -%}
 </main>

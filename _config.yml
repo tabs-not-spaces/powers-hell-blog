@@ -1,8 +1,16 @@
 title: Powers Hell
-description: Great Power Is Great Fun
+description: Great power is great fun
 permalink: /:year/:month/:day/:title/
 twitter_username: powers_hell
 github_username: tabs-not-spaces
+
+plugins:
+  - jekyll-paginate
+  - jekyll-feed
+  - jekyll-sitemap
+
+paginate: 5
+paginate_path: "/page:num/"
 
 date_format: "%-d %b"
 excerpt_separator: <!--more-->
