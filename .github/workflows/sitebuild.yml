@@ -45,7 +45,7 @@ jobs:
             ${{ runner.os }}-gems-
             
       - name: Install and Build 🔧
-        run: npm install && npm run build && npm run prod
+        run: npm install && npm run prod && npm run build 
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
           
