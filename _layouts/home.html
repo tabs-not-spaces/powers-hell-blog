@@ -1,13 +1,12 @@
 ---
 layout: default
 ---
-
-<main class="-mt-32">
+<main class="-mt-72">
   {%- if site.posts.size > 0 -%} {%- for post in site.posts -%}
-  <div class="max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
     <a href="{{ post.url | relative_url }}">
       <div
-        class="drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+        class="main-overlay drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
       >
         {%- assign date_format = site.date_format | default: "%-d %b" -%}
         <h2 class="drac-heading drac-heading-xl drac-text-white">

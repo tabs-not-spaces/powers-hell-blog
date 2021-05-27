@@ -1,3 +1,10 @@
+
+:root {
+  --blackBlack: #14141b;
+}
+.drac-bg-blackBlack {
+  background-color: var(--blackBlack);
+}
 body {
   background-color: var(--black);
   font-family: Fira Code, monospace !important;
@@ -7,4 +14,15 @@ p {
 }
 pre {
   white-space: pre-line;
+}
+.wave {
+  position: relative;
+  z-index: 1;
+}
+.main-overlay {
+  position: relative;
+  z-index: 2;
+}
+svg>path{
+  fill: var(--blackBlack);
 }
