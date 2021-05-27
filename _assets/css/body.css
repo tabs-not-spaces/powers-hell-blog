@@ -2,6 +2,10 @@
 :root {
   --blackBlack: #14141b;
 }
+.page-container {
+  position: relative;
+  min-height: 100vh;
+}
 .drac-bg-blackBlack {
   background-color: var(--blackBlack);
 }

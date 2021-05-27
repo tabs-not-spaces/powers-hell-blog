@@ -1,6 +1,6 @@
 title: Powers Hell
 description: Great Power Is Great Fun
-permalink: /:slugified_categories/:title/
+permalink: /:year/:month/:day/:title/
 twitter_username: powers_hell
 github_username: tabs-not-spaces
 

@@ -1,51 +1,54 @@
 <body>
-  <div>
-    <div class="drac-bg-blackBlack pb-32">
-      <nav class="drac-bg-black">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16 px-4 sm:px-0">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+  <div class="page-container">
+    <div class="">
+      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <nav class="drac-bg-black">
+          <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <h2 class="sm:items-center drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers
+                      Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                  <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="hidden md:block">
-                <div class="ml-10 flex items-baseline space-x-4">
-                  <div class="drac-text drac-text-orange drac-text-right drac-line-height">Great power is great fun
+              <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                  <div>
+                    <button
+                      class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</button>
+                    <button
+                      class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</button>
+                    <button
+                      class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</button>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="hidden md:block">
-              <div class="ml-4 items-center relative">
-                <div>
-                  <button
-                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</button>
-                  <button
-                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</button>
-                  <button
-                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</button>
-                </div>
-              </div>
+          </div>
+        </nav>
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% if page.title == "Welcome" %}
+            <div class="md:container md:mx-auto content-center">
+              <img class="object-scale-down h-48 w-full" src="https://i.imgur.com/YsNA2EL.png">
             </div>
+            {% else %}
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">{{ page.title }}</h1>
+            {% endif %}
           </div>
-        </div>
-      </nav>
-      <header class="py-10">
-        <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {% if page.title == "Welcome" %}
-          <div class="hidden md:container md:mx-auto content-center">
-            <img class="object-scale-down h-48 w-full" src="https://i.imgur.com/YsNA2EL.png">
-          </div>
-          {% else %}
-          <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-orange">{{ page.title }}</h1>
-          {% endif %}
-        </div>
-      </header>
-    </div>
-    <div>
-      <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
-        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
-        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
-      </svg>
-    </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+          <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+          <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div>
