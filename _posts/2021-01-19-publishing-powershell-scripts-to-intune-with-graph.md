@@ -103,8 +103,6 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
 
 The required properties for publishing scripts to Graph are quite simple - the endpoint **deviceManagementScripts** is <a href="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta" data-type="URL" data-id="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta">well documented</a>, but for simplicity, the only settings we need to understand are listed below:
 
-<figure class="wp-block-table">
-
 <table>
   <tr>
     <td>
