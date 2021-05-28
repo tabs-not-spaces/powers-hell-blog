@@ -158,8 +158,6 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
 
 <p>The required properties for publishing scripts to Graph are quite simple - the endpoint <strong>deviceManagementScripts</strong> is <a href="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta" data-type="URL" data-id="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta">well documented</a>, but for simplicity, the only settings we need to understand are listed below:</p>
 
-<figure class="wp-block-table">
-
 <table>
   <tr>
     <td>
@@ -272,12 +270,11 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
       Script content - encoded as base64
     </td>
   </tr>
-</table> 
+</table>
 
-So, knowing what we need, let's build out the code to build the payload.
+<p>So, knowing what we need, let’s build out the code to build the payload.</p>
 
-```PowerShell
-#region build the request body
+<pre><code class="language-PowerShell">#region build the request body
 $postBody = [PSCustomObject]@{
     displayName           = "Powers-Hell Configuration Script"
     description           = "script that configures important things"
@@ -288,16 +285,15 @@ $postBody = [PSCustomObject]@{
     scriptContent         = $encodedScriptContent
 } | ConvertTo-Json -Depth 10
 #endregion
-```
+</code></pre>
 
-Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.
+<p>Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.</p>
 
-### Post the request to Graph
+<h3 id="post-the-request-to-graph">Post the request to Graph</h3>
 
-Once we've got out authentication header, we've encoded the script contents and built out the JSON payload, all that's left to do is post the payload to the Graph endpoint.
+<p>Once we’ve got out authentication header, we’ve encoded the script contents and built out the JSON payload, all that’s left to do is post the payload to the Graph endpoint.</p>
 
-```PowerShell
-#region post the request
+<pre><code class="language-PowerShell">#region post the request
 $postParams = @{
     Method      = "Post"
     Uri         = "https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts"
@@ -307,12 +303,11 @@ $postParams = @{
 }
 Invoke-RestMethod @postParams
 #endregion
-```
+</code></pre>
 
-If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of **runAs32Bit** to $false, we can ensure the script will always run correctly - even if we haven't had enough coffee yet.
+<p>If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of <strong>runAs32Bit</strong> to $false, we can ensure the script will always run correctly - even if we haven’t had enough coffee yet.</p>
 
-```PowerShell
-#requires -module msal.ps
+<pre><code class="language-PowerShell">#requires -module msal.ps
 function Publish-ScriptToIntune {
     [CmdletBinding()]
     param (
@@ -401,12 +396,11 @@ function Publish-ScriptToIntune {
         }
     }
 }
-```
+</code></pre>
 
-As always, the code featured is available in my [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune) and I'm always up for a chat on [Twitter](https://twitter.com/powers_hell)!
+<p>As always, the code featured is available in my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune">GitHub</a> and I’m always up for a chat on <a href="https://twitter.com/powers_hell">Twitter</a>!</p>
 
-— Ben
-</figure>
+<p>— Ben</p>
 
         </article>
     </div>

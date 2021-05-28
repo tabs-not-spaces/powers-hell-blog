@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T12:54:28+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T13:00:40+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -270,8 +270,6 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
 
 &lt;p&gt;The required properties for publishing scripts to Graph are quite simple - the endpoint &lt;strong&gt;deviceManagementScripts&lt;/strong&gt; is &lt;a href=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot; data-type=&quot;URL&quot; data-id=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot;&gt;well documented&lt;/a&gt;, but for simplicity, the only settings we need to understand are listed below:&lt;/p&gt;
 
-&lt;figure class=&quot;wp-block-table&quot;&gt;
-
 &lt;table&gt;
   &lt;tr&gt;
     &lt;td&gt;
@@ -384,12 +382,11 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
       Script content - encoded as base64
     &lt;/td&gt;
   &lt;/tr&gt;
-&lt;/table&gt; 
+&lt;/table&gt;
 
-So, knowing what we need, let's build out the code to build the payload.
+&lt;p&gt;So, knowing what we need, let’s build out the code to build the payload.&lt;/p&gt;
 
-```PowerShell
-#region build the request body
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region build the request body
 $postBody = [PSCustomObject]@{
     displayName           = &quot;Powers-Hell Configuration Script&quot;
     description           = &quot;script that configures important things&quot;
@@ -400,16 +397,15 @@ $postBody = [PSCustomObject]@{
     scriptContent         = $encodedScriptContent
 } | ConvertTo-Json -Depth 10
 #endregion
-```
+&lt;/code&gt;&lt;/pre&gt;
 
-Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.
+&lt;p&gt;Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.&lt;/p&gt;
 
-### Post the request to Graph
+&lt;h3 id=&quot;post-the-request-to-graph&quot;&gt;Post the request to Graph&lt;/h3&gt;
 
-Once we've got out authentication header, we've encoded the script contents and built out the JSON payload, all that's left to do is post the payload to the Graph endpoint.
+&lt;p&gt;Once we’ve got out authentication header, we’ve encoded the script contents and built out the JSON payload, all that’s left to do is post the payload to the Graph endpoint.&lt;/p&gt;
 
-```PowerShell
-#region post the request
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region post the request
 $postParams = @{
     Method      = &quot;Post&quot;
     Uri         = &quot;https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts&quot;
@@ -419,12 +415,11 @@ $postParams = @{
 }
 Invoke-RestMethod @postParams
 #endregion
-```
+&lt;/code&gt;&lt;/pre&gt;
 
-If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of **runAs32Bit** to $false, we can ensure the script will always run correctly - even if we haven't had enough coffee yet.
+&lt;p&gt;If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of &lt;strong&gt;runAs32Bit&lt;/strong&gt; to $false, we can ensure the script will always run correctly - even if we haven’t had enough coffee yet.&lt;/p&gt;
 
-```PowerShell
-#requires -module msal.ps
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#requires -module msal.ps
 function Publish-ScriptToIntune {
     [CmdletBinding()]
     param (
@@ -513,12 +508,11 @@ function Publish-ScriptToIntune {
         }
     }
 }
-```
+&lt;/code&gt;&lt;/pre&gt;
 
-As always, the code featured is available in my [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune) and I'm always up for a chat on [Twitter](https://twitter.com/powers_hell)!
+&lt;p&gt;As always, the code featured is available in my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune&quot;&gt;GitHub&lt;/a&gt; and I’m always up for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;!&lt;/p&gt;
 
-— Ben
-&lt;/figure&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><summary type="html">I've recently been asked the question - &quot;How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?&quot; I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't &quot;fat finger&quot; your way into frustration!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><summary type="html">I've recently been asked the question - &quot;How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?&quot; I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't &quot;fat finger&quot; your way into frustration!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
 
 &lt;!--more--&gt;
 &lt;h2 id=&quot;first-title&quot;&gt;First Title&lt;/h2&gt;
