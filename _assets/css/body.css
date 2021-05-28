@@ -13,9 +13,6 @@ body {
   background-color: var(--black);
   font-family: Fira Code, monospace !important;
 }
-p {
-  margin-bottom: 10px;
-}
 pre {
   white-space: pre-line;
 }
