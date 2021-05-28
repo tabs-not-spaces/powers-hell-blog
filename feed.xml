@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T01:24:14+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">First Post!</title><link href="/2021/05/14/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/2021/05/14/first-post</id><content type="html" xml:base="/2021/05/14/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T01:27:45+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">First Post!</title><link href="/2021/05/14/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/2021/05/14/first-post</id><content type="html" xml:base="/2021/05/14/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
 
 &lt;p&gt;Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.&lt;br /&gt;
 &lt;!--more--&gt;&lt;/p&gt;
@@ -262,7 +262,7 @@ Invoke-RestMethod @restParams
 
 &lt;p&gt;The only solution during this period was to make your scripts bootstrap themselves into 64bit with a little bit of PowerShell magic.&lt;/p&gt;
 
-&lt;pre class=&quot;wp-block-code&quot; title=&quot;64Bit Bootstrap&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region 64-bit elevation
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region 64-bit elevation
 if ($env:PROCESSOR_ARCHITEW6432 -eq &quot;AMD64&quot;) {
     write-Host &quot;pull on those bootstraps...&quot;
     if ($myInvocation.Line) {
@@ -273,7 +273,8 @@ if ($env:PROCESSOR_ARCHITEW6432 -eq &quot;AMD64&quot;) {
     }
     exit $lastexitcode
 }
-#endregion&lt;/code&gt;&lt;/pre&gt;
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Place that code at the top of any script you publish to Intune and you can rest easy knowing that your code will always run in the environment it should be in, regardless if you set it correctly from within Intune or not.&lt;/p&gt;
 
@@ -301,7 +302,7 @@ if ($env:PROCESSOR_ARCHITEW6432 -eq &quot;AMD64&quot;) {
 
 &lt;p&gt;I’ve covered this ad-nauseum, so I won’t spend time explaining it - but here’s the code snippet we will use for this example. What’s cool about this is we can handle whether or not the end user uses PowerShell 5.1 or 7.&lt;/p&gt;
 
-&lt;pre class=&quot;wp-block-code&quot; title=&quot;MSAL Authentication&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region authenticate to Graph
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region authenticate to Graph
 if ($PSVersionTable.PSEdition -ne &quot;Core&quot;) {
     $auth = Get-MsalToken -ClientId &quot;d1ddf0e4-d672-4dae-b554-9d5bdfd93547&quot; -RedirectUri &quot;urn:ietf:wg:oauth:2.0:oob&quot; -Interactive
 }
@@ -311,20 +312,24 @@ else {
 $script:authToken = @{
     Authorization = $auth.CreateAuthorizationHeader()
 }
-#endregion&lt;/code&gt;&lt;/pre&gt;
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&quot;encode-the-script-to-a-base64-string&quot;&gt;Encode the script to a base64 string&lt;/h3&gt;
 
 &lt;p&gt;Very simple - but super important. We just need to get the raw content of the script and throw it into the .Net “System.Convert” type.&lt;/p&gt;
 
-&lt;pre class=&quot;wp-block-code&quot; title=&quot;Encode to Base64&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region encode the script content to base64
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region encode the script content to base64
 $scriptContent = Get-Content &quot;C:\Path\To\Script.ps1&quot; -Raw
 $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(&quot;$scriptContent&quot;))
-#endregion&lt;/code&gt;&lt;/pre&gt;
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&quot;payload-properties&quot;&gt;Payload properties&lt;/h3&gt;
 
-&lt;p&gt;The required properties for publishing scripts to Graph are quite simple - the endpoint &lt;strong&gt;deviceManagementScripts&lt;/strong&gt; is &lt;a href=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot; data-type=&quot;URL&quot; data-id=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot;&gt;well documented&lt;/a&gt;, but for simplicity, the only settings we need to understand are listed below:&lt;figure class=&quot;wp-block-table&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;The required properties for publishing scripts to Graph are quite simple - the endpoint &lt;strong&gt;deviceManagementScripts&lt;/strong&gt; is &lt;a href=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot; data-type=&quot;URL&quot; data-id=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot;&gt;well documented&lt;/a&gt;, but for simplicity, the only settings we need to understand are listed below:&lt;/p&gt;
+
+&lt;figure class=&quot;wp-block-table&quot;&gt;
 
 &lt;table&gt;
   &lt;tr&gt;
@@ -438,11 +443,12 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
       Script content - encoded as base64
     &lt;/td&gt;
   &lt;/tr&gt;
-&lt;/table&gt;
+&lt;/table&gt; 
 
-&lt;p&gt;So, knowing what we need, let’s build out the code to build the payload.&lt;/p&gt;
+So, knowing what we need, let's build out the code to build the payload.
 
-&lt;pre class=&quot;wp-block-code&quot; title=&quot;Payload Generation&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region build the request body
+```PowerShell
+    #region build the request body
 $postBody = [PSCustomObject]@{
     displayName           = &quot;Powers-Hell Configuration Script&quot;
     description           = &quot;script that configures important things&quot;
@@ -452,15 +458,17 @@ $postBody = [PSCustomObject]@{
     runAsAccount          = &quot;System&quot;
     scriptContent         = $encodedScriptContent
 } | ConvertTo-Json -Depth 10
-#endregion&lt;/code&gt;&lt;/pre&gt;
+#endregion
+```
 
-&lt;p&gt;Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.&lt;/p&gt;
+Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.
 
-&lt;h3 id=&quot;post-the-request-to-graph&quot;&gt;Post the request to Graph&lt;/h3&gt;
+### Post the request to Graph
 
-&lt;p&gt;Once we’ve got out authentication header, we’ve encoded the script contents and built out the JSON payload, all that’s left to do is post the payload to the Graph endpoint.&lt;/p&gt;
+Once we've got out authentication header, we've encoded the script contents and built out the JSON payload, all that's left to do is post the payload to the Graph endpoint.
 
-&lt;pre class=&quot;wp-block-code&quot; title=&quot;Invoke Rest Method&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region post the request
+```PowerShell
+#region post the request
 $postParams = @{
     Method      = &quot;Post&quot;
     Uri         = &quot;https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts&quot;
@@ -469,11 +477,13 @@ $postParams = @{
     ContentType = &quot;Application/Json&quot;
 }
 Invoke-RestMethod @postParams
-#endregion&lt;/code&gt;&lt;/pre&gt;
+#endregion
+```
 
-&lt;p&gt;If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of &lt;strong&gt;runAs32Bit&lt;/strong&gt; to $false, we can ensure the script will always run correctly - even if we haven’t had enough coffee yet.&lt;/p&gt;
+If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of **runAs32Bit** to $false, we can ensure the script will always run correctly - even if we haven't had enough coffee yet.
 
-&lt;pre class=&quot;wp-block-code&quot; title=&quot;Publish-ScriptToIntune.ps1&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;#requires -module msal.ps
+```PowerShell
+    #requires -module msal.ps
 function Publish-ScriptToIntune {
     [CmdletBinding()]
     param (
@@ -561,11 +571,13 @@ function Publish-ScriptToIntune {
             }
         }
     }
-}&lt;/code&gt;&lt;/pre&gt;
+}
+```
 
-&lt;p&gt;As always, the code featured is available in my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune&quot;&gt;GitHub&lt;/a&gt; and I’m always up for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;!&lt;/p&gt;
+As always, the code featured is available in my [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune) and I'm always up for a chat on [Twitter](https://twitter.com/powers_hell)!
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><summary type="html">I've recently been asked the question - &quot;How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?&quot; I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't &quot;fat finger&quot; your way into frustration!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
+— Ben
+&lt;/figure&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><summary type="html">I've recently been asked the question - &quot;How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?&quot; I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't &quot;fat finger&quot; your way into frustration!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
 
 &lt;!--more--&gt;
 &lt;h2 id=&quot;first-title&quot;&gt;First Title&lt;/h2&gt;
