@@ -30,8 +30,8 @@
     font-size: 1em;
   }
   .markdown-body p {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
   .post-date p {
     padding-top: 0rem;

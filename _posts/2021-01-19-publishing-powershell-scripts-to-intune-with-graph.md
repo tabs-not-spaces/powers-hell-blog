@@ -222,7 +222,7 @@ The required properties for publishing scripts to Graph are quite simple - the e
 So, knowing what we need, let's build out the code to build the payload.
 
 ```PowerShell
-    #region build the request body
+#region build the request body
 $postBody = [PSCustomObject]@{
     displayName           = "Powers-Hell Configuration Script"
     description           = "script that configures important things"
@@ -257,7 +257,7 @@ Invoke-RestMethod @postParams
 If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of **runAs32Bit** to $false, we can ensure the script will always run correctly - even if we haven't had enough coffee yet.
 
 ```PowerShell
-    #requires -module msal.ps
+#requires -module msal.ps
 function Publish-ScriptToIntune {
     [CmdletBinding()]
     param (
