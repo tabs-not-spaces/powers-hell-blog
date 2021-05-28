@@ -6,14 +6,8 @@ author: Ben
 layout: post
 guid: http://powers-hell.com/?p=514
 permalink: /2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/
-obfx-header-scripts:
-  - ""
-obfx-footer-scripts:
-  - ""
 views:
   - "901"
-spay_email:
-  - ""
 image: /assets/images/2021/03/settingsCatapalooza.gif
 categories:
   - Azure
@@ -31,13 +25,11 @@ The new profile type, named **Settings Catalog**, allows us to explicitly define
 
 <!--more-->
 
-<img loading="lazy" width="474" height="317" src="/assets/images/2021/03/image.png" />  
+![image](https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png)
 
-I sat down with [Mike Danoski](https://twitter.com/MikeDanoski) for an in-depth chat about this on the <a href="https://intune.training" data-type="URL" data-id="https://intune.training">Intune.Training</a> Channel (video below).<figure class="wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio">
+I sat down with [Mike Danoski](https://twitter.com/MikeDanoski) for an in-depth chat about this on the <a href="https://intune.training" data-type="URL" data-id="https://intune.training">Intune.Training</a> Channel (video below).
 
-<div class="wp-block-embed__wrapper">
-  <span class="embed-youtube" style="text-align:center; display: block;"></span>
-</div> 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sqIKcWXPvyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 After spending time with Mike and seeing how settings catalog profiles work from the endpoint portal user interface, I immediately wanted to see what I could do with this new device management framework via graph.
 
@@ -47,9 +39,9 @@ So let's dive in and play!
 
 First, let's create a policy from the endpoint portal and see what is required to retrieve the policy data.
 
-For this demo, I've created a simple settings catalog with a few settings around bitlocker as shown below. <figure class="wp-block-image size-large">
+For this demo, I've created a simple settings catalog with a few settings around bitlocker as shown below.
 
-<img loading="lazy" width="1008" height="1000" src="/assets/images/2021/03/image-1.png" alt="" class="wp-image-517" srcset="/assets/images/2021/03/image-1.png 1008w, /assets/images/2021/03/image-1-300x298.png 300w, /assets/images/2021/03/image-1-150x150.png 150w, /assets/images/2021/03/image-1-768x762.png 768w" sizes="(max-width: 1008px) 100vw, 1008px" />  
+![image-1](https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png)
 
 The first thing we need to do, as always, is authenticate to graph - At this point I shouldn't need to explain what is happening here. We will use the msal.ps module to make things easier.
 
@@ -73,13 +65,14 @@ $restParam = @{
 $configPolicies = Invoke-RestMethod @restParam
 $configPolicies.value</code></pre>
 
-As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available **settings catalog** policies that are in our tenant (in our case just the one).<figure class="wp-block-image size-large">
+As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available **settings catalog** policies that are in our tenant (in our case just the one).
 
-<img loading="lazy" width="588" height="287" src="/assets/images/2021/03/image-2.png" alt="" class="wp-image-518" srcset="/assets/images/2021/03/image-2.png 588w, /assets/images/2021/03/image-2-300x146.png 300w" sizes="(max-width: 588px) 100vw, 588px" />  
+![image-2](https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png)
 
 Ok, so we've got the basic metadata of our policy - so let's grab the id from the previous call and dive in further..
 
-<pre class="wp-block-code"><code lang="powershell" class="language-powershell">$policyId = $configPolicies.value[0].id #grabbing the id from the previous code block
+```PowerShell
+$policyId = $configPolicies.value[0].id #grabbing the id from the previous code block
 $restParam = @{
     Method = 'Get'
     Uri = "$baseUri/configurationPolicies('$policyId')/settings"
@@ -88,29 +81,30 @@ $restParam = @{
 }
 
 $configPolicySettings = Invoke-RestMethod @restParam
-$configPolicySettings.value</code></pre>
+$configPolicySettings.value
+```
 
-The code above returns data on all available settings that we configured in our policy..<figure class="wp-block-image size-large">
+The code above returns data on all available settings that we configured in our policy..
 
-<img loading="lazy" width="1024" height="163" src="/assets/images/2021/03/image-3-1024x163.png" alt="" class="wp-image-519" srcset="/assets/images/2021/03/image-3-1024x163.png 1024w, /assets/images/2021/03/image-3-300x48.png 300w, /assets/images/2021/03/image-3-768x122.png 768w, /assets/images/2021/03/image-3.png 1367w" sizes="(max-width: 1024px) 100vw, 1024px" />  
+![image-3](https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png)
 
-if we drill in to one of the **settingInstance** objects, we should see more info..<figure class="wp-block-image size-large">
+if we drill in to one of the **settingInstance** objects, we should see more info..
 
-<img loading="lazy" width="926" height="240" src="/assets/images/2021/03/image-4.png" alt="" class="wp-image-520" srcset="/assets/images/2021/03/image-4.png 926w, /assets/images/2021/03/image-4-300x78.png 300w, /assets/images/2021/03/image-4-768x199.png 768w" sizes="(max-width: 926px) 100vw, 926px" />  
+![image-4](https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png)
 
-As we can see, this particular setting is for **allow warning for other disk encryption** - as clearly defined in the **definitionId** value. If we drill into the **choiceSettingValue** item, we will see the applied value and any other child properties within that setting..<figure class="wp-block-image size-large">
+As we can see, this particular setting is for **allow warning for other disk encryption** - as clearly defined in the **definitionId** value. If we drill into the **choiceSettingValue** item, we will see the applied value and any other child properties within that setting..
 
-<img loading="lazy" width="1024" height="171" src="/assets/images/2021/03/image-5-1024x171.png" alt="" class="wp-image-521" srcset="/assets/images/2021/03/image-5-1024x171.png 1024w, /assets/images/2021/03/image-5-300x50.png 300w, /assets/images/2021/03/image-5-768x128.png 768w, /assets/images/2021/03/image-5.png 1393w" sizes="(max-width: 1024px) 100vw, 1024px" />  
+![image-5](https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png)
 
-Here we can see the value of **allow warning for other disk encryption** is set to 0 - or false, which correlates to our policy set from the endpoint portal.<figure class="wp-block-image size-large">
+Here we can see the value of **allow warning for other disk encryption** is set to 0 - or false, which correlates to our policy set from the endpoint portal.
 
-<img loading="lazy" width="863" height="215" src="/assets/images/2021/03/image-6.png" alt="" class="wp-image-522" srcset="/assets/images/2021/03/image-6.png 863w, /assets/images/2021/03/image-6-300x75.png 300w, /assets/images/2021/03/image-6-768x191.png 768w" sizes="(max-width: 863px) 100vw, 863px" />  
+![image-6](https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png)
 
 Here we can see the **child** setting of **allow standard user encryption** with the setting value of 1 - or true.
 
-This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the **settingDefinitions** property..<figure class="wp-block-image size-full">
+This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the **settingDefinitions** property..
 
-<img loading="lazy" width="1920" height="1080" src="/assets/images/2021/03/settingsDefinition.gif" alt="" class="wp-image-523" />  
+![settingsDefinition](https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif)
 
 Cool, huh? literally everything about each and every setting is available to us if we just spend the time to dig into graph a little bit!
 
@@ -128,28 +122,30 @@ So the first question that you may be asking, is, "How do I get the data that I 
 
 We can capture all necessary metadata on those available settings by using the **deviceManagement/configurationSettings** endpoint.
 
-<pre class="wp-block-code"><code lang="powershell" class="language-powershell">$restParam = @{
+```PowerShell
+$restParam = @{
     Method = "Get"
     Uri = "$baseUri/configurationSettings"
     Headers = $authHeaders
     ContentType = 'Application/Json'
 }
 $settingsData = Invoke-RestMethod @restParam
-$settingsData.value</code></pre>
+$settingsData.value
+```
 
 Let's run the above code and see what we get back..
 
-<figure class="wp-block-image size-full">
-
-<img loading="lazy" width="1920" height="1080" src="/assets/images/2021/03/settingsCatapalooza.gif" alt="" class="wp-image-524" />  
+![settingsCatapalooza](https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif)
 
 Well&#8230; that was a bit much wasn't it! at the time of writing, there is around 2,100 settings available in the settings catalog library with more to come until it is at parity with all existing methods of device configuration (configuration items, ADMX templates, endpoint baselines etc).
 
 Let's filter the settings by a setting **definitionId** that we know (notice that the definitionId isnt a GUID? welcome to the future&#8230;)
 
-<pre class="wp-block-code"><code lang="powershell" class="language-powershell">$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}</code></pre><figure class="wp-block-image size-large">
+```PowerShell
+$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}
+```
 
-<img loading="lazy" width="1024" height="440" src="/assets/images/2021/03/image-7-1024x440.png" alt="" class="wp-image-525" srcset="/assets/images/2021/03/image-7-1024x440.png 1024w, /assets/images/2021/03/image-7-300x129.png 300w, /assets/images/2021/03/image-7-768x330.png 768w, /assets/images/2021/03/image-7-1536x659.png 1536w, /assets/images/2021/03/image-7.png 1635w" sizes="(max-width: 1024px) 100vw, 1024px" />  
+![image-7](https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png)
 
 Weird&#8230; doesn't that look the same as the expanded **settingsDefinitions** content from earlier? That's because it is literally the same data! We can dig into this data to find out the available options for each setting, but let's skip that for now and just build our example policy from scratch..
 
@@ -157,7 +153,8 @@ Weird&#8230; doesn't that look the same as the expanded **settingsDefinitions** 
 
 Conceptually we now should understand what's required here. We have some metadata around what the policy is called to which we attach whichever settings we want attributed to our new policy profile. So let's rebuild the original policy in PowerShell!
 
-<pre class="wp-block-code"><code lang="powershell" class="language-powershell">$baseUri = 'https://graph.microsoft.com/beta/deviceManagement/configurationPolicies'
+```PowerShell
+$baseUri = 'https://graph.microsoft.com/beta/deviceManagement/configurationPolicies'
 
 #region build the policy
 $newPolicy = [pscustomobject]@{
@@ -210,11 +207,12 @@ $restParams = @{
     ContentType = 'Application/Json'
 }
 Invoke-RestMethod @restParams
-#endregion</code></pre>
+#endregion
+```
 
-Once we run this - within seconds we should have a replicated policy in our tenant!<figure class="wp-block-image size-large">
+Once we run this - within seconds we should have a replicated policy in our tenant!
 
-<img loading="lazy" width="1024" height="351" src="/assets/images/2021/03/image-8-1024x351.png" alt="" class="wp-image-526" srcset="/assets/images/2021/03/image-8-1024x351.png 1024w, /assets/images/2021/03/image-8-300x103.png 300w, /assets/images/2021/03/image-8-768x263.png 768w, /assets/images/2021/03/image-8.png 1471w" sizes="(max-width: 1024px) 100vw, 1024px" />  
+![image-8](https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png)
 
 As mentioned earlier, building these from scratch is tricky - but if you read between the lines, knowing how to capture pre-built policies via graph and using the captured JSON payload to post the same policy to a new tenant (or a few hundred tenants) should make multi-tenant device management less painful.
 
