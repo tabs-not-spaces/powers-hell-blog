@@ -10,14 +10,8 @@ excerpt: |
 layout: post
 guid: http://powers-hell.com/?p=499
 permalink: /2021/01/19/publishing-powershell-scripts-to-intune-with-graph/
-obfx-header-scripts:
-  - ""
-obfx-footer-scripts:
-  - ""
 views:
   - "1484"
-spay_email:
-  - ""
 image: /assets/images/2021/01/scriptToGraph.gif
 categories:
   - Azure
@@ -41,7 +35,8 @@ When PowerShell script deployment was initially released within Intune there was
 
 The only solution during this period was to make your scripts bootstrap themselves into 64bit with a little bit of PowerShell magic.
 
-<pre class="wp-block-code" title="64Bit Bootstrap"><code lang="powershell" class="language-powershell line-numbers">#region 64-bit elevation
+```PowerShell
+#region 64-bit elevation
 if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
     write-Host "pull on those bootstraps..."
     if ($myInvocation.Line) {
@@ -52,7 +47,8 @@ if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
     }
     exit $lastexitcode
 }
-#endregion</code></pre>
+#endregion
+```
 
 Place that code at the top of any script you publish to Intune and you can rest easy knowing that your code will always run in the environment it should be in, regardless if you set it correctly from within Intune or not.
 
@@ -78,7 +74,8 @@ Let's dive into the solution together.
 
 I've covered this ad-nauseum, so I won't spend time explaining it - but here's the code snippet we will use for this example. What's cool about this is we can handle whether or not the end user uses PowerShell 5.1 or 7.
 
-<pre class="wp-block-code" title="MSAL Authentication"><code lang="powershell" class="language-powershell line-numbers">#region authenticate to Graph
+```PowerShell
+#region authenticate to Graph
 if ($PSVersionTable.PSEdition -ne "Core") {
     $auth = Get-MsalToken -ClientId "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" -RedirectUri "urn:ietf:wg:oauth:2.0:oob" -Interactive
 }
@@ -88,20 +85,25 @@ else {
 $script:authToken = @{
     Authorization = $auth.CreateAuthorizationHeader()
 }
-#endregion</code></pre>
+#endregion
+```
 
 ### Encode the script to a base64 string
 
 Very simple - but super important. We just need to get the raw content of the script and throw it into the .Net "System.Convert" type.
 
-<pre class="wp-block-code" title="Encode to Base64"><code lang="powershell" class="language-powershell line-numbers">#region encode the script content to base64
+```PowerShell
+#region encode the script content to base64
 $scriptContent = Get-Content "C:\Path\To\Script.ps1" -Raw
 $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$scriptContent"))
-#endregion</code></pre>
+#endregion
+```
 
 ### Payload properties
 
-The required properties for publishing scripts to Graph are quite simple - the endpoint **deviceManagementScripts** is <a href="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta" data-type="URL" data-id="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta">well documented</a>, but for simplicity, the only settings we need to understand are listed below:<figure class="wp-block-table">
+The required properties for publishing scripts to Graph are quite simple - the endpoint **deviceManagementScripts** is <a href="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta" data-type="URL" data-id="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta">well documented</a>, but for simplicity, the only settings we need to understand are listed below:
+
+<figure class="wp-block-table">
 
 <table>
   <tr>
@@ -219,7 +221,8 @@ The required properties for publishing scripts to Graph are quite simple - the e
 
 So, knowing what we need, let's build out the code to build the payload.
 
-<pre class="wp-block-code" title="Payload Generation"><code lang="powershell" class="language-powershell line-numbers">#region build the request body
+```PowerShell
+    #region build the request body
 $postBody = [PSCustomObject]@{
     displayName           = "Powers-Hell Configuration Script"
     description           = "script that configures important things"
@@ -229,7 +232,8 @@ $postBody = [PSCustomObject]@{
     runAsAccount          = "System"
     scriptContent         = $encodedScriptContent
 } | ConvertTo-Json -Depth 10
-#endregion</code></pre>
+#endregion
+```
 
 Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.
 
@@ -237,7 +241,8 @@ Quite simple - creating a PSCustomObject, filling in the property values and the
 
 Once we've got out authentication header, we've encoded the script contents and built out the JSON payload, all that's left to do is post the payload to the Graph endpoint.
 
-<pre class="wp-block-code" title="Invoke Rest Method"><code lang="powershell" class="language-powershell line-numbers">#region post the request
+```PowerShell
+#region post the request
 $postParams = @{
     Method      = "Post"
     Uri         = "https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts"
@@ -246,11 +251,13 @@ $postParams = @{
     ContentType = "Application/Json"
 }
 Invoke-RestMethod @postParams
-#endregion</code></pre>
+#endregion
+```
 
 If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of **runAs32Bit** to $false, we can ensure the script will always run correctly - even if we haven't had enough coffee yet.
 
-<pre class="wp-block-code" title="Publish-ScriptToIntune.ps1"><code lang="powershell" class="language-powershell">#requires -module msal.ps
+```PowerShell
+    #requires -module msal.ps
 function Publish-ScriptToIntune {
     [CmdletBinding()]
     param (
@@ -338,7 +345,8 @@ function Publish-ScriptToIntune {
             }
         }
     }
-}</code></pre>
+}
+```
 
 As always, the code featured is available in my [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune) and I'm always up for a chat on [Twitter](https://twitter.com/powers_hell)!
 
