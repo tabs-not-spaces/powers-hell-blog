@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-27T13:44:06+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">First Post!</title><link href="/2021/05/14/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/2021/05/14/first-post</id><content type="html" xml:base="/2021/05/14/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T01:08:49+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">First Post!</title><link href="/2021/05/14/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/2021/05/14/first-post</id><content type="html" xml:base="/2021/05/14/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
 
 &lt;p&gt;Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.&lt;br /&gt;
 &lt;!--more--&gt;&lt;/p&gt;
@@ -57,7 +57,516 @@
       &lt;td&gt;hates himself&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
-&lt;/table&gt;</content><author><name></name></author><category term="First-Post" /><category term="Pretty-Cool" /><summary type="html">Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.</summary></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
+&lt;/table&gt;</content><author><name></name></author><category term="First-Post" /><category term="Pretty-Cool" /><summary type="html">Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.</summary></entry><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+
+&lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;474&quot; height=&quot;317&quot; src=&quot;/assets/images/2021/03/image.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I sat down with &lt;a href=&quot;https://twitter.com/MikeDanoski&quot;&gt;Mike Danoski&lt;/a&gt; for an in-depth chat about this on the &lt;a href=&quot;https://intune.training&quot; data-type=&quot;URL&quot; data-id=&quot;https://intune.training&quot;&gt;Intune.Training&lt;/a&gt; Channel (video below).&lt;figure class=&quot;wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;div class=&quot;wp-block-embed__wrapper&quot;&gt;
+  &lt;span class=&quot;embed-youtube&quot; style=&quot;text-align:center; display: block;&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After spending time with Mike and seeing how settings catalog profiles work from the endpoint portal user interface, I immediately wanted to see what I could do with this new device management framework via graph.&lt;/p&gt;
+
+&lt;p&gt;So let’s dive in and play!&lt;/p&gt;
+
+&lt;h2 id=&quot;pulling-settings-catalog-policies-from-graph&quot;&gt;&lt;strong&gt;Pulling settings catalog policies from Graph&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;First, let’s create a policy from the endpoint portal and see what is required to retrieve the policy data.&lt;/p&gt;
+
+&lt;p&gt;For this demo, I’ve created a simple settings catalog with a few settings around bitlocker as shown below. &lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1008&quot; height=&quot;1000&quot; src=&quot;/assets/images/2021/03/image-1.png&quot; alt=&quot;&quot; class=&quot;wp-image-517&quot; srcset=&quot;/assets/images/2021/03/image-1.png 1008w, /assets/images/2021/03/image-1-300x298.png 300w, /assets/images/2021/03/image-1-150x150.png 150w, /assets/images/2021/03/image-1-768x762.png 768w&quot; sizes=&quot;(max-width: 1008px) 100vw, 1008px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The first thing we need to do, as always, is authenticate to graph - At this point I shouldn’t need to explain what is happening here. We will use the msal.ps module to make things easier.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;Configure Authentication for Graph.&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$params = @{
+    ClientId = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    TenantId = 'powers-hell.com'
+    DeviceCode = $true
+}
+$AuthHeader = @{Authorization = (Get-MsalToken @params).CreateAuthorizationHeader()}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we’ve authenticated to graph, let’s use the new graph endpoint &lt;strong&gt;configurationPolicies&lt;/strong&gt; to have a look at how this new feature looks in the backend.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;Get configurationPolicies&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$baseUri = &quot;https://graph.microsoft.com/beta/deviceManagement&quot;
+$restParam = @{
+    Method = 'Get'
+    Uri = &quot;$baseUri/configurationPolicies&quot;
+    Headers = $authHeaders
+    ContentType = 'Application/json'
+}
+
+$configPolicies = Invoke-RestMethod @restParam
+$configPolicies.value&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available &lt;strong&gt;settings catalog&lt;/strong&gt; policies that are in our tenant (in our case just the one).&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;588&quot; height=&quot;287&quot; src=&quot;/assets/images/2021/03/image-2.png&quot; alt=&quot;&quot; class=&quot;wp-image-518&quot; srcset=&quot;/assets/images/2021/03/image-2.png 588w, /assets/images/2021/03/image-2-300x146.png 300w&quot; sizes=&quot;(max-width: 588px) 100vw, 588px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ok, so we’ve got the basic metadata of our policy - so let’s grab the id from the previous call and dive in further..&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$policyId = $configPolicies.value[0].id #grabbing the id from the previous code block
+$restParam = @{
+    Method = 'Get'
+    Uri = &quot;$baseUri/configurationPolicies('$policyId')/settings&quot;
+    Headers = $authHeaders
+    ContentType = 'Application/json'
+}
+
+$configPolicySettings = Invoke-RestMethod @restParam
+$configPolicySettings.value&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The code above returns data on all available settings that we configured in our policy..&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;163&quot; src=&quot;/assets/images/2021/03/image-3-1024x163.png&quot; alt=&quot;&quot; class=&quot;wp-image-519&quot; srcset=&quot;/assets/images/2021/03/image-3-1024x163.png 1024w, /assets/images/2021/03/image-3-300x48.png 300w, /assets/images/2021/03/image-3-768x122.png 768w, /assets/images/2021/03/image-3.png 1367w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;if we drill in to one of the &lt;strong&gt;settingInstance&lt;/strong&gt; objects, we should see more info..&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;926&quot; height=&quot;240&quot; src=&quot;/assets/images/2021/03/image-4.png&quot; alt=&quot;&quot; class=&quot;wp-image-520&quot; srcset=&quot;/assets/images/2021/03/image-4.png 926w, /assets/images/2021/03/image-4-300x78.png 300w, /assets/images/2021/03/image-4-768x199.png 768w&quot; sizes=&quot;(max-width: 926px) 100vw, 926px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As we can see, this particular setting is for &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; - as clearly defined in the &lt;strong&gt;definitionId&lt;/strong&gt; value. If we drill into the &lt;strong&gt;choiceSettingValue&lt;/strong&gt; item, we will see the applied value and any other child properties within that setting..&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;171&quot; src=&quot;/assets/images/2021/03/image-5-1024x171.png&quot; alt=&quot;&quot; class=&quot;wp-image-521&quot; srcset=&quot;/assets/images/2021/03/image-5-1024x171.png 1024w, /assets/images/2021/03/image-5-300x50.png 300w, /assets/images/2021/03/image-5-768x128.png 768w, /assets/images/2021/03/image-5.png 1393w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here we can see the value of &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; is set to 0 - or false, which correlates to our policy set from the endpoint portal.&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;863&quot; height=&quot;215&quot; src=&quot;/assets/images/2021/03/image-6.png&quot; alt=&quot;&quot; class=&quot;wp-image-522&quot; srcset=&quot;/assets/images/2021/03/image-6.png 863w, /assets/images/2021/03/image-6-300x75.png 300w, /assets/images/2021/03/image-6-768x191.png 768w&quot; sizes=&quot;(max-width: 863px) 100vw, 863px&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here we can see the &lt;strong&gt;child&lt;/strong&gt; setting of &lt;strong&gt;allow standard user encryption&lt;/strong&gt; with the setting value of 1 - or true.&lt;/p&gt;
+
+&lt;p&gt;This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the &lt;strong&gt;settingDefinitions&lt;/strong&gt; property..&lt;figure class=&quot;wp-block-image size-full&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1920&quot; height=&quot;1080&quot; src=&quot;/assets/images/2021/03/settingsDefinition.gif&quot; alt=&quot;&quot; class=&quot;wp-image-523&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Cool, huh? literally everything about each and every setting is available to us if we just spend the time to dig into graph a little bit!&lt;/p&gt;
+
+&lt;h2 id=&quot;building-a-policy-from-scratch&quot;&gt;Building a policy from scratch&lt;/h2&gt;
+
+&lt;p&gt;Now, before we begin, I’m going to put this out there - settings catalog policies are probably not the easiest things to build from scratch..&lt;/p&gt;
+
+&lt;p&gt;There is LOTS of metadata that you need to know for each setting before you can build out the policies. However, the concepts shown below can also be leveraged to maintain &lt;strong&gt;reference templates&lt;/strong&gt; that can be captured and redeployed to other tenants to allow seamless management of multiple tenants with minimal effort.&lt;/p&gt;
+
+&lt;p&gt;Enough stalling, let’s see what’s required.&lt;/p&gt;
+
+&lt;h3 id=&quot;getting-all-settings-data&quot;&gt;Getting all settings data&lt;/h3&gt;
+
+&lt;p&gt;So the first question that you may be asking, is, “How do I get the data that I need for the settings that I want to add to my catalog policy?” Luckily, Microsoft has an endpoint in graph that will return all possible settings currently available for the settings catalog.&lt;/p&gt;
+
+&lt;p&gt;We can capture all necessary metadata on those available settings by using the &lt;strong&gt;deviceManagement/configurationSettings&lt;/strong&gt; endpoint.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$restParam = @{
+    Method = &quot;Get&quot;
+    Uri = &quot;$baseUri/configurationSettings&quot;
+    Headers = $authHeaders
+    ContentType = 'Application/Json'
+}
+$settingsData = Invoke-RestMethod @restParam
+$settingsData.value&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let’s run the above code and see what we get back..&lt;/p&gt;
+
+&lt;figure class=&quot;wp-block-image size-full&quot;&gt;
+
+&lt;img loading=&quot;lazy&quot; width=&quot;1920&quot; height=&quot;1080&quot; src=&quot;/assets/images/2021/03/settingsCatapalooza.gif&quot; alt=&quot;&quot; class=&quot;wp-image-524&quot; /&gt;  
+
+Well&amp;#8230; that was a bit much wasn't it! at the time of writing, there is around 2,100 settings available in the settings catalog library with more to come until it is at parity with all existing methods of device configuration (configuration items, ADMX templates, endpoint baselines etc).
+
+Let's filter the settings by a setting **definitionId** that we know (notice that the definitionId isnt a GUID? welcome to the future&amp;#8230;)
+
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}&lt;/code&gt;&lt;/pre&gt;&lt;figure class=&quot;wp-block-image size-large&quot;&gt;
+
+&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;440&quot; src=&quot;/assets/images/2021/03/image-7-1024x440.png&quot; alt=&quot;&quot; class=&quot;wp-image-525&quot; srcset=&quot;/assets/images/2021/03/image-7-1024x440.png 1024w, /assets/images/2021/03/image-7-300x129.png 300w, /assets/images/2021/03/image-7-768x330.png 768w, /assets/images/2021/03/image-7-1536x659.png 1536w, /assets/images/2021/03/image-7.png 1635w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;  
+
+Weird&amp;#8230; doesn't that look the same as the expanded **settingsDefinitions** content from earlier? That's because it is literally the same data! We can dig into this data to find out the available options for each setting, but let's skip that for now and just build our example policy from scratch..
+
+### Posting a settings catalog policy to Intune from Graph
+
+Conceptually we now should understand what's required here. We have some metadata around what the policy is called to which we attach whichever settings we want attributed to our new policy profile. So let's rebuild the original policy in PowerShell!
+
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$baseUri = 'https://graph.microsoft.com/beta/deviceManagement/configurationPolicies'
+
+#region build the policy
+$newPolicy = [pscustomobject]@{
+    name         = &quot;Bitlocker Policy from PowerShell&quot;
+    description  = &quot;we built this from PowerShell!&quot;
+    platforms    = &quot;windows10&quot;
+    technologies = &quot;mdm&quot;
+    settings     = @(
+        @{
+            '@odata.type'   = &quot;#microsoft.graph.deviceManagementConfigurationSetting&quot;
+            settingInstance = @{
+                '@odata.type'       = &quot;#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance&quot;
+                settingDefinitionId = &quot;device_vendor_msft_bitlocker_allowwarningforotherdiskencryption&quot;
+                choiceSettingValue  = @{
+                    '@odata.type' = &quot;#microsoft.graph.deviceManagementConfigurationChoiceSettingValue&quot;
+                    value         = &quot;device_vendor_msft_bitlocker_allowwarningforotherdiskencryption_0&quot;
+                    children      = @(
+                        @{
+                            '@odata.type'       = &quot;#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance&quot;
+                            settingDefinitionId = &quot;device_vendor_msft_bitlocker_allowstandarduserencryption&quot;
+                            choiceSettingValue  = @{
+                                '@odata.type' = &quot;#microsoft.graph.deviceManagementConfigurationChoiceSettingValue&quot;
+                                value         = &quot;device_vendor_msft_bitlocker_allowstandarduserencryption_0&quot;
+                            }
+                        }
+                    )
+                }
+            }
+        }
+        @{
+            '@odata.type'   = &quot;#microsoft.graph.deviceManagementConfigurationSetting&quot;
+            settingInstance = @{
+                '@odata.type'       = &quot;#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance&quot;
+                settingDefinitionId = &quot;device_vendor_msft_bitlocker_requiredeviceencryption&quot;
+                choiceSettingValue  = @{
+                    '@odata.type' = &quot;#microsoft.graph.deviceManagementConfigurationChoiceSettingValue&quot;
+                    value         = &quot;device_vendor_msft_bitlocker_requiredeviceencryption_1&quot;
+                }
+            }
+        }
+    )
+}
+#endregion
+#region post the request
+$restParams = @{
+    Method      = 'Post'
+    Uri         = $baseUri
+    body        = ($newPolicy | ConvertTo-Json -Depth 20)
+    Headers     = $authHeaders
+    ContentType = 'Application/Json'
+}
+Invoke-RestMethod @restParams
+#endregion&lt;/code&gt;&lt;/pre&gt;
+
+Once we run this - within seconds we should have a replicated policy in our tenant!&lt;figure class=&quot;wp-block-image size-large&quot;&gt;
+
+&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;351&quot; src=&quot;/assets/images/2021/03/image-8-1024x351.png&quot; alt=&quot;&quot; class=&quot;wp-image-526&quot; srcset=&quot;/assets/images/2021/03/image-8-1024x351.png 1024w, /assets/images/2021/03/image-8-300x103.png 300w, /assets/images/2021/03/image-8-768x263.png 768w, /assets/images/2021/03/image-8.png 1471w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;  
+
+As mentioned earlier, building these from scratch is tricky - but if you read between the lines, knowing how to capture pre-built policies via graph and using the captured JSON payload to post the same policy to a new tenant (or a few hundred tenants) should make multi-tenant device management less painful.
+
+— Ben
+&lt;/figure&gt;&lt;/figure&gt;&lt;/figure&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Azure" /><category term="Intune" /><category term="Powershell" /><summary type="html">Microsoft has recently introduced even more ways to create device configuration profiles.. The new profile type, named Settings Catalog, allows us to explicitly define and configure a policy that has only the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the templates profile type.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/03/settingsCatapalooza.gif" /><media:content medium="image" url="/assets/images/2021/03/settingsCatapalooza.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Publishing PowerShell scripts to Intune with Graph</title><link href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/" rel="alternate" type="text/html" title="Publishing PowerShell scripts to Intune with Graph" /><published>2021-01-19T03:22:12+00:00</published><updated>2021-01-19T03:22:12+00:00</updated><id>/2021/01/19/publishing-powershell-scripts-to-intune-with-graph</id><content type="html" xml:base="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&lt;p&gt;I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?”&lt;/p&gt;
+
+&lt;p&gt;I thought was a great question with a few simple solutions - so let’s look at the two methods I’ve used in the past to make sure you don’t “fat finger” your way into frustration!&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;enforce-architecture-from-the-script&quot;&gt;Enforce architecture from the script&lt;/h2&gt;
+
+&lt;p&gt;When PowerShell script deployment was initially released within Intune there was no native way to define what architecture the script would run in. This means that the script would always run in the 32bit / x86 environment as the Intune Management Extension agent was launching the scripts and the agent itself was a 32bit agent - it had no way to bootstrap out of the 32bit environment!&lt;/p&gt;
+
+&lt;p&gt;The only solution during this period was to make your scripts bootstrap themselves into 64bit with a little bit of PowerShell magic.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;64Bit Bootstrap&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region 64-bit elevation
+if ($env:PROCESSOR_ARCHITEW6432 -eq &quot;AMD64&quot;) {
+    write-Host &quot;pull on those bootstraps...&quot;
+    if ($myInvocation.Line) {
+        &amp;amp;&quot;$env:WINDIR\sysnative\windowspowershell\v1.0\powershell.exe&quot; -NonInteractive -executionPolicy Bypass -NoProfile $myInvocation.Line
+    }
+    else {
+        &amp;amp;&quot;$env:WINDIR\sysnative\windowspowershell\v1.0\powershell.exe&quot; -NonInteractive -executionPolicy Bypass -NoProfile -file &quot;$($myInvocation.InvocationName)&quot; $args
+    }
+    exit $lastexitcode
+}
+#endregion&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Place that code at the top of any script you publish to Intune and you can rest easy knowing that your code will always run in the environment it should be in, regardless if you set it correctly from within Intune or not.&lt;/p&gt;
+
+&lt;h2 id=&quot;avoid-the-endpoint-ui-and-use-graph&quot;&gt;Avoid the Endpoint UI and use Graph&lt;/h2&gt;
+
+&lt;p&gt;Now that the option to set the architecture from within the script deployment, the above solution is conceivably “redundant” - we can set everything when we publish the script in the portal now!&lt;/p&gt;
+
+&lt;p&gt;The problem arises however, because the default architecture setting is set to 32bit instead of the generally expected 64bit, that you can sometimes forget to set the configuration correctly from the portal.&lt;/p&gt;
+
+&lt;p&gt;Luckily, we can move away from the Endpoint portal and use PowerShell and Graph to change the default settings to values and standardize our script publishing to avoid any of those absent-minded “user errors” that are so frustratingly common.&lt;/p&gt;
+
+&lt;p&gt;Like all other configuration settings / device management endpoints that are exposed via Graph, all that is required is to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Understand how the JSON payload data is formed&lt;/li&gt;
+  &lt;li&gt;Authenticate to Graph&lt;/li&gt;
+  &lt;li&gt;Build and publish the JSON payload to Graph&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The one extra step for script deployment is that we need to encode the script content into a base64 encoded string so that we can post the file within the JSON payload.&lt;/p&gt;
+
+&lt;p&gt;Let’s dive into the solution together.&lt;/p&gt;
+
+&lt;h3 id=&quot;authentication&quot;&gt;Authentication&lt;/h3&gt;
+
+&lt;p&gt;I’ve covered this ad-nauseum, so I won’t spend time explaining it - but here’s the code snippet we will use for this example. What’s cool about this is we can handle whether or not the end user uses PowerShell 5.1 or 7.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;MSAL Authentication&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region authenticate to Graph
+if ($PSVersionTable.PSEdition -ne &quot;Core&quot;) {
+    $auth = Get-MsalToken -ClientId &quot;d1ddf0e4-d672-4dae-b554-9d5bdfd93547&quot; -RedirectUri &quot;urn:ietf:wg:oauth:2.0:oob&quot; -Interactive
+}
+else {
+    $auth = Get-MsalToken -ClientId &quot;d1ddf0e4-d672-4dae-b554-9d5bdfd93547&quot; -DeviceCode
+}
+$script:authToken = @{
+    Authorization = $auth.CreateAuthorizationHeader()
+}
+#endregion&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;encode-the-script-to-a-base64-string&quot;&gt;Encode the script to a base64 string&lt;/h3&gt;
+
+&lt;p&gt;Very simple - but super important. We just need to get the raw content of the script and throw it into the .Net “System.Convert” type.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;Encode to Base64&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region encode the script content to base64
+$scriptContent = Get-Content &quot;C:\Path\To\Script.ps1&quot; -Raw
+$encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(&quot;$scriptContent&quot;))
+#endregion&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;payload-properties&quot;&gt;Payload properties&lt;/h3&gt;
+
+&lt;p&gt;The required properties for publishing scripts to Graph are quite simple - the endpoint &lt;strong&gt;deviceManagementScripts&lt;/strong&gt; is &lt;a href=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot; data-type=&quot;URL&quot; data-id=&quot;https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta&quot;&gt;well documented&lt;/a&gt;, but for simplicity, the only settings we need to understand are listed below:&lt;figure class=&quot;wp-block-table&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;
+      &lt;strong&gt;Property Name&lt;/strong&gt;
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      &lt;strong&gt;Data Type&lt;/strong&gt;
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      &lt;strong&gt;Description&lt;/strong&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      displayName
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      String
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Name of the device management script.
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      description
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      String
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Description of the script
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      enforceSignatureCheck
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Boolean
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Setting this to False disables signature check.
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      fileName
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      String
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Name of the file being uploaded.
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      runas32Bit
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Boolean
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Setting this to False sets to 64bit
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      runAsAccount
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      String
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Execution context - System or User
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;
+      scriptContent
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Binary
+    &lt;/td&gt;
+    
+    &lt;td&gt;
+      Script content - encoded as base64
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;So, knowing what we need, let’s build out the code to build the payload.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;Payload Generation&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region build the request body
+$postBody = [PSCustomObject]@{
+    displayName           = &quot;Powers-Hell Configuration Script&quot;
+    description           = &quot;script that configures important things&quot;
+    enforceSignatureCheck = $false
+    fileName              = &quot;Script.ps1&quot;
+    runAs32Bit            = $false
+    runAsAccount          = &quot;System&quot;
+    scriptContent         = $encodedScriptContent
+} | ConvertTo-Json -Depth 10
+#endregion&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.&lt;/p&gt;
+
+&lt;h3 id=&quot;post-the-request-to-graph&quot;&gt;Post the request to Graph&lt;/h3&gt;
+
+&lt;p&gt;Once we’ve got out authentication header, we’ve encoded the script contents and built out the JSON payload, all that’s left to do is post the payload to the Graph endpoint.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;Invoke Rest Method&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region post the request
+$postParams = @{
+    Method      = &quot;Post&quot;
+    Uri         = &quot;https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts&quot;
+    Headers     = $script:authToken
+    Body        = $postBody
+    ContentType = &quot;Application/Json&quot;
+}
+Invoke-RestMethod @postParams
+#endregion&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of &lt;strong&gt;runAs32Bit&lt;/strong&gt; to $false, we can ensure the script will always run correctly - even if we haven’t had enough coffee yet.&lt;/p&gt;
+
+&lt;pre class=&quot;wp-block-code&quot; title=&quot;Publish-ScriptToIntune.ps1&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;#requires -module msal.ps
+function Publish-ScriptToIntune {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$ScriptFilePath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$DisplayName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Description,
+        
+        [Parameter(Mandatory = $false)]
+        [ValidateSet(&quot;System&quot;, &quot;User&quot;)]
+        [string]$RunAsAccount = &quot;System&quot;,
+
+        [Parameter(Mandatory = $false)]
+        [boolean]$EnforceSignatureCheck,
+
+        [Parameter(Mandatory = $false)]
+        [boolean]$RunAs32Bit
+
+    )
+    try {
+        $script:tick = [char]0x221a
+        $errorMsg = $null
+        #region authenticate to Graph
+        if ($PSVersionTable.PSEdition -ne &quot;Core&quot;) {
+            $auth = Get-MsalToken -ClientId &quot;d1ddf0e4-d672-4dae-b554-9d5bdfd93547&quot; -RedirectUri &quot;urn:ietf:wg:oauth:2.0:oob&quot; -Interactive
+        }
+        else {
+            $auth = Get-MsalToken -ClientId &quot;d1ddf0e4-d672-4dae-b554-9d5bdfd93547&quot; -DeviceCode
+        }
+        if (!($auth)) {
+            throw &quot;Authentication failed.&quot;
+        }
+        $script:authToken = @{
+            Authorization = $auth.CreateAuthorizationHeader()
+        }
+        #endregion
+        #region encode the script content to base64
+        $scriptContent = Get-Content &quot;$ScriptFilePath&quot; -Raw
+        $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(&quot;$scriptContent&quot;))
+        #endregion
+        #region build the request body
+        $postBody = [PSCustomObject]@{
+            displayName           = $DisplayName
+            description           = $Description
+            enforceSignatureCheck = $EnforceSignatureCheck
+            fileName              = $ScriptFilePath.Name
+            runAs32Bit            = $RunAs32Bit
+            runAsAccount          = $RunAsAccount
+            scriptContent         = $encodedScriptContent
+        } | ConvertTo-Json -Depth 10
+        #endregion
+        Write-Host &quot;`nPosting script content to Intune: &quot; -NoNewline -ForegroundColor Cyan
+        #region post the request
+        $postParams = @{
+            Method      = &quot;Post&quot;
+            Uri         = &quot;https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts&quot;
+            Headers     = $script:authToken
+            Body        = $postBody
+            ContentType = &quot;Application/Json&quot;
+        }
+        if ($PSCmdlet.MyInvocation.BoundParameters[&quot;Verbose&quot;].IsPresent) {
+            Write-Host &quot;`n&quot;
+        }
+        $res = Invoke-RestMethod @postParams
+        #endregion
+    }
+    catch {
+        $errorMsg = $_.Exception.Message
+    }
+    finally {
+        if ($auth) {
+            if ($errorMsg) {
+                Write-Host &quot;X`n&quot; -ForegroundColor Red
+                Write-Warning $errorMsg
+            }
+            else {
+                if ($PSCmdlet.MyInvocation.BoundParameters[&quot;Verbose&quot;].IsPresent) {
+                    $res
+                }
+                Write-Host &quot;$script:tick Script published to Intune with ID $($res.id)&quot; -ForegroundColor Green
+            }
+        }
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As always, the code featured is available in my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune&quot;&gt;GitHub&lt;/a&gt; and I’m always up for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><summary type="html">I've recently been asked the question - &quot;How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?&quot; I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't &quot;fat finger&quot; your way into frustration!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
 
 &lt;!--more--&gt;
 &lt;h2 id=&quot;first-title&quot;&gt;First Title&lt;/h2&gt;

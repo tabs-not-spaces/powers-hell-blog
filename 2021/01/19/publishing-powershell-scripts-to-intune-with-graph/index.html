@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Publishing PowerShell scripts to Intune with Graph | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Publishing PowerShell scripts to Intune with Graph" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?” I thought was a great question with a few simple solutions - so let’s look at the two methods I’ve used in the past to make sure you don’t “fat finger” your way into frustration!" />
+<meta property="og:description" content="I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?” I thought was a great question with a few simple solutions - so let’s look at the two methods I’ve used in the past to make sure you don’t “fat finger” your way into frustration!" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="/assets/images/2021/01/scriptToGraph.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-01-19T03:22:12+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/assets/images/2021/01/scriptToGraph.gif" />
+<meta property="twitter:title" content="Publishing PowerShell scripts to Intune with Graph" />
+<script type="application/ld+json">
+{"headline":"Publishing PowerShell scripts to Intune with Graph","dateModified":"2021-01-19T03:22:12+00:00","datePublished":"2021-01-19T03:22:12+00:00","description":"I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?” I thought was a great question with a few simple solutions - so let’s look at the two methods I’ve used in the past to make sure you don’t “fat finger” your way into frustration!","mainEntityOfPage":{"@type":"WebPage","@id":"/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/"},"url":"/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/","@type":"BlogPosting","author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2021/01/scriptToGraph.gif","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Publishing PowerShell scripts to Intune with Graph</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class=" break-normal md:break-all drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+    >
+        <article class="markdown-body drac-text drac-line-height">
+          
+          <p>Published: 19 Jan
+          </p>
+          <br />
+          <p>I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?”</p>
+
+<p>I thought was a great question with a few simple solutions - so let’s look at the two methods I’ve used in the past to make sure you don’t “fat finger” your way into frustration!</p>
+
+<!--more-->
+
+<h2 id="enforce-architecture-from-the-script">Enforce architecture from the script</h2>
+
+<p>When PowerShell script deployment was initially released within Intune there was no native way to define what architecture the script would run in. This means that the script would always run in the 32bit / x86 environment as the Intune Management Extension agent was launching the scripts and the agent itself was a 32bit agent - it had no way to bootstrap out of the 32bit environment!</p>
+
+<p>The only solution during this period was to make your scripts bootstrap themselves into 64bit with a little bit of PowerShell magic.</p>
+
+<pre class="wp-block-code" title="64Bit Bootstrap"><code lang="powershell" class="language-powershell line-numbers">#region 64-bit elevation
+if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
+    write-Host "pull on those bootstraps..."
+    if ($myInvocation.Line) {
+        &amp;"$env:WINDIR\sysnative\windowspowershell\v1.0\powershell.exe" -NonInteractive -executionPolicy Bypass -NoProfile $myInvocation.Line
+    }
+    else {
+        &amp;"$env:WINDIR\sysnative\windowspowershell\v1.0\powershell.exe" -NonInteractive -executionPolicy Bypass -NoProfile -file "$($myInvocation.InvocationName)" $args
+    }
+    exit $lastexitcode
+}
+#endregion</code></pre>
+
+<p>Place that code at the top of any script you publish to Intune and you can rest easy knowing that your code will always run in the environment it should be in, regardless if you set it correctly from within Intune or not.</p>
+
+<h2 id="avoid-the-endpoint-ui-and-use-graph">Avoid the Endpoint UI and use Graph</h2>
+
+<p>Now that the option to set the architecture from within the script deployment, the above solution is conceivably “redundant” - we can set everything when we publish the script in the portal now!</p>
+
+<p>The problem arises however, because the default architecture setting is set to 32bit instead of the generally expected 64bit, that you can sometimes forget to set the configuration correctly from the portal.</p>
+
+<p>Luckily, we can move away from the Endpoint portal and use PowerShell and Graph to change the default settings to values and standardize our script publishing to avoid any of those absent-minded “user errors” that are so frustratingly common.</p>
+
+<p>Like all other configuration settings / device management endpoints that are exposed via Graph, all that is required is to:</p>
+
+<ul>
+  <li>Understand how the JSON payload data is formed</li>
+  <li>Authenticate to Graph</li>
+  <li>Build and publish the JSON payload to Graph</li>
+</ul>
+
+<p>The one extra step for script deployment is that we need to encode the script content into a base64 encoded string so that we can post the file within the JSON payload.</p>
+
+<p>Let’s dive into the solution together.</p>
+
+<h3 id="authentication">Authentication</h3>
+
+<p>I’ve covered this ad-nauseum, so I won’t spend time explaining it - but here’s the code snippet we will use for this example. What’s cool about this is we can handle whether or not the end user uses PowerShell 5.1 or 7.</p>
+
+<pre class="wp-block-code" title="MSAL Authentication"><code lang="powershell" class="language-powershell line-numbers">#region authenticate to Graph
+if ($PSVersionTable.PSEdition -ne "Core") {
+    $auth = Get-MsalToken -ClientId "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" -RedirectUri "urn:ietf:wg:oauth:2.0:oob" -Interactive
+}
+else {
+    $auth = Get-MsalToken -ClientId "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" -DeviceCode
+}
+$script:authToken = @{
+    Authorization = $auth.CreateAuthorizationHeader()
+}
+#endregion</code></pre>
+
+<h3 id="encode-the-script-to-a-base64-string">Encode the script to a base64 string</h3>
+
+<p>Very simple - but super important. We just need to get the raw content of the script and throw it into the .Net “System.Convert” type.</p>
+
+<pre class="wp-block-code" title="Encode to Base64"><code lang="powershell" class="language-powershell line-numbers">#region encode the script content to base64
+$scriptContent = Get-Content "C:\Path\To\Script.ps1" -Raw
+$encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$scriptContent"))
+#endregion</code></pre>
+
+<h3 id="payload-properties">Payload properties</h3>
+
+<p>The required properties for publishing scripts to Graph are quite simple - the endpoint <strong>deviceManagementScripts</strong> is <a href="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta" data-type="URL" data-id="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta">well documented</a>, but for simplicity, the only settings we need to understand are listed below:<figure class="wp-block-table"></figure></p>
+
+<table>
+  <tr>
+    <td>
+      <strong>Property Name</strong>
+    </td>
+    
+    <td>
+      <strong>Data Type</strong>
+    </td>
+    
+    <td>
+      <strong>Description</strong>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      displayName
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Name of the device management script.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      description
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Description of the script
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      enforceSignatureCheck
+    </td>
+    
+    <td>
+      Boolean
+    </td>
+    
+    <td>
+      Setting this to False disables signature check.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      fileName
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Name of the file being uploaded.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      runas32Bit
+    </td>
+    
+    <td>
+      Boolean
+    </td>
+    
+    <td>
+      Setting this to False sets to 64bit
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      runAsAccount
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Execution context - System or User
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      scriptContent
+    </td>
+    
+    <td>
+      Binary
+    </td>
+    
+    <td>
+      Script content - encoded as base64
+    </td>
+  </tr>
+</table>
+
+<p>So, knowing what we need, let’s build out the code to build the payload.</p>
+
+<pre class="wp-block-code" title="Payload Generation"><code lang="powershell" class="language-powershell line-numbers">#region build the request body
+$postBody = [PSCustomObject]@{
+    displayName           = "Powers-Hell Configuration Script"
+    description           = "script that configures important things"
+    enforceSignatureCheck = $false
+    fileName              = "Script.ps1"
+    runAs32Bit            = $false
+    runAsAccount          = "System"
+    scriptContent         = $encodedScriptContent
+} | ConvertTo-Json -Depth 10
+#endregion</code></pre>
+
+<p>Quite simple - creating a PSCustomObject, filling in the property values and then immediately converting to a JSON string.</p>
+
+<h3 id="post-the-request-to-graph">Post the request to Graph</h3>
+
+<p>Once we’ve got out authentication header, we’ve encoded the script contents and built out the JSON payload, all that’s left to do is post the payload to the Graph endpoint.</p>
+
+<pre class="wp-block-code" title="Invoke Rest Method"><code lang="powershell" class="language-powershell line-numbers">#region post the request
+$postParams = @{
+    Method      = "Post"
+    Uri         = "https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts"
+    Headers     = $script:authToken
+    Body        = $postBody
+    ContentType = "Application/Json"
+}
+Invoke-RestMethod @postParams
+#endregion</code></pre>
+
+<p>If we use the above basic blocks of code, we can very easily build a simple function to allow us to build out a request to publish scripts to our Intune tenant and by forcing the boolean value of <strong>runAs32Bit</strong> to $false, we can ensure the script will always run correctly - even if we haven’t had enough coffee yet.</p>
+
+<pre class="wp-block-code" title="Publish-ScriptToIntune.ps1"><code lang="powershell" class="language-powershell">#requires -module msal.ps
+function Publish-ScriptToIntune {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$ScriptFilePath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$DisplayName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Description,
+        
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("System", "User")]
+        [string]$RunAsAccount = "System",
+
+        [Parameter(Mandatory = $false)]
+        [boolean]$EnforceSignatureCheck,
+
+        [Parameter(Mandatory = $false)]
+        [boolean]$RunAs32Bit
+
+    )
+    try {
+        $script:tick = [char]0x221a
+        $errorMsg = $null
+        #region authenticate to Graph
+        if ($PSVersionTable.PSEdition -ne "Core") {
+            $auth = Get-MsalToken -ClientId "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" -RedirectUri "urn:ietf:wg:oauth:2.0:oob" -Interactive
+        }
+        else {
+            $auth = Get-MsalToken -ClientId "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" -DeviceCode
+        }
+        if (!($auth)) {
+            throw "Authentication failed."
+        }
+        $script:authToken = @{
+            Authorization = $auth.CreateAuthorizationHeader()
+        }
+        #endregion
+        #region encode the script content to base64
+        $scriptContent = Get-Content "$ScriptFilePath" -Raw
+        $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$scriptContent"))
+        #endregion
+        #region build the request body
+        $postBody = [PSCustomObject]@{
+            displayName           = $DisplayName
+            description           = $Description
+            enforceSignatureCheck = $EnforceSignatureCheck
+            fileName              = $ScriptFilePath.Name
+            runAs32Bit            = $RunAs32Bit
+            runAsAccount          = $RunAsAccount
+            scriptContent         = $encodedScriptContent
+        } | ConvertTo-Json -Depth 10
+        #endregion
+        Write-Host "`nPosting script content to Intune: " -NoNewline -ForegroundColor Cyan
+        #region post the request
+        $postParams = @{
+            Method      = "Post"
+            Uri         = "https://graph.microsoft.com/Beta/deviceManagement/deviceManagementScripts"
+            Headers     = $script:authToken
+            Body        = $postBody
+            ContentType = "Application/Json"
+        }
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            Write-Host "`n"
+        }
+        $res = Invoke-RestMethod @postParams
+        #endregion
+    }
+    catch {
+        $errorMsg = $_.Exception.Message
+    }
+    finally {
+        if ($auth) {
+            if ($errorMsg) {
+                Write-Host "X`n" -ForegroundColor Red
+                Write-Warning $errorMsg
+            }
+            else {
+                if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+                    $res
+                }
+                Write-Host "$script:tick Script published to Intune with ID $($res.id)" -ForegroundColor Green
+            }
+        }
+    }
+}</code></pre>
+
+<p>As always, the code featured is available in my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune">GitHub</a> and I’m always up for a chat on <a href="https://twitter.com/powers_hell">Twitter</a>!</p>
+
+<p>— Ben</p>
+
+        </article>
+    </div>
+  </div>
+</main>
+
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>
