@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T01:08:49+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">First Post!</title><link href="/2021/05/14/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/2021/05/14/first-post</id><content type="html" xml:base="/2021/05/14/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-28T01:24:14+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">First Post!</title><link href="/2021/05/14/first-post/" rel="alternate" type="text/html" title="First Post!" /><published>2021-05-14T01:55:30+00:00</published><updated>2021-05-14T01:55:30+00:00</updated><id>/2021/05/14/first-post</id><content type="html" xml:base="/2021/05/14/first-post/">&lt;link href=&quot;http://github.com/yrgoldteeth/darkdowncss/raw/master/darkdown.css&quot; rel=&quot;stylesheet&quot; /&gt;
 
 &lt;p&gt;Amet eiusmod fugiat Lorem magna in occaecat id non exercitation Lorem elit sunt exercitation culpa. Est nulla ut amet labore cupidatat duis enim laborum culpa. Fugiat non exercitation veniam exercitation deserunt consectetur ullamco. Et minim qui aliquip nisi adipisicing duis nostrud esse consequat qui ea cillum. Qui elit voluptate velit fugiat dolore eiusmod mollit.&lt;br /&gt;
 &lt;!--more--&gt;&lt;/p&gt;
@@ -63,13 +63,11 @@
 
 &lt;!--more--&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;474&quot; height=&quot;317&quot; src=&quot;/assets/images/2021/03/image.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;I sat down with &lt;a href=&quot;https://twitter.com/MikeDanoski&quot;&gt;Mike Danoski&lt;/a&gt; for an in-depth chat about this on the &lt;a href=&quot;https://intune.training&quot; data-type=&quot;URL&quot; data-id=&quot;https://intune.training&quot;&gt;Intune.Training&lt;/a&gt; Channel (video below).&lt;figure class=&quot;wp-block-embed-youtube wp-block-embed is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;I sat down with &lt;a href=&quot;https://twitter.com/MikeDanoski&quot;&gt;Mike Danoski&lt;/a&gt; for an in-depth chat about this on the &lt;a href=&quot;https://intune.training&quot; data-type=&quot;URL&quot; data-id=&quot;https://intune.training&quot;&gt;Intune.Training&lt;/a&gt; Channel (video below).&lt;/p&gt;
 
-&lt;div class=&quot;wp-block-embed__wrapper&quot;&gt;
-  &lt;span class=&quot;embed-youtube&quot; style=&quot;text-align:center; display: block;&quot;&gt;&lt;/span&gt;
-&lt;/div&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/sqIKcWXPvyI&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;p&gt;After spending time with Mike and seeing how settings catalog profiles work from the endpoint portal user interface, I immediately wanted to see what I could do with this new device management framework via graph.&lt;/p&gt;
 
@@ -79,9 +77,9 @@
 
 &lt;p&gt;First, let’s create a policy from the endpoint portal and see what is required to retrieve the policy data.&lt;/p&gt;
 
-&lt;p&gt;For this demo, I’ve created a simple settings catalog with a few settings around bitlocker as shown below. &lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;For this demo, I’ve created a simple settings catalog with a few settings around bitlocker as shown below.&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1008&quot; height=&quot;1000&quot; src=&quot;/assets/images/2021/03/image-1.png&quot; alt=&quot;&quot; class=&quot;wp-image-517&quot; srcset=&quot;/assets/images/2021/03/image-1.png 1008w, /assets/images/2021/03/image-1-300x298.png 300w, /assets/images/2021/03/image-1-150x150.png 150w, /assets/images/2021/03/image-1-768x762.png 768w&quot; sizes=&quot;(max-width: 1008px) 100vw, 1008px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png&quot; alt=&quot;image-1&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The first thing we need to do, as always, is authenticate to graph - At this point I shouldn’t need to explain what is happening here. We will use the msal.ps module to make things easier.&lt;/p&gt;
 
@@ -105,13 +103,13 @@ $restParam = @{
 $configPolicies = Invoke-RestMethod @restParam
 $configPolicies.value&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available &lt;strong&gt;settings catalog&lt;/strong&gt; policies that are in our tenant (in our case just the one).&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available &lt;strong&gt;settings catalog&lt;/strong&gt; policies that are in our tenant (in our case just the one).&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;588&quot; height=&quot;287&quot; src=&quot;/assets/images/2021/03/image-2.png&quot; alt=&quot;&quot; class=&quot;wp-image-518&quot; srcset=&quot;/assets/images/2021/03/image-2.png 588w, /assets/images/2021/03/image-2-300x146.png 300w&quot; sizes=&quot;(max-width: 588px) 100vw, 588px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png&quot; alt=&quot;image-2&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Ok, so we’ve got the basic metadata of our policy - so let’s grab the id from the previous call and dive in further..&lt;/p&gt;
 
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$policyId = $configPolicies.value[0].id #grabbing the id from the previous code block
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$policyId = $configPolicies.value[0].id #grabbing the id from the previous code block
 $restParam = @{
     Method = 'Get'
     Uri = &quot;$baseUri/configurationPolicies('$policyId')/settings&quot;
@@ -120,29 +118,30 @@ $restParam = @{
 }
 
 $configPolicySettings = Invoke-RestMethod @restParam
-$configPolicySettings.value&lt;/code&gt;&lt;/pre&gt;
+$configPolicySettings.value
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;The code above returns data on all available settings that we configured in our policy..&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;The code above returns data on all available settings that we configured in our policy..&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;163&quot; src=&quot;/assets/images/2021/03/image-3-1024x163.png&quot; alt=&quot;&quot; class=&quot;wp-image-519&quot; srcset=&quot;/assets/images/2021/03/image-3-1024x163.png 1024w, /assets/images/2021/03/image-3-300x48.png 300w, /assets/images/2021/03/image-3-768x122.png 768w, /assets/images/2021/03/image-3.png 1367w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png&quot; alt=&quot;image-3&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;if we drill in to one of the &lt;strong&gt;settingInstance&lt;/strong&gt; objects, we should see more info..&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;if we drill in to one of the &lt;strong&gt;settingInstance&lt;/strong&gt; objects, we should see more info..&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;926&quot; height=&quot;240&quot; src=&quot;/assets/images/2021/03/image-4.png&quot; alt=&quot;&quot; class=&quot;wp-image-520&quot; srcset=&quot;/assets/images/2021/03/image-4.png 926w, /assets/images/2021/03/image-4-300x78.png 300w, /assets/images/2021/03/image-4-768x199.png 768w&quot; sizes=&quot;(max-width: 926px) 100vw, 926px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png&quot; alt=&quot;image-4&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;As we can see, this particular setting is for &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; - as clearly defined in the &lt;strong&gt;definitionId&lt;/strong&gt; value. If we drill into the &lt;strong&gt;choiceSettingValue&lt;/strong&gt; item, we will see the applied value and any other child properties within that setting..&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;As we can see, this particular setting is for &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; - as clearly defined in the &lt;strong&gt;definitionId&lt;/strong&gt; value. If we drill into the &lt;strong&gt;choiceSettingValue&lt;/strong&gt; item, we will see the applied value and any other child properties within that setting..&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;171&quot; src=&quot;/assets/images/2021/03/image-5-1024x171.png&quot; alt=&quot;&quot; class=&quot;wp-image-521&quot; srcset=&quot;/assets/images/2021/03/image-5-1024x171.png 1024w, /assets/images/2021/03/image-5-300x50.png 300w, /assets/images/2021/03/image-5-768x128.png 768w, /assets/images/2021/03/image-5.png 1393w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png&quot; alt=&quot;image-5&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Here we can see the value of &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; is set to 0 - or false, which correlates to our policy set from the endpoint portal.&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Here we can see the value of &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; is set to 0 - or false, which correlates to our policy set from the endpoint portal.&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;863&quot; height=&quot;215&quot; src=&quot;/assets/images/2021/03/image-6.png&quot; alt=&quot;&quot; class=&quot;wp-image-522&quot; srcset=&quot;/assets/images/2021/03/image-6.png 863w, /assets/images/2021/03/image-6-300x75.png 300w, /assets/images/2021/03/image-6-768x191.png 768w&quot; sizes=&quot;(max-width: 863px) 100vw, 863px&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png&quot; alt=&quot;image-6&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Here we can see the &lt;strong&gt;child&lt;/strong&gt; setting of &lt;strong&gt;allow standard user encryption&lt;/strong&gt; with the setting value of 1 - or true.&lt;/p&gt;
 
-&lt;p&gt;This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the &lt;strong&gt;settingDefinitions&lt;/strong&gt; property..&lt;figure class=&quot;wp-block-image size-full&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the &lt;strong&gt;settingDefinitions&lt;/strong&gt; property..&lt;/p&gt;
 
-&lt;p&gt;&lt;img loading=&quot;lazy&quot; width=&quot;1920&quot; height=&quot;1080&quot; src=&quot;/assets/images/2021/03/settingsDefinition.gif&quot; alt=&quot;&quot; class=&quot;wp-image-523&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif&quot; alt=&quot;settingsDefinition&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Cool, huh? literally everything about each and every setting is available to us if we just spend the time to dig into graph a little bit!&lt;/p&gt;
 
@@ -160,36 +159,36 @@ $configPolicySettings.value&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We can capture all necessary metadata on those available settings by using the &lt;strong&gt;deviceManagement/configurationSettings&lt;/strong&gt; endpoint.&lt;/p&gt;
 
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$restParam = @{
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$restParam = @{
     Method = &quot;Get&quot;
     Uri = &quot;$baseUri/configurationSettings&quot;
     Headers = $authHeaders
     ContentType = 'Application/Json'
 }
 $settingsData = Invoke-RestMethod @restParam
-$settingsData.value&lt;/code&gt;&lt;/pre&gt;
+$settingsData.value
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Let’s run the above code and see what we get back..&lt;/p&gt;
 
-&lt;figure class=&quot;wp-block-image size-full&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif&quot; alt=&quot;settingsCatapalooza&quot; /&gt;&lt;/p&gt;
 
-&lt;img loading=&quot;lazy&quot; width=&quot;1920&quot; height=&quot;1080&quot; src=&quot;/assets/images/2021/03/settingsCatapalooza.gif&quot; alt=&quot;&quot; class=&quot;wp-image-524&quot; /&gt;  
+&lt;p&gt;Well… that was a bit much wasn’t it! at the time of writing, there is around 2,100 settings available in the settings catalog library with more to come until it is at parity with all existing methods of device configuration (configuration items, ADMX templates, endpoint baselines etc).&lt;/p&gt;
 
-Well&amp;#8230; that was a bit much wasn't it! at the time of writing, there is around 2,100 settings available in the settings catalog library with more to come until it is at parity with all existing methods of device configuration (configuration items, ADMX templates, endpoint baselines etc).
+&lt;p&gt;Let’s filter the settings by a setting &lt;strong&gt;definitionId&lt;/strong&gt; that we know (notice that the definitionId isnt a GUID? welcome to the future…)&lt;/p&gt;
 
-Let's filter the settings by a setting **definitionId** that we know (notice that the definitionId isnt a GUID? welcome to the future&amp;#8230;)
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}&lt;/code&gt;&lt;/pre&gt;&lt;figure class=&quot;wp-block-image size-large&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png&quot; alt=&quot;image-7&quot; /&gt;&lt;/p&gt;
 
-&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;440&quot; src=&quot;/assets/images/2021/03/image-7-1024x440.png&quot; alt=&quot;&quot; class=&quot;wp-image-525&quot; srcset=&quot;/assets/images/2021/03/image-7-1024x440.png 1024w, /assets/images/2021/03/image-7-300x129.png 300w, /assets/images/2021/03/image-7-768x330.png 768w, /assets/images/2021/03/image-7-1536x659.png 1536w, /assets/images/2021/03/image-7.png 1635w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;  
+&lt;p&gt;Weird… doesn’t that look the same as the expanded &lt;strong&gt;settingsDefinitions&lt;/strong&gt; content from earlier? That’s because it is literally the same data! We can dig into this data to find out the available options for each setting, but let’s skip that for now and just build our example policy from scratch..&lt;/p&gt;
 
-Weird&amp;#8230; doesn't that look the same as the expanded **settingsDefinitions** content from earlier? That's because it is literally the same data! We can dig into this data to find out the available options for each setting, but let's skip that for now and just build our example policy from scratch..
+&lt;h3 id=&quot;posting-a-settings-catalog-policy-to-intune-from-graph&quot;&gt;Posting a settings catalog policy to Intune from Graph&lt;/h3&gt;
 
-### Posting a settings catalog policy to Intune from Graph
+&lt;p&gt;Conceptually we now should understand what’s required here. We have some metadata around what the policy is called to which we attach whichever settings we want attributed to our new policy profile. So let’s rebuild the original policy in PowerShell!&lt;/p&gt;
 
-Conceptually we now should understand what's required here. We have some metadata around what the policy is called to which we attach whichever settings we want attributed to our new policy profile. So let's rebuild the original policy in PowerShell!
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell&quot;&gt;$baseUri = 'https://graph.microsoft.com/beta/deviceManagement/configurationPolicies'
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$baseUri = 'https://graph.microsoft.com/beta/deviceManagement/configurationPolicies'
 
 #region build the policy
 $newPolicy = [pscustomobject]@{
@@ -242,16 +241,16 @@ $restParams = @{
     ContentType = 'Application/Json'
 }
 Invoke-RestMethod @restParams
-#endregion&lt;/code&gt;&lt;/pre&gt;
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
 
-Once we run this - within seconds we should have a replicated policy in our tenant!&lt;figure class=&quot;wp-block-image size-large&quot;&gt;
+&lt;p&gt;Once we run this - within seconds we should have a replicated policy in our tenant!&lt;/p&gt;
 
-&lt;img loading=&quot;lazy&quot; width=&quot;1024&quot; height=&quot;351&quot; src=&quot;/assets/images/2021/03/image-8-1024x351.png&quot; alt=&quot;&quot; class=&quot;wp-image-526&quot; srcset=&quot;/assets/images/2021/03/image-8-1024x351.png 1024w, /assets/images/2021/03/image-8-300x103.png 300w, /assets/images/2021/03/image-8-768x263.png 768w, /assets/images/2021/03/image-8.png 1471w&quot; sizes=&quot;(max-width: 1024px) 100vw, 1024px&quot; /&gt;  
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png&quot; alt=&quot;image-8&quot; /&gt;&lt;/p&gt;
 
-As mentioned earlier, building these from scratch is tricky - but if you read between the lines, knowing how to capture pre-built policies via graph and using the captured JSON payload to post the same policy to a new tenant (or a few hundred tenants) should make multi-tenant device management less painful.
+&lt;p&gt;As mentioned earlier, building these from scratch is tricky - but if you read between the lines, knowing how to capture pre-built policies via graph and using the captured JSON payload to post the same policy to a new tenant (or a few hundred tenants) should make multi-tenant device management less painful.&lt;/p&gt;
 
-— Ben
-&lt;/figure&gt;&lt;/figure&gt;&lt;/figure&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Azure" /><category term="Intune" /><category term="Powershell" /><summary type="html">Microsoft has recently introduced even more ways to create device configuration profiles.. The new profile type, named Settings Catalog, allows us to explicitly define and configure a policy that has only the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the templates profile type.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/03/settingsCatapalooza.gif" /><media:content medium="image" url="/assets/images/2021/03/settingsCatapalooza.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Publishing PowerShell scripts to Intune with Graph</title><link href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/" rel="alternate" type="text/html" title="Publishing PowerShell scripts to Intune with Graph" /><published>2021-01-19T03:22:12+00:00</published><updated>2021-01-19T03:22:12+00:00</updated><id>/2021/01/19/publishing-powershell-scripts-to-intune-with-graph</id><content type="html" xml:base="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&lt;p&gt;I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?”&lt;/p&gt;
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Azure" /><category term="Intune" /><category term="Powershell" /><summary type="html">Microsoft has recently introduced even more ways to create device configuration profiles.. The new profile type, named Settings Catalog, allows us to explicitly define and configure a policy that has only the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the templates profile type.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2021/03/settingsCatapalooza.gif" /><media:content medium="image" url="/assets/images/2021/03/settingsCatapalooza.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Publishing PowerShell scripts to Intune with Graph</title><link href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/" rel="alternate" type="text/html" title="Publishing PowerShell scripts to Intune with Graph" /><published>2021-01-19T03:22:12+00:00</published><updated>2021-01-19T03:22:12+00:00</updated><id>/2021/01/19/publishing-powershell-scripts-to-intune-with-graph</id><content type="html" xml:base="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&lt;p&gt;I’ve recently been asked the question - “How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?”&lt;/p&gt;
 
 &lt;p&gt;I thought was a great question with a few simple solutions - so let’s look at the two methods I’ve used in the past to make sure you don’t “fat finger” your way into frustration!&lt;/p&gt;
 
