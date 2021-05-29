@@ -10,9 +10,11 @@ Encore
   .setOutputPath('assets/')
   .setPublicPath('/assets')
   .addStyleEntry('css/app', './_assets/css/app.css')
+  .addStyleEntry('css/lightbox', './_assets/css/lightbox.css')
   .addStyleEntry('css/prism-dracula', './_assets/css/prism-dracula.css')
   .addEntry('js/app', './_assets/js/app.js')
   .addEntry('js/prism', './_assets/js/prism.js')
+  .addEntry('js/lightbox', './_assets/js/lightbox.js')
   .enablePostCssLoader()
   .disableSingleRuntimeChunk()
   .enableSourceMaps(!Encore.isProduction());
