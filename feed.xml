@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-29T07:23:27+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-29T11:51:03+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
 &lt;!--more--&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png&quot; alt=&quot;image&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;I sat down with &lt;a href=&quot;https://twitter.com/MikeDanoski&quot;&gt;Mike Danoski&lt;/a&gt; for an in-depth chat about this on the &lt;a href=&quot;https://intune.training&quot; data-type=&quot;URL&quot; data-id=&quot;https://intune.training&quot;&gt;Intune.Training&lt;/a&gt; Channel (video below).&lt;/p&gt;
 
@@ -20,7 +20,7 @@
 
 &lt;p&gt;For this demo, I’ve created a simple settings catalog with a few settings around bitlocker as shown below.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png&quot; alt=&quot;image-1&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png&quot; alt=&quot;image-1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;The first thing we need to do, as always, is authenticate to graph - At this point I shouldn’t need to explain what is happening here. We will use the msal.ps module to make things easier.&lt;/p&gt;
 
@@ -46,7 +46,7 @@ $configPolicies.value&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available &lt;strong&gt;settings catalog&lt;/strong&gt; policies that are in our tenant (in our case just the one).&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png&quot; alt=&quot;image-2&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png&quot; alt=&quot;image-2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Ok, so we’ve got the basic metadata of our policy - so let’s grab the id from the previous call and dive in further..&lt;/p&gt;
 
@@ -64,25 +64,25 @@ $configPolicySettings.value
 
 &lt;p&gt;The code above returns data on all available settings that we configured in our policy..&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png&quot; alt=&quot;image-3&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png&quot; alt=&quot;image-3&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;if we drill in to one of the &lt;strong&gt;settingInstance&lt;/strong&gt; objects, we should see more info..&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png&quot; alt=&quot;image-4&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png&quot; alt=&quot;image-4&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;As we can see, this particular setting is for &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; - as clearly defined in the &lt;strong&gt;definitionId&lt;/strong&gt; value. If we drill into the &lt;strong&gt;choiceSettingValue&lt;/strong&gt; item, we will see the applied value and any other child properties within that setting..&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png&quot; alt=&quot;image-5&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png&quot; alt=&quot;image-5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Here we can see the value of &lt;strong&gt;allow warning for other disk encryption&lt;/strong&gt; is set to 0 - or false, which correlates to our policy set from the endpoint portal.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png&quot; alt=&quot;image-6&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png&quot; alt=&quot;image-6&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Here we can see the &lt;strong&gt;child&lt;/strong&gt; setting of &lt;strong&gt;allow standard user encryption&lt;/strong&gt; with the setting value of 1 - or true.&lt;/p&gt;
 
 &lt;p&gt;This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the &lt;strong&gt;settingDefinitions&lt;/strong&gt; property..&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif&quot; alt=&quot;settingsDefinition&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif&quot; alt=&quot;settingsDefinition&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Cool, huh? literally everything about each and every setting is available to us if we just spend the time to dig into graph a little bit!&lt;/p&gt;
 
@@ -112,7 +112,7 @@ $settingsData.value
 
 &lt;p&gt;Let’s run the above code and see what we get back..&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif&quot; alt=&quot;settingsCatapalooza&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif&quot; alt=&quot;settingsCatapalooza&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Well… that was a bit much wasn’t it! at the time of writing, there is around 2,100 settings available in the settings catalog library with more to come until it is at parity with all existing methods of device configuration (configuration items, ADMX templates, endpoint baselines etc).&lt;/p&gt;
 
@@ -121,7 +121,7 @@ $settingsData.value
 &lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png&quot; alt=&quot;image-7&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png&quot; alt=&quot;image-7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Weird… doesn’t that look the same as the expanded &lt;strong&gt;settingsDefinitions&lt;/strong&gt; content from earlier? That’s because it is literally the same data! We can dig into this data to find out the available options for each setting, but let’s skip that for now and just build our example policy from scratch..&lt;/p&gt;
 
@@ -187,7 +187,7 @@ Invoke-RestMethod @restParams
 
 &lt;p&gt;Once we run this - within seconds we should have a replicated policy in our tenant!&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png&quot; alt=&quot;image-8&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png&quot;&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png&quot; alt=&quot;image-8&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;As mentioned earlier, building these from scratch is tricky - but if you read between the lines, knowing how to capture pre-built policies via graph and using the captured JSON payload to post the same policy to a new tenant (or a few hundred tenants) should make multi-tenant device management less painful.&lt;/p&gt;
 

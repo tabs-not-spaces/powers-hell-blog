@@ -85,7 +85,7 @@
 
 <!--more-->
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png" alt="image" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png"><img src="https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png" alt="image" /></a></p>
 
 <p>I sat down with <a href="https://twitter.com/MikeDanoski">Mike Danoski</a> for an in-depth chat about this on the <a href="https://intune.training" data-type="URL" data-id="https://intune.training">Intune.Training</a> Channel (video below).</p>
 
@@ -101,7 +101,7 @@
 
 <p>For this demo, I’ve created a simple settings catalog with a few settings around bitlocker as shown below.</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png" alt="image-1" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png"><img src="https://user-images.githubusercontent.com/33951277/119915357-ad200d00-bfa5-11eb-97fc-2cef877def1a.png" alt="image-1" /></a></p>
 
 <p>The first thing we need to do, as always, is authenticate to graph - At this point I shouldn’t need to explain what is happening here. We will use the msal.ps module to make things easier.</p>
 
@@ -127,7 +127,7 @@ $configPolicies.value</code></pre>
 
 <p>As you can see, the code above is quite simple, and looking at the resultant data shows we get some basic data back showing all available <strong>settings catalog</strong> policies that are in our tenant (in our case just the one).</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png" alt="image-2" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png"><img src="https://user-images.githubusercontent.com/33951277/119915408-ca54db80-bfa5-11eb-9be7-d9d02f8cd82c.png" alt="image-2" /></a></p>
 
 <p>Ok, so we’ve got the basic metadata of our policy - so let’s grab the id from the previous call and dive in further..</p>
 
@@ -145,25 +145,25 @@ $configPolicySettings.value
 
 <p>The code above returns data on all available settings that we configured in our policy..</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png" alt="image-3" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png"><img src="https://user-images.githubusercontent.com/33951277/119915446-e5bfe680-bfa5-11eb-95ee-c997cae4af14.png" alt="image-3" /></a></p>
 
 <p>if we drill in to one of the <strong>settingInstance</strong> objects, we should see more info..</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png" alt="image-4" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png"><img src="https://user-images.githubusercontent.com/33951277/119915455-ea849a80-bfa5-11eb-8e0a-e3b960be372e.png" alt="image-4" /></a></p>
 
 <p>As we can see, this particular setting is for <strong>allow warning for other disk encryption</strong> - as clearly defined in the <strong>definitionId</strong> value. If we drill into the <strong>choiceSettingValue</strong> item, we will see the applied value and any other child properties within that setting..</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png" alt="image-5" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png"><img src="https://user-images.githubusercontent.com/33951277/119915465-efe1e500-bfa5-11eb-868b-3201648c081f.png" alt="image-5" /></a></p>
 
 <p>Here we can see the value of <strong>allow warning for other disk encryption</strong> is set to 0 - or false, which correlates to our policy set from the endpoint portal.</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png" alt="image-6" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png"><img src="https://user-images.githubusercontent.com/33951277/119915536-1011a400-bfa6-11eb-8421-eeca2c61bcb9.png" alt="image-6" /></a></p>
 
 <p>Here we can see the <strong>child</strong> setting of <strong>allow standard user encryption</strong> with the setting value of 1 - or true.</p>
 
 <p>This example shows how simple it is to capture the basic building blocks of a settings catalog policy. But for those interested to dig deeper, why not check out what happens when you run the same example from above while expanding the <strong>settingDefinitions</strong> property..</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif" alt="settingsDefinition" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif"><img src="https://user-images.githubusercontent.com/33951277/119915557-1acc3900-bfa6-11eb-8374-b50a0a1b2d82.gif" alt="settingsDefinition" /></a></p>
 
 <p>Cool, huh? literally everything about each and every setting is available to us if we just spend the time to dig into graph a little bit!</p>
 
@@ -193,7 +193,7 @@ $settingsData.value
 
 <p>Let’s run the above code and see what we get back..</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif" alt="settingsCatapalooza" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif"><img src="https://user-images.githubusercontent.com/33951277/119915626-40f1d900-bfa6-11eb-9bd0-cab0d19c0e2f.gif" alt="settingsCatapalooza" /></a></p>
 
 <p>Well… that was a bit much wasn’t it! at the time of writing, there is around 2,100 settings available in the settings catalog library with more to come until it is at parity with all existing methods of device configuration (configuration items, ADMX templates, endpoint baselines etc).</p>
 
@@ -202,7 +202,7 @@ $settingsData.value
 <pre><code class="language-PowerShell">$settingsData.value | where {$_.id -eq 'device_vendor_msft_bitlocker_allowwarningforotherdiskencryption'}
 </code></pre>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png" alt="image-7" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png"><img src="https://user-images.githubusercontent.com/33951277/119915662-52d37c00-bfa6-11eb-8d82-623eafe6e2b1.png" alt="image-7" /></a></p>
 
 <p>Weird… doesn’t that look the same as the expanded <strong>settingsDefinitions</strong> content from earlier? That’s because it is literally the same data! We can dig into this data to find out the available options for each setting, but let’s skip that for now and just build our example policy from scratch..</p>
 
@@ -268,7 +268,7 @@ Invoke-RestMethod @restParams
 
 <p>Once we run this - within seconds we should have a replicated policy in our tenant!</p>
 
-<p><img src="https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png" alt="image-8" /></p>
+<p><a href="https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png"><img src="https://user-images.githubusercontent.com/33951277/119915697-65e64c00-bfa6-11eb-8cab-06a15f01b7e8.png" alt="image-8" /></a></p>
 
 <p>As mentioned earlier, building these from scratch is tricky - but if you read between the lines, knowing how to capture pre-built policies via graph and using the captured JSON payload to post the same policy to a new tenant (or a few hundred tenants) should make multi-tenant device management less painful.</p>
 
