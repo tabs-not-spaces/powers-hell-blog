@@ -10,9 +10,19 @@
         "/assets/js/prism.js"
       ]
     },
+    "js/lightbox": {
+      "js": [
+        "/assets/js/lightbox.js"
+      ]
+    },
     "css/app": {
       "css": [
         "/assets/css/app.css"
+      ]
+    },
+    "css/lightbox": {
+      "css": [
+        "/assets/css/lightbox.css"
       ]
     },
     "css/prism-dracula": {
