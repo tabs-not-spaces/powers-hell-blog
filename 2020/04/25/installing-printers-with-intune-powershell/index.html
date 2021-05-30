@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Installing printers with Intune &amp; PowerShell | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Installing printers with Intune &amp; PowerShell" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="On the surface, installing printers on end user devices seems like a fairly simple process that’s been solved for decades - a nice combination of Group Policies and PowerShell has made this a non-issue. But what if our devices aren’t domain joined?" />
+<meta property="og:description" content="On the surface, installing printers on end user devices seems like a fairly simple process that’s been solved for decades - a nice combination of Group Policies and PowerShell has made this a non-issue. But what if our devices aren’t domain joined?" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-25T12:30:42+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Installing printers with Intune &amp; PowerShell" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/25/installing-printers-with-intune-powershell/"},"description":"On the surface, installing printers on end user devices seems like a fairly simple process that’s been solved for decades - a nice combination of Group Policies and PowerShell has made this a non-issue. But what if our devices aren’t domain joined?","url":"/2020/04/25/installing-printers-with-intune-powershell/","@type":"BlogPosting","headline":"Installing printers with Intune &amp; PowerShell","dateModified":"2020-04-25T12:30:42+00:00","datePublished":"2020-04-25T12:30:42+00:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Installing printers with Intune & PowerShell</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 25 Apr
+        </p>
+        <p>On the surface, installing printers on end user devices seems like a fairly simple process that’s been solved for decades - a nice combination of Group Policies and PowerShell has made this a non-issue.</p>
+
+<p>But what if our devices aren’t domain joined?</p>
+
+<!--more-->
+
+<p>When I first had to tackle this problem, I figured it would be a simple as running “Add-Printer” as the end user and moving on.</p>
+
+<p>The problem arises however, when the printer requires drivers to be installed - the dreaded administration UAC prompt appears and ruins any chance of getting out of work early!</p>
+
+<p>By default, Windows doesn’t trust printer drivers - It’s understood there are inherent security risks involved in blindly allowing drivers to be installed on your computer and as such, requires admin approval if a device wants to install one.</p>
+
+<p>This issue was previously resolved by clearly defining via the <strong>Point and Print Restrictions</strong> group policy exactly what servers could be trusted by the devices, which would allow us to suppress any elevation prompts that would invariably appear.</p>
+
+<p><a href="/assets/images/2020/04/image-8.png" title="GPO"><img src="/assets/images/2020/04/image-8.png" alt="GPO" /></a></p>
+
+<p>“OK, cool - but can’t I just do that with an Administrative Template via Intune?” I hear you ask…</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/awDQbvI.gif?w=1170&#038;ssl=1" title="Admin Templates In Intune"><img src="https://i2.wp.com/i.imgur.com/awDQbvI.gif?w=1170&#038;ssl=1" alt="Admin Templates In Intune" /></a></p>
+
+<p>Here’s the rub - there’s actually two policies you need to define and one of them currently doesn’t appear in the administrative templates available to us in Intune.</p>
+
+<p>No worries though - with PowerShell, we can solve this issue!</p>
+
+<p>Let’s move onto the solution - This will be split up into two segments - Configuring the <strong>Point and Print Policies</strong> and <strong>installing the printers</strong>.</p>
+
+<h2 id="point-and-print-policies">Point and Print Policies</h2>
+
+<p>As mentioned above, there are actually two policies that need to be configured to allow implicit trust for printer driver installation, the <strong>Point and Print Restrictions</strong> <strong>policy</strong> and the <strong>Package Point and Print - Approved Servers</strong> policy.</p>
+
+<p><a href="/assets/images/2020/04/image-9.png" title="Local GPO Editor"><img src="/assets/images/2020/04/image-9.png" alt="Local GPO Editor" /></a></p>
+
+<p>We define our restrictions for Point and Print in the <strong>PnP Restrictions policy</strong>, and then we define our allowed servers for those restrictions to be applied to in the <strong>Package PnP Approved Servers policy.</strong></p>
+
+<p>Luckily, both of these policies are quite easy to configure with PowerShell.</p>
+
+<p>First let’s set up how we want to configure the restrictions policy.</p>
+
+<p>This is a simple array of configuration settings - all we are doing is replicating the same settings as shown in the first screenshot of this post.</p>
+
+<p>Now let’s add the configuration of <strong>Package PnP - Approved Servers policy</strong> to our script..</p>
+
+<p>Now with a little help from a very simple function I’ve created, we can import all of the settings to the registry..</p>
+
+<p>Now if we open up RegEdit on our device, we should see the configuration in the <strong>HKLM:\Software\Policies\Microsoft\Windows NT\Printers</strong> path.</p>
+
+<p><a href="/assets/images/2020/04/image-10.png" title="ListOfServers Registry"><img src="/assets/images/2020/04/image-10.png" alt="ListOfServers Registry" /></a></p>
+
+<p>All we need to do now is deploy the script to our users via Intune, making sure to deploy it as the System to avoid any permissions issues to the registry.</p>
+
+<h2 id="installing-printers-with-powershell">Installing printers with PowerShell</h2>
+
+<p>Now that the difficult part is out of the way, let’s move on to installing the printers.</p>
+
+<p>Hopefully you’ve already got all of the print queue names documented (and the names of the printers AND the queues are the same…) - if not, do it now..</p>
+
+<p>Got your printers? ok, great - let’s set them up in an array.</p>
+
+<p>Finally, as in the last section, with the help of a simple function I’ve created for this scenario, we will force the printers to install on the devices. Unlike last time, we don’t need admin access, so we will run this as the user.</p>
+
+<p>The function above isn’t doing anything special - it’s primarily just making sure that we can access the network path and that the printer isn’t already installed. The only cool thing to mention is line 26.</p>
+
+<pre class="wp-block-code"><code>&amp; cscript /noLogo C:\windows\System32\Printing_Admin_Scripts\en-US\prnmngr.vbs -ac -p $printerPath</code></pre>
+
+<p>Windows has come bundled with a bunch of printer administration scripts since Windows 7 and it’s amazing. You can read more about how it works <a href="https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/prnmngr">here</a>. These sorts of tools are super handy to know about, as it saves us having to “re-invent the wheel” so to speak.</p>
+
+<p>So that’s it! two scripts - once run as system to configure the device, and one run as user to map the printers.</p>
+
+<p>Full examples of the code referenced in this article is, as always, available on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Install-Printers">GitHub</a>, and I can be reached on <a href="https://twitter.com/Powers_Hell">twitter</a> if you have any questions. I love the distraction!</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/">&raquo; Set your Azure VPN connections to "Connect Automatically" with PowerShell</a></li>
+        
+        <li><a href="/2020/10/25/deploying-universal-print-printers-with-powershell-intune/">&raquo; Deploying Universal Print Printers With PowerShell & Intune</a></li>
+        
+        <li><a href="/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/">&raquo; Preparing custom image templates with Azure Image Builder & PowerShell</a></li>
+        
+    </ul>
+</div>
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

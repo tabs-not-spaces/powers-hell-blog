@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>/2020/04/25/installing-printers-with-intune-powershell/</loc>
+<lastmod>2020-04-25T12:30:42+00:00</lastmod>
+</url>
+<url>
 <loc>/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/</loc>
 <lastmod>2020-05-04T03:58:14+00:00</lastmod>
 </url>
@@ -48,6 +52,9 @@
 </url>
 <url>
 <loc>/page2/</loc>
+</url>
+<url>
+<loc>/page3/</loc>
 </url>
 <url>
 <loc>/node_modules/@tailwindcss/forms/</loc>
