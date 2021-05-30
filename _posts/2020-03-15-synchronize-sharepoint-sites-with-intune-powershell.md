@@ -18,6 +18,8 @@ tags:
 ---
 I recently spent some time with my colleague and frequent collaborator [Steven Hosking](https://twitter.com/OnPremCloudGuy). We spoke about a solution I came up with to synchronize SharePoint sites to devices using PowerShell & Intune.
 
+<!--more-->
+
 This is something I've had in my drafts for quite a while, but it kept ending up being too long to write about. As it turns out, Steve ( and [Adam](https://twitter.com/AdamGrossTX)) runs a very valuable and informative [youtube channel](http://intune.training) that is dedicated to everything that is "Intune".
 
 As the solution I wrote for this is directly linked with Intune, we figured it'd be perfect for the channel. We decided to film this little video to show how my solution works better than the official one provided by Microsoft.

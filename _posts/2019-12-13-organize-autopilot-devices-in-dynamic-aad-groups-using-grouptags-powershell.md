@@ -20,6 +20,8 @@ Don't ever say Microsoft doesn't listen! One of my biggest pet peeves was solved
 
 This doesn't sound like much, but it essentially unlocks the potential of group tags that was never really there before - we can now use group tags to dynamically control device group membership.
 
+<!--more-->
+
 While there have been [quite](https://oofhours.com/2019/11/25/now-you-can-edit-group-tags-and-computer-names-for-windows-autopilot-devices/) a few great [posts](https://blog.alschneiter.com/2019/11/26/edit-group-tag-and-computer-name-in-windows-autopilot/) about this, most of the code in the articles I've read are using community modules that, while there's nothing wrong with using other people's code, I find the best way to understand how something works is to dig in and figure out the inner-workings myself.
 
 The good news is that because almost \*everything\* in Azure is accessible through the omnipresent Microsoft Graph, so it only took a few minutes of analyzing the requests to figure out what was going on. Let's dive right in!
