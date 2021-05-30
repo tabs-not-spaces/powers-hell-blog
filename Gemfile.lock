@@ -44,6 +44,11 @@ GEM
       jekyll (>= 3.8, < 5.0)
     jekyll-sitemap (1.4.0)
       jekyll (>= 3.7, < 5.0)
+    jekyll-tagging (1.1.0)
+      nuggets
+    jekyll-tagging-related_posts (1.1.0)
+      jekyll (>= 3.5, < 5.0)
+      jekyll-tagging (~> 1.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
     kramdown (2.3.1)
@@ -59,6 +64,7 @@ GEM
       jekyll (>= 3.5, < 5.0)
       jekyll-feed (~> 0.9)
       jekyll-seo-tag (~> 2.1)
+    nuggets (1.6.0)
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     public_suffix (4.0.6)
@@ -86,6 +92,7 @@ DEPENDENCIES
   jekyll-redirect-from
   jekyll-seo-tag
   jekyll-sitemap
+  jekyll-tagging-related_posts
   minima
 
 BUNDLED WITH
