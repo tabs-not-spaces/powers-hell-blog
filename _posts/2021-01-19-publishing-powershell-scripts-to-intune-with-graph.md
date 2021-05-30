@@ -103,119 +103,15 @@ $encodedScriptContent = [System.Convert]::ToBase64String([System.Text.Encoding]:
 
 The required properties for publishing scripts to Graph are quite simple - the endpoint **deviceManagementScripts** is <a href="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta" data-type="URL" data-id="https://docs.microsoft.com/en-us/graph/api/intune-shared-devicemanagementscript-create?view=graph-rest-beta">well documented</a>, but for simplicity, the only settings we need to understand are listed below:
 
-<table>
-  <tr>
-    <td>
-      <strong>Property Name</strong>
-    </td>
-    
-    <td>
-      <strong>Data Type</strong>
-    </td>
-    
-    <td>
-      <strong>Description</strong>
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      displayName
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Name of the device management script.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      description
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Description of the script
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      enforceSignatureCheck
-    </td>
-    
-    <td>
-      Boolean
-    </td>
-    
-    <td>
-      Setting this to False disables signature check.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      fileName
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Name of the file being uploaded.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      runas32Bit
-    </td>
-    
-    <td>
-      Boolean
-    </td>
-    
-    <td>
-      Setting this to False sets to 64bit
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      runAsAccount
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Execution context - System or User
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      scriptContent
-    </td>
-    
-    <td>
-      Binary
-    </td>
-    
-    <td>
-      Script content - encoded as base64
-    </td>
-  </tr>
-</table> 
+| **Property Name**     | **Data Type** | **Description**                                  |
+|-----------------------|---------------|--------------------------------------------------|
+| displayName           | String        | Name of the device management script\.           |
+| description           | String        | Description of the script                        |
+| enforceSignatureCheck | Boolean       | Setting this to False disables signature check\. |
+| fileName              | String        | Name of the file being uploaded\.                |
+| runas32Bit            | Boolean       | Setting this to False sets to 64bit              |
+| runAsAccount          | String        | Execution context \- System or User              |
+| scriptContent         | Binary        | Script content \- encoded as base64              |
 
 So, knowing what we need, let's build out the code to build the payload.
 

@@ -25,17 +25,21 @@ The new profile type, named **Settings Catalog**, allows us to explicitly define
 
 <!--more-->
 
-[![image](https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png)](https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png)
+[![](https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png)](https://user-images.githubusercontent.com/33951277/119915226-66caae00-bfa5-11eb-8cc5-4eccfce7787e.png "Create a setting profile")
 
 I sat down with [Mike Danoski](https://twitter.com/MikeDanoski) for an in-depth chat about this on the <a href="https://intune.training" data-type="URL" data-id="https://intune.training">Intune.Training</a> Channel (video below).
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/sqIKcWXPvyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="video-container">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/sqIKcWXPvyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 After spending time with Mike and seeing how settings catalog profiles work from the endpoint portal user interface, I immediately wanted to see what I could do with this new device management framework via graph.
 
 So let's dive in and play!
 
 ## **Pulling settings catalog policies from Graph**
+
+
 
 First, let's create a policy from the endpoint portal and see what is required to retrieve the policy data.
 
