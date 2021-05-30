@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T06:27:12+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:11:33+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -1008,7 +1008,88 @@ $job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name 
 
 &lt;p&gt;As always, sample code used in this guide are available on &lt;a href=&quot;https://github.com/tabs-not-spaces/Az.ImageBuilder.Tools/tree/master/Samples&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><category term="Azure Image Builder" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><summary type="html">Azure Image Builder (AIB) is Microsoft’s solution to configure and customize virtual machine images. The concept of it is pretty great: Pick a reference image from the public market place, apply some customization built around HashiCorp’s Packer, hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.</summary></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><category term="Azure Image Builder" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><summary type="html">Azure Image Builder (AIB) is Microsoft’s solution to configure and customize virtual machine images. The concept of it is pretty great: Pick a reference image from the public market place, apply some customization built around HashiCorp’s Packer, hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.</summary></entry><entry><title type="html">Dynamically set the time zone of a device in Intune using Azure Maps &amp;amp; PowerShell</title><link href="/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell/" rel="alternate" type="text/html" title="Dynamically set the time zone of a device in Intune using Azure Maps &amp;amp; PowerShell" /><published>2020-08-30T21:20:59+00:00</published><updated>2020-08-30T21:20:59+00:00</updated><id>/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell</id><content type="html" xml:base="/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell/">&lt;p&gt;Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;I get it though. At one point, as &lt;a href=&quot;https://twitter.com/mniehaus&quot;&gt;Michael Neihaus&lt;/a&gt; &lt;a href=&quot;https://oofhours.com/2019/12/20/configuring-time-zones-part-2/&quot;&gt;has written about previously&lt;/a&gt;, even if we could configure the time zone during the Out of Box Experience, everything was hinged on the timings of certificates and policies reaching the device within an agreed time frame.&lt;br /&gt;
+If the time zone changed on a device during that process it had the possibility to break the entire enrollment process. This has since been (for the most part) resolved if you are using Windows 10 2004 (20h1) as your operating system.&lt;/p&gt;
+
+&lt;p&gt;I’m hopeful that eventually, we will be able to configure the time zone as part of the OOBE, but until that time comes, I’d like to share some ways that I currently solve this problem using Azure Maps &amp;amp; PowerShell.&lt;/p&gt;
+
+&lt;p&gt;Most solutions I’ve found involve creating custom OMA-URI policies to set the value of the time zone which works in some scenarios, but isn’t elegant enough to handle the real world problem of managing devices and users located all over the world. So let’s change that.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-time-zone-from-device-gps-data&quot;&gt;Setting time zone from device GPS data&lt;/h2&gt;
+
+&lt;p&gt;This one is fun but does require that &lt;strong&gt;location services&lt;/strong&gt; are turned on which, by default are disabled. This can be enforced by device configuration policies, but there are obvious security implications and you may need to discuss this with your organization before enabling.&lt;/p&gt;
+
+&lt;p&gt;The solution below converts the GPS latitude and longitude data to the required windows time zone data by using an API available through Azure Maps.&lt;/p&gt;
+
+&lt;p&gt;Pricing is super affordable and the “included free quantity” means that for small to medium-sized businesses, there is a chance you’d end up not paying a cent. For reference, here are the available &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/azure-maps/choose-pricing-tier&quot;&gt;plans&lt;/a&gt; and &lt;a href=&quot;https://azure.microsoft.com/en-us/pricing/details/azure-maps/&quot;&gt;pricing&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;configuring-azure-maps&quot;&gt;Configuring Azure Maps&lt;/h3&gt;
+
+&lt;p&gt;This is super easy, but it’s still worth documenting!&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Open up your Azure portal and create a new resource.&lt;/li&gt;
+  &lt;li&gt;Search the marketplace for “Azure Maps” and create an account.&lt;/li&gt;
+  &lt;li&gt;Fill out the relevant fields and choose your pricing tier (as mentioned above, S0 will be &lt;strong&gt;more&lt;/strong&gt; than enough for this demo.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-4.png&quot; title=&quot;Create Azure Maps Account&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-4.png&quot; alt=&quot;Create Azure Maps Account&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Once the account is created, go to the resource and head to the &lt;strong&gt;Authentication&lt;/strong&gt; page. Make note of one of the &lt;strong&gt;Shared Keys&lt;/strong&gt;. We will use these to authenticate to the service.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;writing-the-code&quot;&gt;Writing the code&lt;/h3&gt;
+
+&lt;p&gt;Now let’s grab our GPS data and send it to the Azure Maps API!&lt;/p&gt;
+
+&lt;p&gt;The above code is fairly simple - we are adding the &lt;strong&gt;System.Device&lt;/strong&gt; assembly to our session and creating and starting a new &lt;strong&gt;GeoCoordinateWatcher&lt;/strong&gt; object to capture the GPS data of our device.&lt;/p&gt;
+
+&lt;p&gt;If we look at the results that are stored in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$gw&lt;/code&gt; variable we should see the property name &lt;strong&gt;Permission&lt;/strong&gt;. If we step into that, we should see the location data required for the next step.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-5.png&quot; title=&quot;$gw variable&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-5.png&quot; alt=&quot;$gw variable&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now that we have our Latitude and Longitude data stored in a variable, next we need to form the request to the Azure Maps API.&lt;/p&gt;
+
+&lt;p&gt;Looking at the contents of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData&lt;/code&gt; we should now see some cool data.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-6.png&quot; title=&quot;location data&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-6.png&quot; alt=&quot;location data&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Stepping into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData.TimeZones&lt;/code&gt; property should give us even more info.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-7.png&quot; title=&quot;Timezones data&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-7.png&quot; alt=&quot;Timezones data&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The final step is to convert the value we see in &lt;strong&gt;Id&lt;/strong&gt; from the IANA code, to the format our computer needs to set the time zone.&lt;/p&gt;
+
+&lt;p&gt;All we are doing above is getting a list of Windows time zone IDs and matching them to the IANA time zone ID. Once we have a match, using the native &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Set-TimeZone&lt;/code&gt; allows us to dynamically set our device time zone with relative ease!&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-time-zone-from-public-ip-address&quot;&gt;Setting Time Zone from public IP address&lt;/h2&gt;
+
+&lt;p&gt;So what if you aren’t allowed to enable location services? Or what if you are provisioning virtual machines that don’t have access to the GPS data? Luckily, there is another way to get our location data - from the publicly facing IP address of the device.&lt;/p&gt;
+
+&lt;p&gt;For this example, we will use a free API from &lt;a href=&quot;https://ipinfo.io&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://ipinfo.io/&quot;&gt;https://ipinfo.io&lt;/a&gt;. You can use this API without registering, however, it is heavily rate-limited without providing an access token, so just register an account - it allows 50,000 API calls a month for free which is more than enough for this scenario.&lt;/p&gt;
+
+&lt;p&gt;Once you’ve registered and signed in, grab a copy of the access token from the dashboard - we will use it below.&lt;/p&gt;
+
+&lt;p&gt;If we look at the value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData&lt;/code&gt; we should see similar data from our first example.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-9.png&quot; title=&quot;$locData&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-9.png&quot; alt=&quot;$locData&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Jackpot! The value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData.timezone&lt;/code&gt; is a properly formatted IANA Id. We could reuse the code from the first example to match up the IANA Id to the Windows time zone Id - or we can save an API call and grab a copy of the results and compare them in the code. Let’s see how that would look.&lt;/p&gt;
+
+&lt;p&gt;Obviously, that’s a LOT more code, but it does save us another API call, which if we are deploying to tens of thousands of devices could in the end save us being charged for API use!&lt;/p&gt;
+
+&lt;p&gt;I personally prefer and actually do use the second method for setting time zones as during my testing I’m invariably building VMs before I move to physical devices (sometimes I don’t even end up onto physical devices!), so being able to get a rough estimate of the location-based on public IP is much more reliable.&lt;/p&gt;
+
+&lt;p&gt;How you deploy this to your devices is up to personal preference and operational requirements of course. I’ve generally had success simply deploying as a configuration script where I am happy for it to only run once, however bundling this with a scheduled task to run once a week or once a month to maintain time zone reliability is another great option.&lt;/p&gt;
+
+&lt;p&gt;I’ve polished up the code from this article and provided both solutions as ready to deploy scripts, go check them out on my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Set-Timezone&quot;&gt;GitHub&lt;/a&gt; - just make sure to update the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$apiKey&lt;/code&gt; for either scenario you choose to utilize.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Intune" /><summary type="html">Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/08/gpsdata.jpg" /><media:content medium="image" url="/assets/images/2020/08/gpsdata.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Second Post!</title><link href="/2020/05/08/second-post/" rel="alternate" type="text/html" title="Second Post!" /><published>2020-05-08T09:00:07+00:00</published><updated>2020-05-08T09:00:07+00:00</updated><id>/2020/05/08/second-post</id><content type="html" xml:base="/2020/05/08/second-post/">&lt;p&gt;Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.&lt;/p&gt;
 
 &lt;!--more--&gt;
 &lt;h2 id=&quot;first-title&quot;&gt;First Title&lt;/h2&gt;

@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Second Post!" />
 <script type="application/ld+json">
-{"headline":"Second Post!","dateModified":"2020-05-08T09:00:07+00:00","datePublished":"2020-05-08T09:00:07+00:00","description":"Second post - pretty cool!","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/05/08/second-post/"},"url":"/2020/05/08/second-post/","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"description":"Second post - pretty cool!","headline":"Second Post!","url":"/2020/05/08/second-post/","@type":"BlogPosting","dateModified":"2020-05-08T09:00:07+00:00","datePublished":"2020-05-08T09:00:07+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/05/08/second-post/"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -27,7 +27,7 @@
             <div class="flex items-center justify-between h-16 px-4 sm:px-0">
                 <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -69,14 +69,12 @@
         </svg>
       </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
   <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
-    <div
-      class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6"
-    >
-        <article class="markdown-body drac-text drac-line-height">
-          
-          <p class="post-date">Published: 8 May
-          </p>
-          <p>Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.</p>
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 8 May
+        </p>
+        <p>Esse occaecat occaecat irure consequat nisi irure cupidatat mollit est. Anim aliqua nulla velit Lorem eu non eiusmod anim pariatur laborum. Officia eiusmod aute aliqua voluptate amet dolore anim culpa qui do laboris incididunt. Ullamco ut reprehenderit adipisicing amet nulla sunt. Consectetur minim ad elit et ipsum non laboris exercitation incididunt enim ut ullamco amet in. Labore reprehenderit id ipsum eu officia duis ullamco consectetur dolor dolore laboris id labore. Occaecat est pariatur consectetur laboris pariatur Lorem.</p>
 
 <!--more-->
 <h2 id="first-title">First Title</h2>
@@ -98,14 +96,40 @@
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div></div>
 
-        </article>
+      </article>
     </div>
   </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/">&raquo; Set your Azure VPN connections to "Connect Automatically" with PowerShell</a></li>
+        
+        <li><a href="/2020/10/25/deploying-universal-print-printers-with-powershell-intune/">&raquo; Deploying Universal Print Printers With PowerShell &#038; Intune</a></li>
+        
+        <li><a href="/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/">&raquo; Preparing custom image templates with Azure Image Builder & PowerShell</a></li>
+        
+    </ul>
+</div>
 </main>
-
 </div><script src="/assets/js/app.js"></script>
 <script src="/assets/js/prism.js"></script>
 <script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
 <link rel="stylesheet" href="/assets/css/lightbox.css">
 </div>
 <div>

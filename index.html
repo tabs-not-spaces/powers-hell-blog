@@ -14,7 +14,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Welcome" />
 <script type="application/ld+json">
-{"headline":"Welcome","description":"Great power is great fun","url":"/","@type":"WebSite","name":"Powers Hell","@context":"https://schema.org"}</script>
+{"description":"Great power is great fun","headline":"Welcome","url":"/","@type":"WebSite","name":"Powers Hell","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -26,7 +26,7 @@
             <div class="flex items-center justify-between h-16 px-4 sm:px-0">
                 <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -171,6 +171,14 @@ I thought was a great question with a few simple solutions - so let's look at th
 </div><script src="/assets/js/app.js"></script>
 <script src="/assets/js/prism.js"></script>
 <script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
 <link rel="stylesheet" href="/assets/css/lightbox.css">
 </div>
 <div>

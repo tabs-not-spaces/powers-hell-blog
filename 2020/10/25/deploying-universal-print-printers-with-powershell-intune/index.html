@@ -18,7 +18,7 @@
 <meta property="twitter:image" content="/assets/images/2020/10/universalprint.gif" />
 <meta property="twitter:title" content="Deploying Universal Print Printers With PowerShell &#038; Intune" />
 <script type="application/ld+json">
-{"headline":"Deploying Universal Print Printers With PowerShell &#038; Intune","dateModified":"2020-10-25T05:21:15+00:00","datePublished":"2020-10-25T05:21:15+00:00","description":"Over the last few weeks I’ve been playing with Universal Print - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/10/25/deploying-universal-print-printers-with-powershell-intune/"},"url":"/2020/10/25/deploying-universal-print-printers-with-powershell-intune/","@type":"BlogPosting","author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2020/10/universalprint.gif","@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2020/10/universalprint.gif","description":"Over the last few weeks I’ve been playing with Universal Print - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.","headline":"Deploying Universal Print Printers With PowerShell &#038; Intune","url":"/2020/10/25/deploying-universal-print-printers-with-powershell-intune/","@type":"BlogPosting","dateModified":"2020-10-25T05:21:15+00:00","datePublished":"2020-10-25T05:21:15+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/10/25/deploying-universal-print-printers-with-powershell-intune/"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -30,7 +30,7 @@
             <div class="flex items-center justify-between h-16 px-4 sm:px-0">
                 <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -72,14 +72,12 @@
         </svg>
       </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
   <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
-    <div
-      class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6"
-    >
-        <article class="markdown-body drac-text drac-line-height">
-          
-          <p class="post-date">Published: 25 Oct
-          </p>
-          <p>Over the last few weeks I’ve been playing with <strong><a href="https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-whatis">Universal Print</a></strong> - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.</p>
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 25 Oct
+        </p>
+        <p>Over the last few weeks I’ve been playing with <strong><a href="https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-whatis">Universal Print</a></strong> - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.</p>
 
 <!--more-->
 
@@ -225,14 +223,40 @@ finally {
 
 <p>— Ben</p>
 
-        </article>
+      </article>
     </div>
   </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/">&raquo; Set your Azure VPN connections to "Connect Automatically" with PowerShell</a></li>
+        
+        <li><a href="/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/">&raquo; Preparing custom image templates with Azure Image Builder & PowerShell</a></li>
+        
+        <li><a href="/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell/">&raquo; Dynamically set the time zone of a device in Intune using Azure Maps & PowerShell</a></li>
+        
+    </ul>
+</div>
 </main>
-
 </div><script src="/assets/js/app.js"></script>
 <script src="/assets/js/prism.js"></script>
 <script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
 <link rel="stylesheet" href="/assets/css/lightbox.css">
 </div>
 <div>
