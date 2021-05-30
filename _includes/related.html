@@ -1,0 +1,13 @@
+{% if site.related_posts.size >= 1 %}
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul>
+        {% for related_post in site.related_posts limit: 5 %}
+        <li><a href="{{ related_post.url }}">&raquo; {{ related_post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
