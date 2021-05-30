@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:22:10+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:28:14+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -1193,4 +1193,125 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;As always, code from this blog is available &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Get-Win32AppsUsingMSAL&quot;&gt;on my GitHub&lt;/a&gt; and I can be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Intune" /><summary type="html">So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</summary></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Intune" /><summary type="html">So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</summary></entry><entry><title type="html">Installing fonts with PowerShell &amp;amp; Intune</title><link href="/2020/06/09/installing-fonts-with-powershell-intune/" rel="alternate" type="text/html" title="Installing fonts with PowerShell &amp;amp; Intune" /><published>2020-06-08T15:22:21+00:00</published><updated>2020-06-08T15:22:21+00:00</updated><id>/2020/06/09/installing-fonts-with-powershell-intune</id><content type="html" xml:base="/2020/06/09/installing-fonts-with-powershell-intune/">&lt;p&gt;So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices..&lt;/p&gt;
+
+&lt;p&gt;Previously you may have solved this request using Group Policy - but if you are managing your devices with Intune, where do you even start?&lt;/p&gt;
+
+&lt;p&gt;With PowerShell &amp;amp; Win32 app deployments of course!&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;create&quot;&gt;Create.&lt;/h2&gt;
+
+&lt;p&gt;First let’s scaffold out our new application project we are going to make - in the example code below we are just going to put everything in the root of our system drive.&lt;/p&gt;
+
+&lt;p&gt;Now, let’s grab the fonts that the marketing department has asked us to install and place them inside the &lt;strong&gt;Fonts&lt;/strong&gt; folder.&lt;/p&gt;
+
+&lt;p&gt;Open up &lt;strong&gt;install.ps1&lt;/strong&gt; (the file created in the example code above) in your favourite editor (that’s VS-Code, right?) and we will begin the fun stuff.&lt;/p&gt;
+
+&lt;p&gt;We will begin by inserting a very simple function into our install script that will do all of the heavy lifting of this installation.&lt;/p&gt;
+
+&lt;p&gt;As you can see, not much is required - the function is just checking if the font file is a *.TTF or *.OTF file, copying the file to the font folder and setting a registry entry in HKLM to expose the new font on the system to all users of the device.&lt;/p&gt;
+
+&lt;p&gt;Now that we have our function added, all we need to do is step through our fonts folder and send each font through the function to be installed on the system.&lt;/p&gt;
+
+&lt;p&gt;We should probably also add some error handling to the solution - this will be provided in the final solution in GitHub.&lt;/p&gt;
+
+&lt;h2 id=&quot;package&quot;&gt;Package.&lt;/h2&gt;
+
+&lt;p&gt;Once our install.ps1 file is created, we need to convert the project to a single file that we can upload to Intune.&lt;/p&gt;
+
+&lt;p&gt;I’ve spoken about this at length elsewhere, but surprisingly haven’t mentioned it here, so I’ll touch on the process, but I will keep it brief..&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Download a copy of the &lt;strong&gt;&lt;a href=&quot;https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool&quot;&gt;Win32 Content Prep Tool&lt;/a&gt;&lt;/strong&gt;. Store it somewhere central (I tend to keep tools like this in a folder in the root of my system drive, or in the root of the project I am working on.)&lt;/li&gt;
+  &lt;li&gt;Open PowerShell and set your path to the root of the Application Project we made earlier.&lt;/li&gt;
+  &lt;li&gt;Call the Win32 Content Prep Tool from PowerShell.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/createwin32.gif&quot; title=&quot;Create Win32 App Package&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/createwin32.gif&quot; alt=&quot;Create Win32 App Package&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;deploy&quot;&gt;Deploy.&lt;/h2&gt;
+
+&lt;p&gt;Now that we have our *.intunewin package, we can move over to endpoint.microsoft.com and add a new “Windows App (Win32)” application.&lt;/p&gt;
+
+&lt;p&gt;I won’t detail the steps here as it’s been heavily &lt;a href=&quot;https://docs.microsoft.com/en-us/mem/intune/apps/apps-win32-app-management&quot;&gt;documented by Microsoft&lt;/a&gt; and &lt;a href=&quot;https://www.asquaredozen.com/2019/08/21/troubleshooting-win32-app-installs-in-intune/&quot;&gt;the&lt;/a&gt; &lt;a href=&quot;https://www.inthecloud247.com/deploy-win32-apps-with-microsoft-intune/&quot;&gt;greater&lt;/a&gt; &lt;a href=&quot;https://www.anoopcnair.com/intune-win32-app-deployment/&quot;&gt;community&lt;/a&gt; &lt;a href=&quot;https://www.youtube.com/watch?v=x-RMjhzGXxA&amp;amp;t=50s&quot;&gt;already&lt;/a&gt;, just make sure that you:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Deploy the solution using the &lt;strong&gt;system context&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Set the detection method to look for one or more of the resultant font files that will end up in C:\windows\fonts&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hopefully this shows how much can be done with PowerShell &amp;amp; Intune - obviously font installation is a relatively simple task, but using this concept, you can use win32 apps to deliver scripts and related payloads to your devices quickly and securely.&lt;/p&gt;
+
+&lt;p&gt;As always, code for this post is available on &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Install-Fonts&quot;&gt;GitHub&lt;/a&gt; and I am always available for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Intune" /><category term="Powershell" /><category term="Powershell" /><summary type="html">So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices.. Previously you may have solved this request using Group Policy - but if you are managing your devices with Intune, where do you even start? With PowerShell &amp;amp; Win32 app deployments of course!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/06/createwin32.gif" /><media:content medium="image" url="/assets/images/2020/06/createwin32.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Rapidly build Autopilot VMs with Hyper-V and PowerShell!</title><link href="/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell/" rel="alternate" type="text/html" title="Rapidly build Autopilot VMs with Hyper-V and PowerShell!" /><published>2020-05-18T06:27:00+00:00</published><updated>2020-05-18T06:27:00+00:00</updated><id>/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell</id><content type="html" xml:base="/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell/">&lt;p&gt;Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly.&lt;/p&gt;
+
+&lt;p&gt;What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;But what if you don’t have infinite money, time or an understanding client? That’s where Hyper-V and my latest module &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.HV.Tools&quot;&gt;Intune.HV.Tools&lt;/a&gt; come in handy!&lt;/p&gt;
+
+&lt;p&gt;Over the last few days, me and my fellow nerd army (&lt;a href=&quot;https://twitter.com/OnPremCloudGuy&quot;&gt;Steve&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/AdamGrossTX&quot;&gt;Adam&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/BruceSaaaa&quot;&gt;Bruce&lt;/a&gt;) have polished our VM provisioning script to something that we are proud enough to publish to the PowerShell Gallery.&lt;/p&gt;
+
+&lt;p&gt;Enough intro - let’s dive right in.&lt;/p&gt;
+
+&lt;p&gt;Open your favourite terminal as admin - PowerShell 5.1 or 7 will work. Haven’t installed 7 yet? &lt;a href=&quot;https://github.com/PowerShell/powershell/releases&quot;&gt;give it a go&lt;/a&gt;, it’s easy to install and awesome.&lt;/p&gt;
+
+&lt;p&gt;Let’s begin by installing the module..&lt;/p&gt;
+
+&lt;p&gt;Once the module is installed, we need to set up our device using the functions contained within..&lt;/p&gt;
+
+&lt;p&gt;Let’s start by initializing everything..&lt;/p&gt;
+
+&lt;p&gt;All we are doing here is specifying where we want our VMs to be stored and preparing the configuration file - which we can look at by running the “Get-HVToolsConfig” command..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/initialize.gif&quot; title=&quot;Initialize&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/initialize.gif&quot; alt=&quot;Initialize&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now that we have our configuration file initialized, let’s add stuff to it!&lt;/p&gt;
+
+&lt;p&gt;The first thing we need to add is details of our windows installation media - in the example below we are using the latest “2004” build of windows 10..&lt;/p&gt;
+
+&lt;p&gt;We can add as many images to the solution as we want - all we need to do is make sure each one has a unique name - as shown below, I’ve added builds 1909 and 2004 to my lab..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-imagetoconfig.gif&quot; title=&quot;Add image to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-imagetoconfig.gif&quot; alt=&quot;Add image to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Once we have our image library added to the config, let’s add some of our tenants (one at a time of course..)&lt;/p&gt;
+
+&lt;p&gt;What’s cool about the &lt;strong&gt;Add-TenantToConfig&lt;/strong&gt; cmdlet is that the &lt;strong&gt;ImageName&lt;/strong&gt; parameter autocompletes from the available images that we added in the step before. Only have one image? press Tab and it’ll autocomplete. You added a few images? Tab through and find the one you want to use!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-tenantoconfig.gif&quot; title=&quot;Add tenant to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-tenantoconfig.gif&quot; alt=&quot;Add tenant to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Alright, we’ve got our images and our tenants configured, lastly we need to add our Hyper-V VLAN details - most of us probably just have the “Default Switch” that was set up when we install Hyper-V, but *some* of us have complex setups, so let’s solve that.&lt;/p&gt;
+
+&lt;p&gt;The cmdlet actually auto-completes against any virtual switches you might have set up, so as always, just tab through and find the switch you want to assign to your machines..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-networktoconfig.gif&quot; title=&quot;Add network to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-networktoconfig.gif&quot; alt=&quot;Add network to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have a virtual network that requires a &lt;strong&gt;VLanID&lt;/strong&gt; you can also apply that by using the &lt;strong&gt;-VlandID&lt;/strong&gt; parameter..&lt;/p&gt;
+
+&lt;p&gt;Alright, once our configuration is set up, it’s time to build our VMs. For this example I’m going to build 3 VMs with a single CPU and 2gb of memory to enroll to the “Powers-Hell” tenant..&lt;/p&gt;
+
+&lt;p&gt;The first time you build a VM from an image it needs to create a &lt;strong&gt;reference image&lt;/strong&gt; which can take some time - this will only need to be done once per image.&lt;/p&gt;
+
+&lt;p&gt;We will also check for any available Autopilot configuration profiles. If we want to skip that and just spin up test machines we can use the &lt;strong&gt;-SkipAutoPilot&lt;/strong&gt; switch..&lt;/p&gt;
+
+&lt;p&gt;Once we’ve captured the Autopilot configuration profile we will use the local copy moving forward..&lt;/p&gt;
+
+&lt;p&gt;Let’s watch what happens once we already have the reference image created..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://i0.wp.com/i.imgur.com/ix05KH2.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;Run the code&quot;&gt;&lt;img src=&quot;https://i0.wp.com/i.imgur.com/ix05KH2.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;Run the code&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Awesome - we now have 3 machines we can use to verify our Autopilot configuration, all other Intune policies, configurations and applications work.&lt;/p&gt;
+
+&lt;p&gt;The usual caveat emptor rules apply - this works for me - I’ve tested it pretty heavily, &lt;strong&gt;but it may not work for you.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;If it doesn’t work for you, please raise an issue on the &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.HV.Tools&quot;&gt;GitHub&lt;/a&gt; and I’ll try fix it for you.&lt;/p&gt;
+
+&lt;p&gt;There are plenty of things I plan to add to this - so please check back regularly!&lt;/p&gt;
+
+&lt;p&gt;As always, &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.HV.Tools&quot;&gt;Source code for this post can be found here&lt;/a&gt;, the official module can be found &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.HV.Tools&quot;&gt;here&lt;/a&gt;, and I can always be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Hyper-V" /><category term="Intune" /><summary type="html">Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly. What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/05/new-clientVMDemo-1.gif" /><media:content medium="image" url="/assets/images/2020/05/new-clientVMDemo-1.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
