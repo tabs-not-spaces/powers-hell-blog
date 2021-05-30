@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:28:14+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:44:01+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -1314,4 +1314,72 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;As always, &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.HV.Tools&quot;&gt;Source code for this post can be found here&lt;/a&gt;, the official module can be found &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.HV.Tools&quot;&gt;here&lt;/a&gt;, and I can always be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Hyper-V" /><category term="Intune" /><summary type="html">Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly. What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/05/new-clientVMDemo-1.gif" /><media:content medium="image" url="/assets/images/2020/05/new-clientVMDemo-1.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Hyper-V" /><category term="Intune" /><summary type="html">Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly. What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/05/new-clientVMDemo-1.gif" /><media:content medium="image" url="/assets/images/2020/05/new-clientVMDemo-1.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Create a bootable Windows 10 Autopilot device with PowerShell!</title><link href="/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/" rel="alternate" type="text/html" title="Create a bootable Windows 10 Autopilot device with PowerShell!" /><published>2020-05-04T03:58:14+00:00</published><updated>2020-05-04T03:58:14+00:00</updated><id>/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell</id><content type="html" xml:base="/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/">&lt;p&gt;The most common complaint that I’ve received from people over the last few years around Intune / Autopilot / Modern Management is that people find it frustrating how much effort is involved in getting a device prepared to handover to a client for Autopilot enrollment.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;I totally agree - the sales pitch we are all given is that your staff can go out to a big-box store, buy a laptop and in minutes be greeted with a “welcome to mega-corp” login screen.&lt;/p&gt;
+
+&lt;p&gt;What is never told to us is that before we do any of this, we need to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;make sure a CLEAN copy of windows 10 is installed on the device - which it never is.&lt;/li&gt;
+  &lt;li&gt;Capture the hardware hash of the device and upload it to Intune.&lt;/li&gt;
+  &lt;li&gt;Finally, if the device is already past the OOBE, re-image the device and hand it over to the staff member..&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hardly the autonomous, streamlined sales pitch we’ve been sold - is it?&lt;/p&gt;
+
+&lt;p&gt;Well, I’m here to say I want to make it a little less painful with my first published PowerShell module - &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.USB.Creator/1.0.0.420&quot;&gt;Intune.USB.Creator&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;This is a solution developed over the last few years and road-tested with multiple clients and environments - something that is reliable enough that I’m happy enough to share it as a complete solution - something I rarely do due to being an obsessive perfectionist…&lt;/p&gt;
+
+&lt;p&gt;Let’s get into how we use it!&lt;/p&gt;
+
+&lt;h2 id=&quot;pre-requirements&quot;&gt;Pre-Requirements&lt;/h2&gt;
+
+&lt;p&gt;First things first, we need to make sure the device you are going to use to build the Autopilot device has a few pre-requisites:&lt;/p&gt;
+
+&lt;p&gt;The module was written primarily for &lt;a href=&quot;https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7&quot;&gt;PowerShell 7&lt;/a&gt; - if you don’t have it yet, there’s a bunch of ways to get it on your machine. Below is probably the easiest of the lot..&lt;/p&gt;
+
+&lt;p&gt;Some of the helper functions rely on other modules - so let’s install those (using PowerShell 7 of course..)&lt;/p&gt;
+
+&lt;p&gt;The module uses Windows 10 installation media to create the bootable media. This can be procured from many locations - if you do not have access to this, someone you work with will - just make sure you have a copy of the latest *.iso on your device.&lt;/p&gt;
+
+&lt;p&gt;Finally, let’s install the Intune.USB.Creator module..&lt;/p&gt;
+
+&lt;h2 id=&quot;how-to-use&quot;&gt;How to use&lt;/h2&gt;
+
+&lt;p&gt;Once all the pre-requirements are installed, plug a USB into our device and let’s create an Autopilot provisioning device.&lt;/p&gt;
+
+&lt;p&gt;Open up PowerShell 7 as an administrator and we will type in the following command:&lt;/p&gt;
+
+&lt;p&gt;Hitting enter will kick off the device provisioning code..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://i1.wp.com/i.imgur.com/u4HOn0y.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;Using the module&quot;&gt;&lt;img src=&quot;https://i1.wp.com/i.imgur.com/u4HOn0y.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;Using the module&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;A few things to note on each parameter:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;WinPEPath&lt;/strong&gt; (Required) - I’ve put a copy of WinPE up on my own storage account - feel free to use it, but if the cost of storage ends up too much, I will take this down. So grab a copy now and store it locally. Consider this fair warning.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;WindowsIsoPath&lt;/strong&gt; (Not required) - as mentioned in the pre-requirements section, you need to source your own copy of Windows 10. This shouldn’t be difficult. Try and get a copy of the “multi-edition” so you can build different variants if required. If you don’t provide a path to a copy of Windows 10, the device will still be provisioned, but there will be nothing added to the solution except for WinPE.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;GetAutopilotCfg&lt;/strong&gt; (Not required) - this is a simple switch to allow you to log in to an Azure tenant and capture the Autopilot configuration files. If you omit this, you will end up with a provisioning device that installs windows 10 and does nothing else.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Once our USB has been created, all that is required to do is plug it into our target device and boot from it.&lt;/p&gt;
+
+&lt;p&gt;WinPE will load and trigger the built in provisioning script which will load the operating system onto the device and inject the Autopilot configuration file.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://i2.wp.com/i.imgur.com/v9Ls50M.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;WinPE&quot;&gt;&lt;img src=&quot;https://i2.wp.com/i.imgur.com/v9Ls50M.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;WinPE&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Once the device has been provisioned - remove the USB and reboot. We should now be greeted with the standard Out of Box Experience, ending with the ability to log in to the tenant we captured the Autopilot configuration from!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://i0.wp.com/i.imgur.com/KcMT5OP.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;OOBE&quot;&gt;&lt;img src=&quot;https://i0.wp.com/i.imgur.com/KcMT5OP.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;OOBE&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Pretty cool, if I do say so myself.&lt;/p&gt;
+
+&lt;p&gt;Using this solution should provide you with a bootable USB that will get you from “out of box” to “ready to enrol” in less than 5 minutes.&lt;/p&gt;
+
+&lt;p&gt;As usual, source code for everything demonstrated here is available on &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.USB.Creator&quot;&gt;GitHub&lt;/a&gt;, the module itself is available on the &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.USB.Creator&quot;&gt;PowerShell Gallery&lt;/a&gt; and I am always up for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Autopilot" /><category term="Intune" /><category term="Powershell" /><summary type="html">The most common complaint that I've received from people over the last few years around Intune / Autopilot / Modern Management is that people find it frustrating how much effort is involved in getting a device prepared to handover to a client for Autopilot enrollment.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/05/usb-provision.gif" /><media:content medium="image" url="/assets/images/2020/05/usb-provision.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>

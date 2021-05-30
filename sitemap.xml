@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/</loc>
+<lastmod>2020-05-04T03:58:14+00:00</lastmod>
+</url>
+<url>
 <loc>/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell/</loc>
 <lastmod>2020-05-18T06:27:00+00:00</lastmod>
 </url>
