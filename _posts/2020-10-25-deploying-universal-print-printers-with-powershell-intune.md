@@ -1,6 +1,6 @@
 ---
 id: 450
-title: 'Deploying Universal Print Printers With PowerShell &#038; Intune'
+title: 'Deploying Universal Print Printers With PowerShell & Intune'
 date: 2020-10-25T15:21:15+10:00
 author: Ben
 layout: post
