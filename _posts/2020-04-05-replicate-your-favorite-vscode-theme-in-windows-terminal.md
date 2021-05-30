@@ -20,6 +20,8 @@ tags:
 [Windows Terminal](https://aka.ms/windowsterminal) has been out for around 6 months now and it's safe to say it's a huge success.  
 It's a great way to handle working with multiple terminal applications in one space, and the ability to customize the environment to suit your needs (both aesthetic and functional) make it a perfect tool for anyone who lives in a shell environment for hours on end.
 
+<!--more-->
+
 I was recently tagged in a discussion on twitter around customization of Terminal where someone said "If there was a VSCode -> WT Theme converter, that would be the best".
 
 Challenge accepted, [Mr. Rayner](https://twitter.com/MrThomasRayner)!
@@ -30,403 +32,30 @@ The first thing we need to do is understand how color schemes work in Windows Te
 
 Luckily, Windows Terminal is an [opensource solution](https://github.com/microsoft/terminal) and has excellent documentation. We need to know the schema of the "profiles.json" file that houses all of our customization, [which can be found here](https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md). Let's take a look at the "schemes" properties below.
 
-<table class="wp-block-table">
-  <tr>
-    <td>
-      <strong>Property</strong>
-    </td>
-    
-    <td>
-      <strong>Necessity</strong>
-    </td>
-    
-    <td>
-      <strong>Type</strong>
-    </td>
-    
-    <td>
-      <strong>Description</strong>
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>name</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Name of the color scheme.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>foreground</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the foreground color of the color scheme.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>background</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the background color of the color scheme.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>selectionBackground</code>
-    </td>
-    
-    <td>
-      Optional
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the selection background color of the color scheme.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>cursorColor</code>
-    </td>
-    
-    <td>
-      Optional
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the cursor color of the color scheme.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>black</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI black.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>blue</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI blue.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightBlack</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright black.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightBlue</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright blue.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightCyan</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright cyan.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightGreen</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright green.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightPurple</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright purple.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightRed</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright red.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightWhite</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright white.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>brightYellow</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI bright yellow.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>cyan</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI cyan.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>green</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI green.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>purple</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI purple.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>red</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI red.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>white</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI white.
-    </td>
-  </tr>
-  
-  <tr>
-    <td>
-      <code>yellow</code>
-    </td>
-    
-    <td>
-      <em>Required</em>
-    </td>
-    
-    <td>
-      String
-    </td>
-    
-    <td>
-      Sets the color used as ANSI yellow.
-    </td>
-  </tr>
-</table>
+| **Property**        | **Necessity** | **Type** | **Description**                                           |
+|---------------------|---------------|----------|-----------------------------------------------------------|
+| name                | Required      | String   | Name of the color scheme\.                                |
+| foreground          | Required      | String   | Sets the foreground color of the color scheme\.           |
+| background          | Required      | String   | Sets the background color of the color scheme\.           |
+| selectionBackground | Optional      | String   | Sets the selection background color of the color scheme\. |
+| cursorColor         | Optional      | String   | Sets the cursor color of the color scheme\.               |
+| black               | Required      | String   | Sets the color used as ANSI black\.                       |
+| blue                | Required      | String   | Sets the color used as ANSI blue\.                        |
+| brightBlack         | Required      | String   | Sets the color used as ANSI bright black\.                |
+| brightBlue          | Required      | String   | Sets the color used as ANSI bright blue\.                 |
+| brightCyan          | Required      | String   | Sets the color used as ANSI bright cyan\.                 |
+| brightGreen         | Required      | String   | Sets the color used as ANSI bright green\.                |
+| brightPurple        | Required      | String   | Sets the color used as ANSI bright purple\.               |
+| brightRed           | Required      | String   | Sets the color used as ANSI bright red\.                  |
+| brightWhite         | Required      | String   | Sets the color used as ANSI bright white\.                |
+| brightYellow        | Required      | String   | Sets the color used as ANSI bright yellow\.               |
+| cyan                | Required      | String   | Sets the color used as ANSI cyan\.                        |
+| green               | Required      | String   | Sets the color used as ANSI green\.                       |
+| purple              | Required      | String   | Sets the color used as ANSI purple\.                      |
+| red                 | Required      | String   | Sets the color used as ANSI red\.                         |
+| white               | Required      | String   | Sets the color used as ANSI white\.                       |
+| yellow              | Required      | String   | Sets the color used as ANSI yellow\.                      |
+
 
 As you can see, there's not a lot to a color scheme in Windows Terminal - we just need to define the base ANSI colors, give it a name and we should be in business. Let's move over to VSCode and have a look at some themes. For now let's focus only on the "required" fields.
 
@@ -451,8 +80,7 @@ Let's just summarize everything down to two key files:
 
 If we use the example of the Monokai Pro theme as an example, we can open up the Package.json file, and look for the "themes" attribute, which shows the multiple themes available within this extension.
 
-<img loading="lazy" width="1024" height="846" src="/assets/images/2020/04/image-1024x846.png" alt="" class="wp-image-247" srcset="/assets/images/2020/04/image-1024x846.png 1024w, /assets/images/2020/04/image-300x248.png 300w, /assets/images/2020/04/image-768x635.png 768w, /assets/images/2020/04/image.png 1107w" sizes="(max-width: 1024px) 100vw, 1024px" /> <figcaption>  
-</figcaption> 
+[![Package.json](/assets/images/2020/04/image.png)](/assets/images/2020/04/image.png "Package.json")
 
 If we use the relative path of the first theme to open up the configuration file, we can then see every possible configurable attribute of the theme - this example in particular is over 1,200 lines of config, so you can see there is a lot of customisation available in VSCode!
 
