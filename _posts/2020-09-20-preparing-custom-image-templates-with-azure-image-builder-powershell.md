@@ -1,6 +1,6 @@
 ---
 id: 432
-title: 'Preparing custom image templates with Azure Image Builder &#038; PowerShell'
+title: 'Preparing custom image templates with Azure Image Builder & PowerShell'
 date: 2020-09-20T20:44:14+10:00
 author: Ben
 layout: post
@@ -8,12 +8,16 @@ guid: http://powers-hell.com/?p=432
 permalink: /2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/
 views:
   - "3061"
-spay_email:
-  - ""
 categories:
-  - Uncategorized
+  - Azure
+  - PowerShell
+  - Automation
+  - WVD
 tags:
   - Azure Image Builder
+  - PowerShell
+  - Automation
+  - WVD
 ---
 [Azure Image Builder](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview) (AIB) is Microsoft's solution to configure and customize virtual machine images. The concept of it is pretty great: Pick a reference image from the public market place, apply some customization built around [HashiCorp's Packer](https://www.packer.io/), hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.
 
