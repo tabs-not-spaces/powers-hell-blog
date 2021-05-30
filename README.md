@@ -1,5 +1,7 @@
 # Jekyll Starter
 
+[![Build & Deploy](https://github.com/tabs-not-spaces/powers-hell-blog/actions/workflows/sitebuild.yml/badge.svg)](https://github.com/tabs-not-spaces/powers-hell-blog/actions/workflows/sitebuild.yml)
+
 > Starting point for Jekyll sites using [Tailwind CSS](https://tailwindcss.com/)
 and [Alpine.js](https://github.com/alpinejs/alpine/).
 
