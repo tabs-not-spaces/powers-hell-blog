@@ -1,8 +1,9 @@
 {
     "private": true,
     "scripts": {
-        "start": "concurrently -k --restart-tries 3 --restart-after 3000 -p [{name}] -n webpack,jekyll -c yellow,cyan npm:watch:webpack npm:watch:jekyll",
+        "start": "npm run localenv && concurrently -k --restart-tries 3 --restart-after 3000 -p [{name}] -n webpack,jekyll -c yellow,cyan npm:watch:webpack npm:watch:jekyll",
         "dev": "encore dev",
+        "localenv": ". ./.env.local",
         "prod": "encore prod",
         "build": "bundle exec jekyll build",
         "watch:webpack": "encore dev --watch",
