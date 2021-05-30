@@ -100,6 +100,610 @@
         </div>
       </div>
     </a>
+    </div><div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <a href="/2020/04/05/replicate-your-favorite-vscode-theme-in-windows-terminal/">
+      <div
+        class="main-overlay drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+      ><h2 class="drac-heading drac-text-purple-cyan drac-heading-xl drac-text-white">
+          Replicate your favorite VSCode theme in Windows Terminal
+        </h2>
+        <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">5 Apr</font></div>
+        <div class="markdown-body drac-text drac-line-height">
+          <p><a href="https://aka.ms/windowsterminal">Windows Terminal</a> has been out for around 6 months now and it’s safe to say it’s a huge success.<br />
+It’s a great way to handle working with multiple terminal applications in one space, and the ability to customize the environment to suit your needs (both aesthetic and functional) make it a perfect tool for anyone who lives in a shell environment for hours on end.</p>
+
+<p>I was recently tagged in a discussion on twitter around customization of Terminal where someone said “If there was a VSCode -&gt; WT Theme converter, that would be the best”.</p>
+
+<p>Challenge accepted, <a href="https://twitter.com/MrThomasRayner">Mr. Rayner</a>!</p>
+
+<p>The first thing we need to do is understand how color schemes work in Windows Terminal and then see if we can identify any matching traits in the theme extensions of VSCode.</p>
+
+<p>Luckily, Windows Terminal is an <a href="https://github.com/microsoft/terminal">opensource solution</a> and has excellent documentation. We need to know the schema of the “profiles.json” file that houses all of our customization, <a href="https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md">which can be found here</a>. Let’s take a look at the “schemes” properties below.</p>
+
+<table class="wp-block-table">
+  <tr>
+    <td>
+      <strong>Property</strong>
+    </td>
+    
+    <td>
+      <strong>Necessity</strong>
+    </td>
+    
+    <td>
+      <strong>Type</strong>
+    </td>
+    
+    <td>
+      <strong>Description</strong>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>name</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Name of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>foreground</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the foreground color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>background</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the background color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>selectionBackground</code>
+    </td>
+    
+    <td>
+      Optional
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the selection background color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>cursorColor</code>
+    </td>
+    
+    <td>
+      Optional
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the cursor color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>black</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI black.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>blue</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI blue.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightBlack</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright black.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightBlue</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright blue.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightCyan</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright cyan.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightGreen</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright green.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightPurple</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright purple.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightRed</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright red.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightWhite</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright white.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightYellow</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright yellow.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>cyan</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI cyan.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>green</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI green.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>purple</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI purple.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>red</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI red.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>white</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI white.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>yellow</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI yellow.
+    </td>
+  </tr>
+</table>
+
+<p>As you can see, there’s not a lot to a color scheme in Windows Terminal - we just need to define the base ANSI colors, give it a name and we should be in business. Let’s move over to VSCode and have a look at some themes. For now let’s focus only on the “required” fields.</p>
+
+<p>For this demo, I’m going to use two well known themes that are available to install from the VSCode extension library - <a href="https://marketplace.visualstudio.com/items?itemName=monokai.theme-monokai-pro-vscode">Monokai Pro</a> &amp; <a href="https://marketplace.visualstudio.com/items?itemName=Equinusocio.vsc-material-theme">Material Theme</a>. If you haven’t tried either of them out, stop what you are doing and give them a whirl. I personally cannot recommend Monokai Pro enough.</p>
+
+<p>Installed extensions all live in the userprofile: <code class="language-plaintext highlighter-rouge">%userprofile%\.vscode\extensions</code></p>
+
+<p>So, with the two extensions installed on your system, we should see them both at the following paths:</p>
+
+<ul>
+  <li>$env:UserProfile.vscode\extensions\monokai.theme-monokai-pro-vscode-1.1.15</li>
+  <li>$env:UserProfile .vscode\extensions\equinusocio.vsc-material-theme-32.5.0</li>
+  <li></li>
+</ul>
+
+<p>Now, I’ve done the heavy lifting for all of you, so we don’t need to go too in depth with how themes work (but if you are interested, there are plenty of resources that can <a href="https://medium.com/@caludio/how-to-write-a-visual-studio-code-color-theme-from-scratch-7ccb7e5da2aa">shed some light on the subject</a>).</p>
+
+<p>Let’s just summarize everything down to two key files:</p>
+
+<ul>
+  <li>Package.json - which contains the metadata of the extension and the details of the theme &amp; the location of the theme.json configuration file..</li>
+  <li>*theme*.json - contains all of the color configurations and properties for the theme.</li>
+</ul>
+
+<p>If we use the example of the Monokai Pro theme as an example, we can open up the Package.json file, and look for the “themes” attribute, which shows the multiple themes available within this extension.</p>
+
+<p><img loading="lazy" width="1024" height="846" src="/assets/images/2020/04/image-1024x846.png" alt="" class="wp-image-247" srcset="/assets/images/2020/04/image-1024x846.png 1024w, /assets/images/2020/04/image-300x248.png 300w, /assets/images/2020/04/image-768x635.png 768w, /assets/images/2020/04/image.png 1107w" sizes="(max-width: 1024px) 100vw, 1024px" /> &lt;figcaption&gt;<br />
+&lt;/figcaption&gt;</p>
+
+<p>If we use the relative path of the first theme to open up the configuration file, we can then see every possible configurable attribute of the theme - this example in particular is over 1,200 lines of config, so you can see there is a lot of customisation available in VSCode!</p>
+
+<p>Let’s make this easier and do a search for the ANSI colors we know we need for our Windows Terminal theme..</p>
+
+<p><a href="/assets/images/2020/04/image-1.png" title="ANSI Colours"><img src="/assets/images/2020/04/image-1.png" alt="ANSI Colours" /></a></p>
+
+<p>Looking good so far. All of the ANSI colors we need for Windows Terminal seem to exist within our theme, with the notable exception of Purple.<br />
+For brevity, just understand that Magenta in VSCode refers to Purple in Windows Terminal.</p>
+
+<p>Now that we know that we can assume that all themes *should* contain the properties we require, we can get down to writing a script in PowerShell to transpose them into a format that we need!</p>
+
+<p>First, let’s grab all the theme attributes from VSCode.</p>
+
+<p>This is fairly simple - we are providing the path to our theme extension to the function, which is then using the package.json file to capture the theme config paths and extracting the required ANSI attributes into a digestible PSCustomObject. If we run the above code against our Monokai Pro theme, we should get some nice data back..</p>
+
+<p><a href="/assets/images/2020/04/get-vscodetheme.gif" title="Get-VSCodeTheme"><img src="/assets/images/2020/04/get-vscodetheme.gif" alt="Get-VSCodeTheme" /></a></p>
+
+<p>Now that we have a simple way to extract the data we need from our VSCode theme extension, we now just need to build a solution to programmatically insert it into our Windows Terminal profile.</p>
+
+<p>Thankfully for me, there is already a great module created to allow easy access to the Windows Theme profile through PowerShell - <a href="https://www.powershellgallery.com/packages/MSTerminalSettings/1.1.54-pre">MSTerminalSettings</a> so let’s not reinvent the wheel and just install this onto our machine.</p>
+
+<p>Now we have our pre-required module installed, let’s polish up the data we grabbed from VSCode and send it to our Windows Terminal profile.</p>
+
+<p>Again, what we are doing here is fairly simple - We are “splatting” out our parameters that we want to send to the cmdlet “New-MSTerminalColorScheme”.<br />
+In the unlikely scenario that one of the color attributes is not present in the theme of your choice, we need to omit that parameter from our “splatted” hashtable.<br />
+In the Material theme I found that two of the “required parameters” - Foreground and Background were missing. This is something to be aware of, but for now, omitting them allows us to move ahead.</p>
+
+<p>So now, let’s put the two functions together and step through the process.</p>
+
+<ul>
+  <li>We call “Get-VSCodeTheme” with the path of our extension and store it in the $themes variable.</li>
+  <li>We send the $themes variable to “Out-GridView” to select which theme we want to export and store the data in the $theme variable.</li>
+  <li>We call “Import-VSCodeThemeToTerminal” with the chosen theme.</li>
+  <li>Finally, we set the name of our default color scheme in our Windows Terminal settings file “Profile.json”</li>
+</ul>
+
+<p><a href="/assets/images/2020/04/install-vscodetheme.gif" title="Install VSCode Theme"><img src="/assets/images/2020/04/install-vscodetheme.gif" alt="Install VSCode Theme" /></a></p>
+
+<p>And that’s it!<br />
+I cannot guarantee that this will work for every theme in the VSCode extension library, but after testing it against a few of the more popular themes, I’m fairly happy with the strike rate.</p>
+
+<p>I’m genuinely curious as to whether this is of use to any of you, so please, if you find yourself using this successfully (or unsuccessfully) please let me know on <a href="https://twitter.com/powers_hell">twitter</a>.</p>
+
+<p>As always, code for this post is available on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Import-VSCodeThemeToTerminal">GitHub</a>.</p>
+
+<p>— Ben</p>
+
+<p>— P.S. Yes, the colortest script I’m running is awesome.<br />
+I didn’t come up with it myself. Go and <a href="https://gist.github.com/timabell/cc9ca76964b59b2a54e91bda3665499e">check out the gist here</a> and make sure to follow <a href="https://twitter.com/tim_abell">Tim on twitter</a>.</p>
+
+        </div>
+      </div>
+    </a>
+    </div><div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <a href="/2020/03/15/synchronize-sharepoint-sites-with-intune-powershell/">
+      <div
+        class="main-overlay drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+      ><h2 class="drac-heading drac-text-purple-cyan drac-heading-xl drac-text-white">
+          Synchronize SharePoint sites with Intune &amp; PowerShell
+        </h2>
+        <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">14 Mar</font></div>
+        <div class="markdown-body drac-text drac-line-height">
+          <p>I recently spent some time with my colleague and frequent collaborator <a href="https://twitter.com/OnPremCloudGuy">Steven Hosking</a>. We spoke about a solution I came up with to synchronize SharePoint sites to devices using PowerShell &amp; Intune.</p>
+
+<p>This is something I’ve had in my drafts for quite a while, but it kept ending up being too long to write about. As it turns out, Steve ( and <a href="https://twitter.com/AdamGrossTX">Adam</a>) runs a very valuable and informative <a href="http://intune.training">youtube channel</a> that is dedicated to everything that is “Intune”.</p>
+
+<p>As the solution I wrote for this is directly linked with Intune, we figured it’d be perfect for the channel. We decided to film this little video to show how my solution works better than the official one provided by Microsoft.</p>
+
+<div class="video-container">
+&lt;iframe width="560" height="315" src="https://www.youtube.com/watch?v=Zoac9lbUuG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;"
+</div>
+
+<p>To summarize everything in the video:</p>
+
+<ul>
+  <li>SharePoint sites can be synchronized natively through Intune Administrative Template Policies</li>
+  <li>The native policy has a URI character limit which is very easy to hit</li>
+  <li>Capturing the details required to sync SharePoint sites is very easy using Chrome / Edge Chromium</li>
+  <li>Using PowerShell can overcome current limitations with the native policy solutions.</li>
+</ul>
+
+<p>Here is <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Sync-SharepointFolder">a link to the code mentioned in the video</a> - if anyone wants further info, please let me know!</p>
+
+<p>Enjoy!</p>
+
+<ul>
+  <li>Ben</li>
+</ul>
+
+        </div>
+      </div>
+    </a>
+    </div><div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <a href="/2019/12/13/organize-autopilot-devices-in-dynamic-aad-groups-using-grouptags-powershell/">
+      <div
+        class="main-overlay drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+      ><h2 class="drac-heading drac-text-purple-cyan drac-heading-xl drac-text-white">
+          Organize AutoPilot devices in dynamic AAD groups using GroupTags &amp; PowerShell
+        </h2>
+        <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">12 Dec</font></div>
+        <div class="markdown-body drac-text drac-line-height">
+          <p>Don’t ever say Microsoft doesn’t listen! One of my biggest pet peeves was solved at the beginning of the month when Microsoft announced the ability to edit device group tags!</p>
+
+<p>This doesn’t sound like much, but it essentially unlocks the potential of group tags that was never really there before - we can now use group tags to dynamically control device group membership.</p>
+
+<p>While there have been <a href="https://oofhours.com/2019/11/25/now-you-can-edit-group-tags-and-computer-names-for-windows-autopilot-devices/">quite</a> a few great <a href="https://blog.alschneiter.com/2019/11/26/edit-group-tag-and-computer-name-in-windows-autopilot/">posts</a> about this, most of the code in the articles I’ve read are using community modules that, while there’s nothing wrong with using other people’s code, I find the best way to understand how something works is to dig in and figure out the inner-workings myself.</p>
+
+<p>The good news is that because almost *everything* in Azure is accessible through the omnipresent Microsoft Graph, so it only took a few minutes of analyzing the requests to figure out what was going on. Let’s dive right in!</p>
+
+<p>First let’s set up a few dynamic groups in AAD.</p>
+
+<p>The first one - let’s call this our “baseline” group, will have the following dynamic rule that will capture <strong>all</strong> devices.</p>
+
+<pre class="wp-block-code"><code>(device.devicePhysicalIDs -any _ -contains "[ZTDId]")</code></pre>
+
+<p>The second group - let’s call this our “exclusion” group, will have the following dynamic rule that will capture all devices with a specific group tag.</p>
+
+<pre class="wp-block-code"><code>(device.devicePhysicalIds -any _ -eq "[OrderID]:EXCLUDE")</code></pre>
+
+<p>Once set up and given enough time to update, you should now see all of your devices in the “baseline” group and nothing in the “exclusion” group. Let’s fix that now.</p>
+
+<p>Go and grab the serial numbers of the devices you wish to move to the exclusion group (you can grab this directly from AAD or from the Windows AutoPilot Devices section of Intune - here’s mine as an example - note that there are no group tags assigned)</p>
+
+<p><img loading="lazy" width="1024" height="418" src="/assets/images/2019/12/image-1024x418.png" alt="" class="wp-image-203" srcset="/assets/images/2019/12/image-1024x418.png 1024w, /assets/images/2019/12/image-300x123.png 300w, /assets/images/2019/12/image-768x314.png 768w, /assets/images/2019/12/image.png 1092w" sizes="(max-width: 1024px) 100vw, 1024px" /></p>
+
+<p>For this example, let’s exclude the first device in the screenshot above.</p>
+
+<p>The first step when we interact with Microsoft Graph, as always, is to authenticate and store the Authentication Token in a variable so that we can use it for the next few steps - I’ve spoken about this before, so if you aren’t sure how to do this, <a href="https://powers-hell.com/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/">read this and come back when you are ready</a>!</p>
+
+<p>Alright - we’ve got our auth token, put your serial number into a variable, and then we will form out the first Graph Call.</p>
+
+<p>If we’ve formed our request properly, if we look at the contents of $result, we should see details on the device in question.</p>
+
+<p><a href="/assets/images/2019/12/image-1.png" title="$result data"><img src="/assets/images/2019/12/image-1.png" alt="$result data" /></a></p>
+
+<p>Next, we are going to grab the id of the device from the graph call, build the group tag data and post it back to Graph..</p>
+
+<p>Finally, we are going to perform a sync on our AutoPilot device list..</p>
+
+<p>Now if we jump over to our AutoPilot devices list we should see the group tag updated..</p>
+
+<p><a href="/assets/images/2019/12/image-2.png" title="Updated group tag"><img src="/assets/images/2019/12/image-2.png" alt="Updated group tag" /></a></p>
+
+<p>And of course, our dynamic groups should now be populated correctly..</p>
+
+<p><a href="/assets/images/2019/12/image-3.png" title="Dynamic groups"><img src="/assets/images/2019/12/image-3.png" alt="Dynamic groups" /></a></p>
+
+<p>That’s it! - 3 calls to Graph and a little bit of patience.</p>
+
+<p>Now of course, 3 REST API calls is not how I’m going to leave you - with a little bit of error handling and polish we can build out a very reliable function..</p>
+
+<p>As always, all code from this post will be available on my GitHub and I am always available to chat on <a href="https://twitter.com/powers_hell">Twitter</a>.</p>
+
+<p>– Ben</p>
+
+        </div>
+      </div>
+    </a>
     </div>
 <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
   

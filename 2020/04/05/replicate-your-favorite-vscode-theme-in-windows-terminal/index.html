@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Replicate your favorite VSCode theme in Windows Terminal | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Replicate your favorite VSCode theme in Windows Terminal" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Windows Terminal has been out for around 6 months now and it’s safe to say it’s a huge success. It’s a great way to handle working with multiple terminal applications in one space, and the ability to customize the environment to suit your needs (both aesthetic and functional) make it a perfect tool for anyone who lives in a shell environment for hours on end. I was recently tagged in a discussion on twitter around customization of Terminal where someone said “If there was a VSCode -&gt; WT Theme converter, that would be the best”. Challenge accepted, Mr. Rayner! The first thing we need to do is understand how color schemes work in Windows Terminal and then see if we can identify any matching traits in the theme extensions of VSCode. Luckily, Windows Terminal is an opensource solution and has excellent documentation. We need to know the schema of the “profiles.json” file that houses all of our customization, which can be found here. Let’s take a look at the “schemes” properties below. Property Necessity Type Description name Required String Name of the color scheme. foreground Required String Sets the foreground color of the color scheme. background Required String Sets the background color of the color scheme. selectionBackground Optional String Sets the selection background color of the color scheme. cursorColor Optional String Sets the cursor color of the color scheme. black Required String Sets the color used as ANSI black. blue Required String Sets the color used as ANSI blue. brightBlack Required String Sets the color used as ANSI bright black. brightBlue Required String Sets the color used as ANSI bright blue. brightCyan Required String Sets the color used as ANSI bright cyan. brightGreen Required String Sets the color used as ANSI bright green. brightPurple Required String Sets the color used as ANSI bright purple. brightRed Required String Sets the color used as ANSI bright red. brightWhite Required String Sets the color used as ANSI bright white. brightYellow Required String Sets the color used as ANSI bright yellow. cyan Required String Sets the color used as ANSI cyan. green Required String Sets the color used as ANSI green. purple Required String Sets the color used as ANSI purple. red Required String Sets the color used as ANSI red. white Required String Sets the color used as ANSI white. yellow Required String Sets the color used as ANSI yellow. As you can see, there’s not a lot to a color scheme in Windows Terminal - we just need to define the base ANSI colors, give it a name and we should be in business. Let’s move over to VSCode and have a look at some themes. For now let’s focus only on the “required” fields. For this demo, I’m going to use two well known themes that are available to install from the VSCode extension library - Monokai Pro &amp; Material Theme. If you haven’t tried either of them out, stop what you are doing and give them a whirl. I personally cannot recommend Monokai Pro enough. Installed extensions all live in the userprofile: %userprofile%\.vscode\extensions So, with the two extensions installed on your system, we should see them both at the following paths: $env:UserProfile.vscode\extensions\monokai.theme-monokai-pro-vscode-1.1.15 $env:UserProfile .vscode\extensions\equinusocio.vsc-material-theme-32.5.0 Now, I’ve done the heavy lifting for all of you, so we don’t need to go too in depth with how themes work (but if you are interested, there are plenty of resources that can shed some light on the subject). Let’s just summarize everything down to two key files: Package.json - which contains the metadata of the extension and the details of the theme &amp; the location of the theme.json configuration file.. *theme*.json - contains all of the color configurations and properties for the theme. If we use the example of the Monokai Pro theme as an example, we can open up the Package.json file, and look for the “themes” attribute, which shows the multiple themes available within this extension. &lt;figcaption&gt; &lt;/figcaption&gt; If we use the relative path of the first theme to open up the configuration file, we can then see every possible configurable attribute of the theme - this example in particular is over 1,200 lines of config, so you can see there is a lot of customisation available in VSCode! Let’s make this easier and do a search for the ANSI colors we know we need for our Windows Terminal theme.. Looking good so far. All of the ANSI colors we need for Windows Terminal seem to exist within our theme, with the notable exception of Purple. For brevity, just understand that Magenta in VSCode refers to Purple in Windows Terminal. Now that we know that we can assume that all themes *should* contain the properties we require, we can get down to writing a script in PowerShell to transpose them into a format that we need! First, let’s grab all the theme attributes from VSCode. This is fairly simple - we are providing the path to our theme extension to the function, which is then using the package.json file to capture the theme config paths and extracting the required ANSI attributes into a digestible PSCustomObject. If we run the above code against our Monokai Pro theme, we should get some nice data back.. Now that we have a simple way to extract the data we need from our VSCode theme extension, we now just need to build a solution to programmatically insert it into our Windows Terminal profile. Thankfully for me, there is already a great module created to allow easy access to the Windows Theme profile through PowerShell - MSTerminalSettings so let’s not reinvent the wheel and just install this onto our machine. Now we have our pre-required module installed, let’s polish up the data we grabbed from VSCode and send it to our Windows Terminal profile. Again, what we are doing here is fairly simple - We are “splatting” out our parameters that we want to send to the cmdlet “New-MSTerminalColorScheme”. In the unlikely scenario that one of the color attributes is not present in the theme of your choice, we need to omit that parameter from our “splatted” hashtable. In the Material theme I found that two of the “required parameters” - Foreground and Background were missing. This is something to be aware of, but for now, omitting them allows us to move ahead. So now, let’s put the two functions together and step through the process. We call “Get-VSCodeTheme” with the path of our extension and store it in the $themes variable. We send the $themes variable to “Out-GridView” to select which theme we want to export and store the data in the $theme variable. We call “Import-VSCodeThemeToTerminal” with the chosen theme. Finally, we set the name of our default color scheme in our Windows Terminal settings file “Profile.json” And that’s it! I cannot guarantee that this will work for every theme in the VSCode extension library, but after testing it against a few of the more popular themes, I’m fairly happy with the strike rate. I’m genuinely curious as to whether this is of use to any of you, so please, if you find yourself using this successfully (or unsuccessfully) please let me know on twitter. As always, code for this post is available on my GitHub. — Ben — P.S. Yes, the colortest script I’m running is awesome. I didn’t come up with it myself. Go and check out the gist here and make sure to follow Tim on twitter." />
+<meta property="og:description" content="Windows Terminal has been out for around 6 months now and it’s safe to say it’s a huge success. It’s a great way to handle working with multiple terminal applications in one space, and the ability to customize the environment to suit your needs (both aesthetic and functional) make it a perfect tool for anyone who lives in a shell environment for hours on end. I was recently tagged in a discussion on twitter around customization of Terminal where someone said “If there was a VSCode -&gt; WT Theme converter, that would be the best”. Challenge accepted, Mr. Rayner! The first thing we need to do is understand how color schemes work in Windows Terminal and then see if we can identify any matching traits in the theme extensions of VSCode. Luckily, Windows Terminal is an opensource solution and has excellent documentation. We need to know the schema of the “profiles.json” file that houses all of our customization, which can be found here. Let’s take a look at the “schemes” properties below. Property Necessity Type Description name Required String Name of the color scheme. foreground Required String Sets the foreground color of the color scheme. background Required String Sets the background color of the color scheme. selectionBackground Optional String Sets the selection background color of the color scheme. cursorColor Optional String Sets the cursor color of the color scheme. black Required String Sets the color used as ANSI black. blue Required String Sets the color used as ANSI blue. brightBlack Required String Sets the color used as ANSI bright black. brightBlue Required String Sets the color used as ANSI bright blue. brightCyan Required String Sets the color used as ANSI bright cyan. brightGreen Required String Sets the color used as ANSI bright green. brightPurple Required String Sets the color used as ANSI bright purple. brightRed Required String Sets the color used as ANSI bright red. brightWhite Required String Sets the color used as ANSI bright white. brightYellow Required String Sets the color used as ANSI bright yellow. cyan Required String Sets the color used as ANSI cyan. green Required String Sets the color used as ANSI green. purple Required String Sets the color used as ANSI purple. red Required String Sets the color used as ANSI red. white Required String Sets the color used as ANSI white. yellow Required String Sets the color used as ANSI yellow. As you can see, there’s not a lot to a color scheme in Windows Terminal - we just need to define the base ANSI colors, give it a name and we should be in business. Let’s move over to VSCode and have a look at some themes. For now let’s focus only on the “required” fields. For this demo, I’m going to use two well known themes that are available to install from the VSCode extension library - Monokai Pro &amp; Material Theme. If you haven’t tried either of them out, stop what you are doing and give them a whirl. I personally cannot recommend Monokai Pro enough. Installed extensions all live in the userprofile: %userprofile%\.vscode\extensions So, with the two extensions installed on your system, we should see them both at the following paths: $env:UserProfile.vscode\extensions\monokai.theme-monokai-pro-vscode-1.1.15 $env:UserProfile .vscode\extensions\equinusocio.vsc-material-theme-32.5.0 Now, I’ve done the heavy lifting for all of you, so we don’t need to go too in depth with how themes work (but if you are interested, there are plenty of resources that can shed some light on the subject). Let’s just summarize everything down to two key files: Package.json - which contains the metadata of the extension and the details of the theme &amp; the location of the theme.json configuration file.. *theme*.json - contains all of the color configurations and properties for the theme. If we use the example of the Monokai Pro theme as an example, we can open up the Package.json file, and look for the “themes” attribute, which shows the multiple themes available within this extension. &lt;figcaption&gt; &lt;/figcaption&gt; If we use the relative path of the first theme to open up the configuration file, we can then see every possible configurable attribute of the theme - this example in particular is over 1,200 lines of config, so you can see there is a lot of customisation available in VSCode! Let’s make this easier and do a search for the ANSI colors we know we need for our Windows Terminal theme.. Looking good so far. All of the ANSI colors we need for Windows Terminal seem to exist within our theme, with the notable exception of Purple. For brevity, just understand that Magenta in VSCode refers to Purple in Windows Terminal. Now that we know that we can assume that all themes *should* contain the properties we require, we can get down to writing a script in PowerShell to transpose them into a format that we need! First, let’s grab all the theme attributes from VSCode. This is fairly simple - we are providing the path to our theme extension to the function, which is then using the package.json file to capture the theme config paths and extracting the required ANSI attributes into a digestible PSCustomObject. If we run the above code against our Monokai Pro theme, we should get some nice data back.. Now that we have a simple way to extract the data we need from our VSCode theme extension, we now just need to build a solution to programmatically insert it into our Windows Terminal profile. Thankfully for me, there is already a great module created to allow easy access to the Windows Theme profile through PowerShell - MSTerminalSettings so let’s not reinvent the wheel and just install this onto our machine. Now we have our pre-required module installed, let’s polish up the data we grabbed from VSCode and send it to our Windows Terminal profile. Again, what we are doing here is fairly simple - We are “splatting” out our parameters that we want to send to the cmdlet “New-MSTerminalColorScheme”. In the unlikely scenario that one of the color attributes is not present in the theme of your choice, we need to omit that parameter from our “splatted” hashtable. In the Material theme I found that two of the “required parameters” - Foreground and Background were missing. This is something to be aware of, but for now, omitting them allows us to move ahead. So now, let’s put the two functions together and step through the process. We call “Get-VSCodeTheme” with the path of our extension and store it in the $themes variable. We send the $themes variable to “Out-GridView” to select which theme we want to export and store the data in the $theme variable. We call “Import-VSCodeThemeToTerminal” with the chosen theme. Finally, we set the name of our default color scheme in our Windows Terminal settings file “Profile.json” And that’s it! I cannot guarantee that this will work for every theme in the VSCode extension library, but after testing it against a few of the more popular themes, I’m fairly happy with the strike rate. I’m genuinely curious as to whether this is of use to any of you, so please, if you find yourself using this successfully (or unsuccessfully) please let me know on twitter. As always, code for this post is available on my GitHub. — Ben — P.S. Yes, the colortest script I’m running is awesome. I didn’t come up with it myself. Go and check out the gist here and make sure to follow Tim on twitter." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="/assets/images/2020/04/install-vscodetheme.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-05T04:12:23+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/assets/images/2020/04/install-vscodetheme.gif" />
+<meta property="twitter:title" content="Replicate your favorite VSCode theme in Windows Terminal" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/05/replicate-your-favorite-vscode-theme-in-windows-terminal/"},"description":"Windows Terminal has been out for around 6 months now and it’s safe to say it’s a huge success. It’s a great way to handle working with multiple terminal applications in one space, and the ability to customize the environment to suit your needs (both aesthetic and functional) make it a perfect tool for anyone who lives in a shell environment for hours on end. I was recently tagged in a discussion on twitter around customization of Terminal where someone said “If there was a VSCode -&gt; WT Theme converter, that would be the best”. Challenge accepted, Mr. Rayner! The first thing we need to do is understand how color schemes work in Windows Terminal and then see if we can identify any matching traits in the theme extensions of VSCode. Luckily, Windows Terminal is an opensource solution and has excellent documentation. We need to know the schema of the “profiles.json” file that houses all of our customization, which can be found here. Let’s take a look at the “schemes” properties below. Property Necessity Type Description name Required String Name of the color scheme. foreground Required String Sets the foreground color of the color scheme. background Required String Sets the background color of the color scheme. selectionBackground Optional String Sets the selection background color of the color scheme. cursorColor Optional String Sets the cursor color of the color scheme. black Required String Sets the color used as ANSI black. blue Required String Sets the color used as ANSI blue. brightBlack Required String Sets the color used as ANSI bright black. brightBlue Required String Sets the color used as ANSI bright blue. brightCyan Required String Sets the color used as ANSI bright cyan. brightGreen Required String Sets the color used as ANSI bright green. brightPurple Required String Sets the color used as ANSI bright purple. brightRed Required String Sets the color used as ANSI bright red. brightWhite Required String Sets the color used as ANSI bright white. brightYellow Required String Sets the color used as ANSI bright yellow. cyan Required String Sets the color used as ANSI cyan. green Required String Sets the color used as ANSI green. purple Required String Sets the color used as ANSI purple. red Required String Sets the color used as ANSI red. white Required String Sets the color used as ANSI white. yellow Required String Sets the color used as ANSI yellow. As you can see, there’s not a lot to a color scheme in Windows Terminal - we just need to define the base ANSI colors, give it a name and we should be in business. Let’s move over to VSCode and have a look at some themes. For now let’s focus only on the “required” fields. For this demo, I’m going to use two well known themes that are available to install from the VSCode extension library - Monokai Pro &amp; Material Theme. If you haven’t tried either of them out, stop what you are doing and give them a whirl. I personally cannot recommend Monokai Pro enough. Installed extensions all live in the userprofile: %userprofile%\\.vscode\\extensions So, with the two extensions installed on your system, we should see them both at the following paths: $env:UserProfile.vscode\\extensions\\monokai.theme-monokai-pro-vscode-1.1.15 $env:UserProfile .vscode\\extensions\\equinusocio.vsc-material-theme-32.5.0 Now, I’ve done the heavy lifting for all of you, so we don’t need to go too in depth with how themes work (but if you are interested, there are plenty of resources that can shed some light on the subject). Let’s just summarize everything down to two key files: Package.json - which contains the metadata of the extension and the details of the theme &amp; the location of the theme.json configuration file.. *theme*.json - contains all of the color configurations and properties for the theme. If we use the example of the Monokai Pro theme as an example, we can open up the Package.json file, and look for the “themes” attribute, which shows the multiple themes available within this extension. &lt;figcaption&gt; &lt;/figcaption&gt; If we use the relative path of the first theme to open up the configuration file, we can then see every possible configurable attribute of the theme - this example in particular is over 1,200 lines of config, so you can see there is a lot of customisation available in VSCode! Let’s make this easier and do a search for the ANSI colors we know we need for our Windows Terminal theme.. Looking good so far. All of the ANSI colors we need for Windows Terminal seem to exist within our theme, with the notable exception of Purple. For brevity, just understand that Magenta in VSCode refers to Purple in Windows Terminal. Now that we know that we can assume that all themes *should* contain the properties we require, we can get down to writing a script in PowerShell to transpose them into a format that we need! First, let’s grab all the theme attributes from VSCode. This is fairly simple - we are providing the path to our theme extension to the function, which is then using the package.json file to capture the theme config paths and extracting the required ANSI attributes into a digestible PSCustomObject. If we run the above code against our Monokai Pro theme, we should get some nice data back.. Now that we have a simple way to extract the data we need from our VSCode theme extension, we now just need to build a solution to programmatically insert it into our Windows Terminal profile. Thankfully for me, there is already a great module created to allow easy access to the Windows Theme profile through PowerShell - MSTerminalSettings so let’s not reinvent the wheel and just install this onto our machine. Now we have our pre-required module installed, let’s polish up the data we grabbed from VSCode and send it to our Windows Terminal profile. Again, what we are doing here is fairly simple - We are “splatting” out our parameters that we want to send to the cmdlet “New-MSTerminalColorScheme”. In the unlikely scenario that one of the color attributes is not present in the theme of your choice, we need to omit that parameter from our “splatted” hashtable. In the Material theme I found that two of the “required parameters” - Foreground and Background were missing. This is something to be aware of, but for now, omitting them allows us to move ahead. So now, let’s put the two functions together and step through the process. We call “Get-VSCodeTheme” with the path of our extension and store it in the $themes variable. We send the $themes variable to “Out-GridView” to select which theme we want to export and store the data in the $theme variable. We call “Import-VSCodeThemeToTerminal” with the chosen theme. Finally, we set the name of our default color scheme in our Windows Terminal settings file “Profile.json” And that’s it! I cannot guarantee that this will work for every theme in the VSCode extension library, but after testing it against a few of the more popular themes, I’m fairly happy with the strike rate. I’m genuinely curious as to whether this is of use to any of you, so please, if you find yourself using this successfully (or unsuccessfully) please let me know on twitter. As always, code for this post is available on my GitHub. — Ben — P.S. Yes, the colortest script I’m running is awesome. I didn’t come up with it myself. Go and check out the gist here and make sure to follow Tim on twitter.","url":"/2020/04/05/replicate-your-favorite-vscode-theme-in-windows-terminal/","@type":"BlogPosting","image":"/assets/images/2020/04/install-vscodetheme.gif","headline":"Replicate your favorite VSCode theme in Windows Terminal","dateModified":"2020-04-05T04:12:23+00:00","datePublished":"2020-04-05T04:12:23+00:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Replicate your favorite VSCode theme in Windows Terminal</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 5 Apr
+        </p>
+        <p><a href="https://aka.ms/windowsterminal">Windows Terminal</a> has been out for around 6 months now and it’s safe to say it’s a huge success.<br />
+It’s a great way to handle working with multiple terminal applications in one space, and the ability to customize the environment to suit your needs (both aesthetic and functional) make it a perfect tool for anyone who lives in a shell environment for hours on end.</p>
+
+<p>I was recently tagged in a discussion on twitter around customization of Terminal where someone said “If there was a VSCode -&gt; WT Theme converter, that would be the best”.</p>
+
+<p>Challenge accepted, <a href="https://twitter.com/MrThomasRayner">Mr. Rayner</a>!</p>
+
+<p>The first thing we need to do is understand how color schemes work in Windows Terminal and then see if we can identify any matching traits in the theme extensions of VSCode.</p>
+
+<p>Luckily, Windows Terminal is an <a href="https://github.com/microsoft/terminal">opensource solution</a> and has excellent documentation. We need to know the schema of the “profiles.json” file that houses all of our customization, <a href="https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md">which can be found here</a>. Let’s take a look at the “schemes” properties below.</p>
+
+<table class="wp-block-table">
+  <tr>
+    <td>
+      <strong>Property</strong>
+    </td>
+    
+    <td>
+      <strong>Necessity</strong>
+    </td>
+    
+    <td>
+      <strong>Type</strong>
+    </td>
+    
+    <td>
+      <strong>Description</strong>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>name</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Name of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>foreground</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the foreground color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>background</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the background color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>selectionBackground</code>
+    </td>
+    
+    <td>
+      Optional
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the selection background color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>cursorColor</code>
+    </td>
+    
+    <td>
+      Optional
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the cursor color of the color scheme.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>black</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI black.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>blue</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI blue.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightBlack</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright black.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightBlue</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright blue.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightCyan</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright cyan.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightGreen</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright green.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightPurple</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright purple.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightRed</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright red.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightWhite</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright white.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>brightYellow</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI bright yellow.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>cyan</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI cyan.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>green</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI green.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>purple</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI purple.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>red</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI red.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>white</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI white.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>yellow</code>
+    </td>
+    
+    <td>
+      <em>Required</em>
+    </td>
+    
+    <td>
+      String
+    </td>
+    
+    <td>
+      Sets the color used as ANSI yellow.
+    </td>
+  </tr>
+</table>
+
+<p>As you can see, there’s not a lot to a color scheme in Windows Terminal - we just need to define the base ANSI colors, give it a name and we should be in business. Let’s move over to VSCode and have a look at some themes. For now let’s focus only on the “required” fields.</p>
+
+<p>For this demo, I’m going to use two well known themes that are available to install from the VSCode extension library - <a href="https://marketplace.visualstudio.com/items?itemName=monokai.theme-monokai-pro-vscode">Monokai Pro</a> &amp; <a href="https://marketplace.visualstudio.com/items?itemName=Equinusocio.vsc-material-theme">Material Theme</a>. If you haven’t tried either of them out, stop what you are doing and give them a whirl. I personally cannot recommend Monokai Pro enough.</p>
+
+<p>Installed extensions all live in the userprofile: <code class="language-plaintext highlighter-rouge">%userprofile%\.vscode\extensions</code></p>
+
+<p>So, with the two extensions installed on your system, we should see them both at the following paths:</p>
+
+<ul>
+  <li>$env:UserProfile.vscode\extensions\monokai.theme-monokai-pro-vscode-1.1.15</li>
+  <li>$env:UserProfile .vscode\extensions\equinusocio.vsc-material-theme-32.5.0</li>
+  <li></li>
+</ul>
+
+<p>Now, I’ve done the heavy lifting for all of you, so we don’t need to go too in depth with how themes work (but if you are interested, there are plenty of resources that can <a href="https://medium.com/@caludio/how-to-write-a-visual-studio-code-color-theme-from-scratch-7ccb7e5da2aa">shed some light on the subject</a>).</p>
+
+<p>Let’s just summarize everything down to two key files:</p>
+
+<ul>
+  <li>Package.json - which contains the metadata of the extension and the details of the theme &amp; the location of the theme.json configuration file..</li>
+  <li>*theme*.json - contains all of the color configurations and properties for the theme.</li>
+</ul>
+
+<p>If we use the example of the Monokai Pro theme as an example, we can open up the Package.json file, and look for the “themes” attribute, which shows the multiple themes available within this extension.</p>
+
+<p><img loading="lazy" width="1024" height="846" src="/assets/images/2020/04/image-1024x846.png" alt="" class="wp-image-247" srcset="/assets/images/2020/04/image-1024x846.png 1024w, /assets/images/2020/04/image-300x248.png 300w, /assets/images/2020/04/image-768x635.png 768w, /assets/images/2020/04/image.png 1107w" sizes="(max-width: 1024px) 100vw, 1024px" /> &lt;figcaption&gt;<br />
+&lt;/figcaption&gt;</p>
+
+<p>If we use the relative path of the first theme to open up the configuration file, we can then see every possible configurable attribute of the theme - this example in particular is over 1,200 lines of config, so you can see there is a lot of customisation available in VSCode!</p>
+
+<p>Let’s make this easier and do a search for the ANSI colors we know we need for our Windows Terminal theme..</p>
+
+<p><a href="/assets/images/2020/04/image-1.png" title="ANSI Colours"><img src="/assets/images/2020/04/image-1.png" alt="ANSI Colours" /></a></p>
+
+<p>Looking good so far. All of the ANSI colors we need for Windows Terminal seem to exist within our theme, with the notable exception of Purple.<br />
+For brevity, just understand that Magenta in VSCode refers to Purple in Windows Terminal.</p>
+
+<p>Now that we know that we can assume that all themes *should* contain the properties we require, we can get down to writing a script in PowerShell to transpose them into a format that we need!</p>
+
+<p>First, let’s grab all the theme attributes from VSCode.</p>
+
+<p>This is fairly simple - we are providing the path to our theme extension to the function, which is then using the package.json file to capture the theme config paths and extracting the required ANSI attributes into a digestible PSCustomObject. If we run the above code against our Monokai Pro theme, we should get some nice data back..</p>
+
+<p><a href="/assets/images/2020/04/get-vscodetheme.gif" title="Get-VSCodeTheme"><img src="/assets/images/2020/04/get-vscodetheme.gif" alt="Get-VSCodeTheme" /></a></p>
+
+<p>Now that we have a simple way to extract the data we need from our VSCode theme extension, we now just need to build a solution to programmatically insert it into our Windows Terminal profile.</p>
+
+<p>Thankfully for me, there is already a great module created to allow easy access to the Windows Theme profile through PowerShell - <a href="https://www.powershellgallery.com/packages/MSTerminalSettings/1.1.54-pre">MSTerminalSettings</a> so let’s not reinvent the wheel and just install this onto our machine.</p>
+
+<p>Now we have our pre-required module installed, let’s polish up the data we grabbed from VSCode and send it to our Windows Terminal profile.</p>
+
+<p>Again, what we are doing here is fairly simple - We are “splatting” out our parameters that we want to send to the cmdlet “New-MSTerminalColorScheme”.<br />
+In the unlikely scenario that one of the color attributes is not present in the theme of your choice, we need to omit that parameter from our “splatted” hashtable.<br />
+In the Material theme I found that two of the “required parameters” - Foreground and Background were missing. This is something to be aware of, but for now, omitting them allows us to move ahead.</p>
+
+<p>So now, let’s put the two functions together and step through the process.</p>
+
+<ul>
+  <li>We call “Get-VSCodeTheme” with the path of our extension and store it in the $themes variable.</li>
+  <li>We send the $themes variable to “Out-GridView” to select which theme we want to export and store the data in the $theme variable.</li>
+  <li>We call “Import-VSCodeThemeToTerminal” with the chosen theme.</li>
+  <li>Finally, we set the name of our default color scheme in our Windows Terminal settings file “Profile.json”</li>
+</ul>
+
+<p><a href="/assets/images/2020/04/install-vscodetheme.gif" title="Install VSCode Theme"><img src="/assets/images/2020/04/install-vscodetheme.gif" alt="Install VSCode Theme" /></a></p>
+
+<p>And that’s it!<br />
+I cannot guarantee that this will work for every theme in the VSCode extension library, but after testing it against a few of the more popular themes, I’m fairly happy with the strike rate.</p>
+
+<p>I’m genuinely curious as to whether this is of use to any of you, so please, if you find yourself using this successfully (or unsuccessfully) please let me know on <a href="https://twitter.com/powers_hell">twitter</a>.</p>
+
+<p>As always, code for this post is available on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Import-VSCodeThemeToTerminal">GitHub</a>.</p>
+
+<p>— Ben</p>
+
+<p>— P.S. Yes, the colortest script I’m running is awesome.<br />
+I didn’t come up with it myself. Go and <a href="https://gist.github.com/timabell/cc9ca76964b59b2a54e91bda3665499e">check out the gist here</a> and make sure to follow <a href="https://twitter.com/tim_abell">Tim on twitter</a>.</p>
+
+      </article>
+    </div>
+  </div></main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>
