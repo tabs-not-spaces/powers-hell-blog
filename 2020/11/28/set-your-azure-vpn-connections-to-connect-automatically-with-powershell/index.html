@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Set your Azure VPN connections to “Connect Automatically” with PowerShell | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Set your Azure VPN connections to “Connect Automatically” with PowerShell" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices." />
+<meta property="og:description" content="One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-11-28T06:25:27+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Set your Azure VPN connections to “Connect Automatically” with PowerShell" />
+<script type="application/ld+json">
+{"headline":"Set your Azure VPN connections to “Connect Automatically” with PowerShell","dateModified":"2020-11-28T06:25:27+00:00","datePublished":"2020-11-28T06:25:27+00:00","description":"One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices.","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/"},"url":"/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/","@type":"BlogPosting","author":{"@type":"Person","name":"Ben"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Set your Azure VPN connections to "Connect Automatically" with PowerShell</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+    >
+        <article class="markdown-body drac-text drac-line-height">
+          
+          <p class="post-date">Published: 28 Nov
+          </p>
+          <p>One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices.</p>
+
+<!--more-->
+
+<p>My first suggestion was to simply use the built-in VPN client that comes with Windows 10. If we use this, we can utilize the native VPN policies within Intune which let us define everything we need - including setting the connection to automatically connect. The problem, as it turned out is the native VPN client has a limit of 25 route rules per connection - something that *shouldn’t* normally be a problem, but was insurmountable in this scenario.</p>
+
+<p>The next suggestion was to leverage the <a href="https://www.microsoft.com/en-us/p/azure-vpn-client/9np355qt2sqb" data-type="URL" data-id="https://www.microsoft.com/en-us/p/azure-vpn-client/9np355qt2sqb">Azure VPN Client</a> from the Microsoft store. This VPN client is designed to compliment the native VPN client and adds support for MFA as well as allowing connections from the native VPN interface.</p>
+
+<p>The only problem? There is no way to force the “connect automatically” setting in the native VPN client, thus the client’s major requirement was not met.</p>
+
+<p>Now, the end user can technically go in once the connection is deployed and set it themselves, but there has to be a more reliable way of doing this on behalf of the user - if it can be done via Intune for the native client, surely there has to be a way to enforce the setting? The answer, as always, is a resounding “of course!”.</p>
+
+<p>Before we begin, the first thing we need to do is convert the config files I was given by my network team into a format that we can silently push out.</p>
+
+<p>Once you’ve downloaded the Azure P2S config files, the next step is to manually import the config into the Azure VPN client (technically there is a way to do this using CLI parameters, however it’s frustratingly broken at the moment - I’ll talk about that another time!).</p>
+
+<p><a href="/assets/images/2020/11/VPNConnectionImport-1.gif" title="VPN Connection Import"><img src="/assets/images/2020/11/VPNConnectionImport-1.gif" alt="VPN Connection Import" /></a></p>
+
+<p>What this manual step does is creates the *.PBK file that the VPN client uses to “dial the connection”. Once we have that *.PBK file generated, we can capture the contents, and then deploy it out to other devices via Intune (or Configuration Manager) using a very simple PowerShell script.</p>
+
+<p>The *.PBK file is stored within the Azure VPN client folder structure in your local app data folder shown below - It’s always the same path which makes all of this very easy to automate!</p>
+
+<p><strong>%localappdata%\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState\rasphone.pbk</strong></p>
+
+<p>Open the *.pbk file in your favourite editor (that’s VSCode for everyone right?) and let’s move onto the code.</p>
+
+<pre class="wp-block-code" title="Deploy and configure VPN"><code lang="powershell" class="language-powershell line-numbers">
+#region Configuration
+$VPNName = 'Powers Hell VPN Connection'
+$VPNGUID = 'F3910F5AC434944F9335C187D7476DB4'
+$currentUser = (Get-CimInstance -ClassName WIn32_Process -Filter 'Name="explorer.exe"' | Invoke-CimMethod -MethodName GetOwner)[0]
+$objUser = New-Object System.Security.Principal.NTAccount($currentUser.user)
+$strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+$requiredFolder = "C:\Users\$($currentUser.user)\AppData\Local\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState"
+$rasManKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config" 
+#endregion
+#region PBK Configuration
+$PBKConfig - @"
+#Place your PBK contents here...
+"@
+#endregion
+#region Functions
+function Write-Log {
+    [cmdletbinding()]
+    param (
+        [string]$logMessage
+    )
+    Write-Host "[$(Get-Date -Format 'dd-MM-yyyy_HH:mm:ss')] $logMessage" -ForegroundColor Yellow
+}
+#endregion
+#region Deploy VPN
+if (!(Test-Path $RequiredFolder -ErrorAction SilentlyContinue)) {
+  New-Item $RequiredFolder -ItemType Directory | Out-Null
+  $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
+  Start-Transcript -Path $LogLocation -Force -Append
+  
+  Write-Log "Required folder $RequiredFolder was created on the machine since it wasn't found."
+  New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
+  
+  Write-Log "File rasphone.pbk has been created in $RequiredFolder."
+  Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
+  
+  Write-Log "File rasphone.pbk has been populated with configuration details."
+  Stop-Transcript | Out-Null
+}
+else {
+  $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
+  Start-Transcript -Path $LogLocation -Force -Append
+  
+  Write-Log "Folder $RequiredFolder already exists, that means that Azure VPN Client is already installed."
+  if (!(Test-Path "$RequiredFolder\rasphone.pbk" -ErrorAction SilentlyContinue)) {
+    
+    Write-Log "File rasphone.pbk doesn't exist in $RequiredFolder."
+    New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
+    
+    Write-Log "File rasphone.pbk has been created in $RequiredFolder."
+    Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
+    
+    Write-Log "File rasphone.pbk has been populated with configuration details."
+    Stop-Transcript | Out-Null
+  }
+  else {
+    Write-Log "File rasphone.pbk already exists in $RequiredFolder."
+    Rename-Item -Path "$RequiredFolder\rasphone.pbk" -NewName "$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')"    
+    
+    Write-Log "File rasphone.pbk has been renamed to rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss'). This file contains old configuration if it will be required in the future (in case it is, just rename it back to rasphone.pbk)."
+    New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
+    
+    Write-Log "New rasphone.pbk file has been created in $RequiredFolder."
+    Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
+    
+    Write-Log "File rasphone.pbk has been populated with configuration details."
+    Stop-Transcript | Out-Null
+  }
+}
+#endregion</code></pre>
+
+<p>Not much to be said about the above code - all we are doing is pushing out the contents of the *.PBK file to the correct location on the target machines. There is only one important thing to note - I’ve specifically replaced the name and guid from the *.PBK file with variable names to allow me to set them in the configuration at the top of the script. You don’t need to do that yourself, but it makes the solution a little more “reusable”.</p>
+
+<p>You can see where they normally appear in the screenshot below (lines 1 &amp; 10).</p>
+
+<p><a href="/assets/images/2020/11/image.png" title="PBK Snippet"><img src="/assets/images/2020/11/image.png" alt="PBK Snippet" /></a></p>
+
+<p>Alright, we’ve deployed the VPN - but it still isn’t automatically connecting. Let’s go and figure that out.</p>
+
+<p>The key to this solution is found in the registry (as always). The auto connection settings can be found in the local machine hive path shown below.</p>
+
+<p><strong>HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config</strong></p>
+
+<p><a href="/assets/images/2020/11/image-1.png" title="VPN Registry"><img src="/assets/images/2020/11/image-1.png" alt="VPN Registry" /></a></p>
+
+<p>As you can see above, for my corporate VPN connection, we are setting a few key values - namely:</p>
+
+<ul>
+  <li><strong>AutoTriggerDisabledProfilesList</strong> - A list of VPNs specifically set to not automatically connect (done manually by the user).</li>
+  <li><strong>AutoTriggerProfileEntryName</strong> - The Name of the VPN connection</li>
+  <li><strong>AutoTriggerProfileGUID</strong> - The HEX GUID of the VPN connection</li>
+  <li><strong>AutoTriggerProfilePhonebookPath</strong> - The path to the phonebook file</li>
+  <li><strong>UserSID</strong> - The SID of the user who has set the automatic connection.</li>
+</ul>
+
+<p>Once we understand what is required to set the connection, all we need to do is fill out the data and store it in the correct registry location!</p>
+
+<pre class="wp-block-code" title="Connect Automatically"><code lang="powershell" class="language-powershell line-numbers">
+#region Functions
+function Convert-HexToByte {
+  [cmdletbinding()]
+  param (
+    [string]$HexString
+  )
+  $splitString = ($HexString -replace '(..)','$1,').Trim(',')
+  [byte[]]$hexified = $splitString.Split(',') | ForEach-Object { "0x$_"}
+  return $hexified
+}
+function Set-ComputerRegistryValues {
+  param (
+      [Parameter(Mandatory = $true)]
+      [array]$RegistryInstance
+  )
+  try {
+      foreach ($key in $RegistryInstance) {
+          $keyPath = $key.Path
+          if (!(Test-Path $keyPath)) {
+              Write-Host "Registry path : $keyPath not found. Creating now." -ForegroundColor Green
+              New-Item -Path $key.Path -Force | Out-Null
+              Write-Host "Creating item property: $($key.Name)" -ForegroundColor Green
+              New-ItemProperty -Path $keyPath -Name $key.Name -Value $key.Value -Type $key.Type -Force
+          }
+          else {
+              Write-Host "Creating item property: $($key.Name)" -ForegroundColor Green
+              New-ItemProperty -Path $keyPath -Name $key.Name -Value $key.Value -Type $key.Type -Force
+          }
+      }
+  }
+  catch {
+      Throw $_.Exception.Message
+  }
+}
+#endregion
+#region Configure Always On
+[string[]]$autoDisable = (Get-ItemPropertyValue $rasManKeyPath -Name AutoTriggerDisabledProfilesList) | ForEach-Object { if ($_ -ne $VPNName) { $_ }}
+$regKeys = @(
+  @{
+    Path = $rasManKeyPath
+    Name = 'AutoTriggerDisabledProfilesList'
+    Value = [string[]]$autoDisable
+    Type = 'MultiString'
+  }
+  @{
+    Path = $rasManKeyPath
+    Name = 'AutoTriggerProfilePhonebookPath'
+    Value = "$RequiredFolder\rasphone.pbk"
+    Type = 'String'
+  }
+  @{
+    Path = $rasManKeyPath
+    Name = 'AutoTriggerProfileEntryName'
+    Value = $VPNName
+    Type = 'String'
+  }
+@{
+    Path = $rasManKeyPath
+    Name = 'UserSID'
+    Value = $sid
+    Type = 'String'
+  }
+@{
+    Path = $rasManKeyPath
+    Name = 'AutoTriggerProfileGUID'
+    Value = [Byte[]](Convert-HexToByte -HexString $VPNGUID)
+    Type = 'Binary'
+  }
+)
+Set-ComputerRegistryValues $regKeys
+#endregion</code></pre>
+
+<p>Again, most of this code is quite simple - all we are doing is entering some data into the registry.</p>
+
+<p>The only interesting thing of interest is how I’m converting the VPN GUID from the phonebook file into the Binary format required - which is done with the function <strong>Convert-HexToByte</strong> show above - that took me a little longer than I’m willing to admit!</p>
+
+<p>The other thing to be aware of is that deploying the VPN config can be done either in the User or System context - no admin privileges are required, however due to the registry keys being stored in the HKLM hive, admin privileges will be required to set the “connect automatically” section of this solution.</p>
+
+<p>That’s it for now - if you’ve got any questions about this solution, please reach out to me on <a href="https://twitter.com/powers_hell">twitter</a>, and as always, the code for this post can be found on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/AzureVPNAutoConnect">GitHub</a>.</p>
+
+<p>— Ben</p>
+
+        </article>
+    </div>
+  </div>
+</main>
+
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

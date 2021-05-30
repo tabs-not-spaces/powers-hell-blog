@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Deploying Universal Print Printers With PowerShell &#038; Intune | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Deploying Universal Print Printers With PowerShell &#038; Intune" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Over the last few weeks I’ve been playing with Universal Print - the cloud print solution developed by Microsoft and I honestly can’t praise it enough." />
+<meta property="og:description" content="Over the last few weeks I’ve been playing with Universal Print - the cloud print solution developed by Microsoft and I honestly can’t praise it enough." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="/assets/images/2020/10/universalprint.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-25T05:21:15+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/assets/images/2020/10/universalprint.gif" />
+<meta property="twitter:title" content="Deploying Universal Print Printers With PowerShell &#038; Intune" />
+<script type="application/ld+json">
+{"headline":"Deploying Universal Print Printers With PowerShell &#038; Intune","dateModified":"2020-10-25T05:21:15+00:00","datePublished":"2020-10-25T05:21:15+00:00","description":"Over the last few weeks I’ve been playing with Universal Print - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/10/25/deploying-universal-print-printers-with-powershell-intune/"},"url":"/2020/10/25/deploying-universal-print-printers-with-powershell-intune/","@type":"BlogPosting","author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2020/10/universalprint.gif","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Deploying Universal Print Printers With PowerShell &#038; Intune</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6"
+    >
+        <article class="markdown-body drac-text drac-line-height">
+          
+          <p class="post-date">Published: 25 Oct
+          </p>
+          <p>Over the last few weeks I’ve been playing with <strong><a href="https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-whatis">Universal Print</a></strong> - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.</p>
+
+<!--more-->
+
+<p>Configuring the “infrastructure” for the solution took me less than 5 minutes.. Seriously - Grab a license (free during the public preview), install and configure a connector on a device with line-of-sight to your printer and finally set the printer shares in the Azure portal.</p>
+
+<p>It was so easy I honestly don’t think I need to talk more about it - <a href="https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-getting-started">the steps are really well documented over on the Microsoft Docs page</a>, so start there if you haven’t already set things up.</p>
+
+<p>The one area that needs a little bit of polish is the way that printers get deployed to our end user devices. <a href="https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-intune-tool">The current solution</a> offered by Microsoft has two key requirements:</p>
+
+<ul>
+  <li>Deploy the <strong>Universal Print printer provisioning tool</strong> via Intune (as a win32 package)</li>
+  <li>Deploy a CSV file with a list of printers, along with a batch script to deploy the CSV file to a key location.</li>
+</ul>
+
+<p>Once the two packages are deployed, printers will then install on the client devices <strong>upon the next reboot or logon event</strong>.</p>
+
+<p>There’s two things I don’t currently love about this solution and wanted to try and improve:</p>
+
+<ul>
+  <li>Is there a way we can make the printers install on the client devices without having to wait for a reboot or a logon event?</li>
+  <li>Can we do this with PowerShell?</li>
+</ul>
+
+<p>The answer to both of these statements was a resounding “of course we can!” What I was surprised to find was how simple it actually was.</p>
+
+<p>This guide assumes you’ve already configured everything else - licensing, setting up the Universal Print connector etc. If you haven’t done that, go and sort that out.</p>
+
+<p>Alright, let’s jump in - we are going to deploy this solution as a “proactive remediation” script via Intune, although there is nothing stopping you deploying as a standard PowerShell script, or as a packaged win32 application.</p>
+
+<h2 id="detection">Detection</h2>
+
+<pre title="Detection Script" class="wp-block-code"><code lang="powershell" class="language-powershell line-numbers">#region printer list
+$availablePrinters = @(
+    "Printer A"
+    "Printer B"
+    "Printer C"
+    "Printer D"
+)
+$notFound = 0
+#endregion
+#region check the printers exist
+try {
+    foreach ($p in $availablePrinters) {
+        if (!(Get-Printer -Name $p -ErrorAction SilentlyContinue)) {
+            $notFound ++
+        }
+    }
+}
+catch {
+    $errorMsg = $_.Exception.Message
+}
+finally {
+    if ($errorMsg) {
+        Write-Warning $errorMsg
+        exit 1
+    }
+    else {
+        if ($notFound) {
+            Write-Warning "$notFound printers not found locally.."
+            exit 1
+        }
+        else {
+            Write-Host "All printers detected.."
+            exit 0
+        }
+    }
+}
+#endregion</code></pre>
+
+<p>The code above is pretty simple, simply list the names of the printers you want to make sure exist on the device - if any of them are missing, they will be flagged and the script will exit with a <strong>non-zero</strong> exit code, which will alert Intune that the remediation script is required to run.</p>
+
+<h2 id="remediation">Remediation</h2>
+
+<pre title="Remediation Script" class="wp-block-code"><code lang="powershell" class="language-powershell line-numbers">#region printer list
+$availablePrinters = @(
+    [pscustomobject]@{
+        SharedID   = '2f8aa4d8-8c21-4d37-9506-3da446bcf9ea'
+        SharedName = 'Printer A'
+        IsDefault  = 'Yes'
+    }
+    [pscustomobject]@{
+        SharedID   = 'c288bc70-8e14-4c5b-9f82-428ecf3ab63a'
+        SharedName = 'Printer B'
+        IsDefault  = $null
+    }
+    [pscustomobject]@{
+        SharedID   = '478a29db-7bdd-46a7-a75e-e0d61167988c'
+        SharedName = 'Printer C'
+        IsDefault  = $null
+    }
+    [pscustomobject]@{
+        SharedID   = '896262c5-59ca-4b92-becf-074feb25fccc'
+        SharedName = 'Printer D'
+        IsDefault  = $null
+    }
+)
+#endregion
+try {
+    $configurationPath = "$env:appdata\UniversalPrintPrinterProvisioning\Configuration"
+    if (!(Test-Path $configurationPath -ErrorAction SilentlyContinue)) {
+        New-Item $configurationPath -ItemType Directory -Force | Out-Null
+    }
+    $printCfg = ($availablePrinters | ConvertTo-Csv -NoTypeInformation | ForEach-Object { $_ -replace '"', "" } ) -join [System.Environment]::NewLine
+    $printCfg | Out-File "$configurationPath\printers.csv" -Encoding ascii -NoNewline
+    Start-Process "${env:ProgramFiles(x86)}\UniversalPrintPrinterProvisioning\Exe\UPPrinterInstaller.exe" -Wait -WindowStyle Hidden
+}
+catch {
+    $errorMsg = $_.Exception.Message
+}
+finally {
+    if ($errorMsg) {
+        Write-Warning $errorMsg
+        exit 1
+    }
+    else {
+        Write-Host "Universal Printer Installer configured and launched. Printers should appear shortly.."
+        exit 0
+    }
+}</code></pre>
+
+<p>The remediation script is also quite simple, the <strong>$availablePrinters</strong> array contains the details of each Universal Print printer that we need to map the printer to the device.</p>
+
+<p>Head to <strong>Universal Print &gt; Printer Shares</strong> (In the Azure portal), select each printer share and make note of the <strong>Share ID</strong> and the <strong>Name</strong> of the share. For each printer, you will create a <strong>psCustomObject</strong> containing the <strong>ShareID, SharedName</strong> and whether or not you want this printer to be flagged as a <em>default</em> printer or not.<figure class="wp-block-image size-full"></figure></p>
+
+<p><a href="/assets/images/2020/10/image-1.png" title="Printer A"><img src="/assets/images/2020/10/image-1.png" alt="Printer A" /></a></p>
+
+<p>The rest of the script is also fairly straight forward. What we are doing is building out the “printers.csv” file that the <strong>Universal Print Printer Provisioning Service</strong> uses to validate which printers to install.</p>
+
+<p>The real <em>magic</em> of the script (which isn’t really that magic) is on line 32. The print provisioning service that gets installed by the Universal Print installation media sits in the background and listens for a <strong>user logon</strong> event. Once this event is found, the service triggers another executable - <strong>UPPrinterInstaller.exe</strong> which looks for the *.csv file we have created, authenticates to Graph, validates the print share details and then kicks off a <strong>Web Services for Devices (WSD)</strong> process to map the available printers.</p>
+
+<p>Now, I’ll be the first to admit that the solution here is a little “kludgy” - I initially intended to reverse engineer the <strong>UPPrinterInstaller.exe</strong> to identify exactly <em>how</em> that WSD process works, however this works well enough - for now at least.</p>
+
+<h2 id="notes">Notes</h2>
+
+<ul>
+  <li>the Proactive Remediation detection and remediation scripts need to be run in the <strong>user context</strong> as opposed to system - make sure you set that in the solution.</li>
+  <li>The default printer value will <strong>NOT</strong> work the way it is intended if you have the <strong>Let Windows manage my default printer</strong> setting enabled (found within the <strong>Printers &amp; scanners</strong> section of settings). Which makes sense - but just be aware of that.</li>
+</ul>
+
+<p>I will continue to dig into this solution to try and make it a little more elegant - with the hopes that any advancements I make with the provisioning process might just make it into the official solution once it leaves Public Preview.</p>
+
+<p>As always, the code referenced in this guide is available in <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Universal-Print-Printer-Install">GitHub</a> and I can be reached on <a href="https://twitter.com/powers_hell">Twitter</a>.</p>
+
+<p>— Ben</p>
+
+        </article>
+    </div>
+  </div>
+</main>
+
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>
