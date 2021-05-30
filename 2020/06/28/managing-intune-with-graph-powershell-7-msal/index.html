@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Managing Intune with Graph, PowerShell 7 &amp; MSAL | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Managing Intune with Graph, PowerShell 7 &amp; MSAL" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL)." />
+<meta property="og:description" content="So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL)." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-27T22:39:24+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Managing Intune with Graph, PowerShell 7 &amp; MSAL" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).","headline":"Managing Intune with Graph, PowerShell 7 &amp; MSAL","url":"/2020/06/28/managing-intune-with-graph-powershell-7-msal/","@type":"BlogPosting","dateModified":"2020-06-27T22:39:24+00:00","datePublished":"2020-06-27T22:39:24+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"/2020/06/28/managing-intune-with-graph-powershell-7-msal/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Managing Intune with Graph, PowerShell 7 & MSAL</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 27 Jun
+        </p>
+        <p>So it seems we need to talk about Graph and authentication again..</p>
+
+<p>Recently, Microsoft announced an official <a href="https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363">“end of support timeline” for Azure Active Directory Authentication Library (ADAL)</a> which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</p>
+
+<!--more-->
+
+<p>There are many differences between the two libraries, but the workflows are very similar - a request is sent using the libraries for access to specific areas of Azure and an authentication token is sent back giving you the keys into your Azure tenant.</p>
+
+<p>While the announcement from Microsoft gives us a few years to move on, right now if you have moved your workloads over to PowerShell 7 (which you 100% should be), you may have noticed that working with ADAL is tricky.</p>
+
+<p>Lets have a look at that now - using <a href="https://twitter.com/davefalkus">Dave’s</a> <a href="https://github.com/microsoftgraph/powershell-intune-samples/blob/master/LOB_Application/Win32_Application_Add.ps1">sample code</a>, let’s try and authenticate using the “well-known” Intune application in PowerShell 7.</p>
+
+<p><a href="/assets/images/2020/06/adalauthPS7.gif" title="failing authentication in pwsh7"><img src="/assets/images/2020/06/adalauthPS7.gif" alt="failing authentication in pwsh7" /></a></p>
+
+<p>And for reference, the same code in PowerShell 5.1.</p>
+
+<p><a href="/assets/images/2020/06/adalauthPS5.gif" title="passing auth in pwsh5.1"><img src="/assets/images/2020/06/adalauthPS5.gif" alt="passing auth in pwsh5.1" /></a></p>
+
+<p>The primary issue here is that PowerShell 7 just doesn’t natively support the old authentication libraries - you can work around it if you have your existing authentication scripts in a module that you import using the <code class="language-plaintext highlighter-rouge">-UseWindowsPowerShell</code> compatibility flag, but that’s not an ideal scenario.</p>
+
+<p>So how do we authenticate successfully in PowerShell 7 then? With MSAL of course!</p>
+
+<p>For simplicities sake, I will not deep dive into manually creating MSAL requests, as luckily there is already a great module available to us on the PowerShell Gallery - <a href="https://www.powershellgallery.com/packages/MSAL.PS">MSAL.PS</a> (Written by <a href="https://github.com/jasoth">Jason Thompson</a>). So Let’s go ahead and install that on our computer.</p>
+
+<p>One of the benefits of MSAL is that it has been designed from the ground up to be completely cross-platform compatible, which means we get a few new ways to authenticate to devices that are “input constrained”. This is called “device code flow”.</p>
+
+<p>Using the well-known Intune app id, lets try out Device Code Flow.</p>
+
+<p><a href="/assets/images/2020/06/msalDeviceCode.gif" title="device code flow"><img src="/assets/images/2020/06/msalDeviceCode.gif" alt="device code flow" /></a></p>
+
+<p>This is pretty cool - adding <code class="language-plaintext highlighter-rouge">-DeviceCode</code> to our command generates a code that we can use on another device to authenticate “on behalf of” the initial requesting device.</p>
+
+<p>But what if we want to keep it “old school” ? Can we just interactively authenticate?</p>
+
+<p>The answer to that is “Yes. But not with the well-known Intune app id..”</p>
+
+<p>Let’s try it now..</p>
+
+<p><a href="/assets/images/2020/06/msalInteractiveFail.gif" title="failing interactive auth"><img src="/assets/images/2020/06/msalInteractiveFail.gif" alt="failing interactive auth" /></a></p>
+
+<p>How annoying! But what does this error mean?</p>
+
+<p>Simply put, the reply URLs in the AAD application we went to try and authenticate are missing the specific reply URL that MSAL needs registered, which is <code class="language-plaintext highlighter-rouge">http://localhost</code>.</p>
+
+<p>So, what this means, is that until the maintainer of the “PowerShell Intune” application updates the app to include the correct scope, the only way we can use it with MSAL is by following the device code flow.</p>
+
+<p>Until that time, we can create our own AAD application with the same permissions contained within the well-known app and use that instead.</p>
+
+<p>For those interested in this, the permissions required are below.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Intune Client Scope:</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DeviceManagementApps.ReadWrite.All</td>
+    </tr>
+    <tr>
+      <td>DeviceManagementConfiguration.ReadWrite.All</td>
+    </tr>
+    <tr>
+      <td>DeviceManagementManagedDevices.PrivilegedOperations.All</td>
+    </tr>
+    <tr>
+      <td>DeviceManagementManagedDevices.ReadWrite.All</td>
+    </tr>
+    <tr>
+      <td>DeviceManagementRBAC.ReadWrite.All</td>
+    </tr>
+    <tr>
+      <td>DeviceManagementServiceConfig.ReadWrite.All</td>
+    </tr>
+    <tr>
+      <td>Directory.Read.All Group.Read.All</td>
+    </tr>
+    <tr>
+      <td>Group.ReadWrite.All</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>I’ve already gone ahead and created this in my tenant and will be using it for all of my existing workflows and tools.</p>
+
+<p>So now we have a new AAD application registered with the correct permission scopes AND the correct reply URL, let’s see the authentication flow in a simple Graph call.</p>
+
+<p>The code above is a very simple example that grabs the authentication interactively and then queries Intune for any Win32 applications that have been packaged. Let’s see it in action..</p>
+
+<p><a href="/assets/images/2020/06/get-win32apps.gif&quot;" title="Get Win32 Apps"><img src="/assets/images/2020/06/get-win32apps.gif&quot;" alt="Get Win32 Apps" /></a></p>
+
+<p>Hopefully this has helped you understand the importance of migrating over to MSAL and gives you and idea how to begin migrating your workflows over to this new authentication library!</p>
+
+<p>For more light reading on MSAL and how to plan migrations away from ADAL, check the links below:</p>
+
+<ul>
+  <li><a href="https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363">Update your applications to use Microsoft authentication library</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview">MSAL Overview</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-migration">MSAL Migration</a></li>
+</ul>
+
+<p>As always, code from this blog is available <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Get-Win32AppsUsingMSAL">on my GitHub</a> and I can be reached on <a href="https://twitter.com/powers_hell">Twitter</a>.</p>
+
+<p>— Ben</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/">&raquo; Set your Azure VPN connections to "Connect Automatically" with PowerShell</a></li>
+        
+        <li><a href="/2020/10/25/deploying-universal-print-printers-with-powershell-intune/">&raquo; Deploying Universal Print Printers With PowerShell &#038; Intune</a></li>
+        
+        <li><a href="/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/">&raquo; Preparing custom image templates with Azure Image Builder & PowerShell</a></li>
+        
+    </ul>
+</div>
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

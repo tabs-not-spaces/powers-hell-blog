@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:15:16+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-05-30T07:22:10+00:00</updated><id>/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -1089,4 +1089,108 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;I’ve polished up the code from this article and provided both solutions as ready to deploy scripts, go check them out on my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Set-Timezone&quot;&gt;GitHub&lt;/a&gt; - just make sure to update the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$apiKey&lt;/code&gt; for either scenario you choose to utilize.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Intune" /><summary type="html">Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/08/gpsdata.jpg" /><media:content medium="image" url="/assets/images/2020/08/gpsdata.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="Powershell" /><category term="Intune" /><summary type="html">Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/assets/images/2020/08/gpsdata.jpg" /><media:content medium="image" url="/assets/images/2020/08/gpsdata.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Managing Intune with Graph, PowerShell 7 &amp;amp; MSAL</title><link href="/2020/06/28/managing-intune-with-graph-powershell-7-msal/" rel="alternate" type="text/html" title="Managing Intune with Graph, PowerShell 7 &amp;amp; MSAL" /><published>2020-06-27T22:39:24+00:00</published><updated>2020-06-27T22:39:24+00:00</updated><id>/2020/06/28/managing-intune-with-graph-powershell-7-msal</id><content type="html" xml:base="/2020/06/28/managing-intune-with-graph-powershell-7-msal/">&lt;p&gt;So it seems we need to talk about Graph and authentication again..&lt;/p&gt;
+
+&lt;p&gt;Recently, Microsoft announced an official &lt;a href=&quot;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363&quot;&gt;“end of support timeline” for Azure Active Directory Authentication Library (ADAL)&lt;/a&gt; which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;There are many differences between the two libraries, but the workflows are very similar - a request is sent using the libraries for access to specific areas of Azure and an authentication token is sent back giving you the keys into your Azure tenant.&lt;/p&gt;
+
+&lt;p&gt;While the announcement from Microsoft gives us a few years to move on, right now if you have moved your workloads over to PowerShell 7 (which you 100% should be), you may have noticed that working with ADAL is tricky.&lt;/p&gt;
+
+&lt;p&gt;Lets have a look at that now - using &lt;a href=&quot;https://twitter.com/davefalkus&quot;&gt;Dave’s&lt;/a&gt; &lt;a href=&quot;https://github.com/microsoftgraph/powershell-intune-samples/blob/master/LOB_Application/Win32_Application_Add.ps1&quot;&gt;sample code&lt;/a&gt;, let’s try and authenticate using the “well-known” Intune application in PowerShell 7.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/adalauthPS7.gif&quot; title=&quot;failing authentication in pwsh7&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/adalauthPS7.gif&quot; alt=&quot;failing authentication in pwsh7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;And for reference, the same code in PowerShell 5.1.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/adalauthPS5.gif&quot; title=&quot;passing auth in pwsh5.1&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/adalauthPS5.gif&quot; alt=&quot;passing auth in pwsh5.1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The primary issue here is that PowerShell 7 just doesn’t natively support the old authentication libraries - you can work around it if you have your existing authentication scripts in a module that you import using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-UseWindowsPowerShell&lt;/code&gt; compatibility flag, but that’s not an ideal scenario.&lt;/p&gt;
+
+&lt;p&gt;So how do we authenticate successfully in PowerShell 7 then? With MSAL of course!&lt;/p&gt;
+
+&lt;p&gt;For simplicities sake, I will not deep dive into manually creating MSAL requests, as luckily there is already a great module available to us on the PowerShell Gallery - &lt;a href=&quot;https://www.powershellgallery.com/packages/MSAL.PS&quot;&gt;MSAL.PS&lt;/a&gt; (Written by &lt;a href=&quot;https://github.com/jasoth&quot;&gt;Jason Thompson&lt;/a&gt;). So Let’s go ahead and install that on our computer.&lt;/p&gt;
+
+&lt;p&gt;One of the benefits of MSAL is that it has been designed from the ground up to be completely cross-platform compatible, which means we get a few new ways to authenticate to devices that are “input constrained”. This is called “device code flow”.&lt;/p&gt;
+
+&lt;p&gt;Using the well-known Intune app id, lets try out Device Code Flow.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/msalDeviceCode.gif&quot; title=&quot;device code flow&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/msalDeviceCode.gif&quot; alt=&quot;device code flow&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This is pretty cool - adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-DeviceCode&lt;/code&gt; to our command generates a code that we can use on another device to authenticate “on behalf of” the initial requesting device.&lt;/p&gt;
+
+&lt;p&gt;But what if we want to keep it “old school” ? Can we just interactively authenticate?&lt;/p&gt;
+
+&lt;p&gt;The answer to that is “Yes. But not with the well-known Intune app id..”&lt;/p&gt;
+
+&lt;p&gt;Let’s try it now..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/msalInteractiveFail.gif&quot; title=&quot;failing interactive auth&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/msalInteractiveFail.gif&quot; alt=&quot;failing interactive auth&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;How annoying! But what does this error mean?&lt;/p&gt;
+
+&lt;p&gt;Simply put, the reply URLs in the AAD application we went to try and authenticate are missing the specific reply URL that MSAL needs registered, which is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So, what this means, is that until the maintainer of the “PowerShell Intune” application updates the app to include the correct scope, the only way we can use it with MSAL is by following the device code flow.&lt;/p&gt;
+
+&lt;p&gt;Until that time, we can create our own AAD application with the same permissions contained within the well-known app and use that instead.&lt;/p&gt;
+
+&lt;p&gt;For those interested in this, the permissions required are below.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;strong&gt;Intune Client Scope:&lt;/strong&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementApps.ReadWrite.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementConfiguration.ReadWrite.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementManagedDevices.PrivilegedOperations.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementManagedDevices.ReadWrite.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementRBAC.ReadWrite.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementServiceConfig.ReadWrite.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Directory.Read.All Group.Read.All&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Group.ReadWrite.All&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;I’ve already gone ahead and created this in my tenant and will be using it for all of my existing workflows and tools.&lt;/p&gt;
+
+&lt;p&gt;So now we have a new AAD application registered with the correct permission scopes AND the correct reply URL, let’s see the authentication flow in a simple Graph call.&lt;/p&gt;
+
+&lt;p&gt;The code above is a very simple example that grabs the authentication interactively and then queries Intune for any Win32 applications that have been packaged. Let’s see it in action..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/get-win32apps.gif&amp;quot;&quot; title=&quot;Get Win32 Apps&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/get-win32apps.gif&amp;quot;&quot; alt=&quot;Get Win32 Apps&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Hopefully this has helped you understand the importance of migrating over to MSAL and gives you and idea how to begin migrating your workflows over to this new authentication library!&lt;/p&gt;
+
+&lt;p&gt;For more light reading on MSAL and how to plan migrations away from ADAL, check the links below:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363&quot;&gt;Update your applications to use Microsoft authentication library&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview&quot;&gt;MSAL Overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-migration&quot;&gt;MSAL Migration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As always, code from this blog is available &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Get-Win32AppsUsingMSAL&quot;&gt;on my GitHub&lt;/a&gt; and I can be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Graph" /><category term="Intune" /><category term="Powershell" /><category term="Intune" /><summary type="html">So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</summary></entry></feed>
