@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Creating Endpoint Security Policies with PowerShell | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Creating Endpoint Security Policies with PowerShell" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Keeping up with the rapid momentum of everything in the modern management world is a full time job. It’s exhausting, but it’s also fun." />
+<meta property="og:description" content="Keeping up with the rapid momentum of everything in the modern management world is a full time job. It’s exhausting, but it’s also fun." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="https://i2.wp.com/i.imgur.com/idlGMwI.gif?w=1170&#038;ssl=1" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-21T04:53:26+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://i2.wp.com/i.imgur.com/idlGMwI.gif?w=1170&#038;ssl=1" />
+<meta property="twitter:title" content="Creating Endpoint Security Policies with PowerShell" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"mainEntityOfPage":{"@type":"WebPage","@id":"/2020/04/21/creating-endpoint-security-policies-with-powershell/"},"description":"Keeping up with the rapid momentum of everything in the modern management world is a full time job. It’s exhausting, but it’s also fun.","url":"/2020/04/21/creating-endpoint-security-policies-with-powershell/","@type":"BlogPosting","image":"https://i2.wp.com/i.imgur.com/idlGMwI.gif?w=1170&#038;ssl=1","headline":"Creating Endpoint Security Policies with PowerShell","dateModified":"2020-04-21T04:53:26+00:00","datePublished":"2020-04-21T04:53:26+00:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Creating Endpoint Security Policies with PowerShell</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 21 Apr
+        </p>
+        <p>Keeping up with the rapid momentum of everything in the modern management world is a full time job. It’s exhausting, but it’s also fun.</p>
+
+<!--more-->
+
+<p>It truly pays to read the “<a href="https://docs.microsoft.com/en-us/mem/intune/fundamentals/whats-new">What’s new in Microsoft Intune</a>” on a regular basis.</p>
+
+<p>Case in point, late last month, Microsoft announced an updated URL for the Microsoft Endpoint Manager Admin Portal - <a href="https://endpoint.microsoft.com">https://endpoint.microsoft.com</a>, previously <a href="https://devicemanagement.microsoft.com">https://devicemanagement.microsoft.com</a>.</p>
+
+<p>Along with this change to the new and improved management portal, about a week ago, I noticed some changes to the UI around device management and how device configuration policies are configured and managed.</p>
+
+<p><a href="/assets/images/2020/04/image-4.png" title="Endpoint Portal"><img src="/assets/images/2020/04/image-4.png" alt="Endpoint Portal" /></a></p>
+
+<p>Stepping through the new policy options shows that configuring policies is a significantly streamlined experience than in the previous <a href="https://aka.ms/devicemanagement">management portal</a>. More importantly, the policies that you configure in the new admin portal don’t seem to appear in the previous portal..</p>
+
+<p>This got me to thinking - if these policies aren’t visible in the original portal, then there must be some new Graph API endpoints for me to play with.</p>
+
+<p>Turns out I was right - all of these new policies exist as what Microsoft are calling “templates”.</p>
+
+<p>To work with them, all we need to do is create an “instance” of a template and add the settings to the new policy.</p>
+
+<p>So let’s dive in and learn how to create some security policies in the new endpoint portal.</p>
+
+<p>Firstly, I created a reference policy, using <strong>Disk Encryption</strong> as the policy type to show what we will be creating.</p>
+
+<p><a href="/assets/images/2020/04/image-5.png" title="Reference policy"><img src="/assets/images/2020/04/image-5.png" alt="Reference policy" /></a></p>
+
+<p>The 5 settings displayed above are literally all we need for most scenarios to encrypt devices. This interface is a marked improvement from the original portal!</p>
+
+<p>Alright, enough of graphical user interfaces. Let’s pop open PowerShell and start building things.</p>
+
+<p>Firstly we need to authenticate to Graph - This has been discussed ad-nauseum over the last few years, so I wont go into how to do this. I will say however, that as I’ve been working predominantly with PowerShell 7, I’ve had to move away from the ADAL libraries and over to the new MSAL libraries. There’s a <a href="https://github.com/jasoth/MSAL.PS/issues">module available</a> for us to auth, so let’s grab that.</p>
+
+<p>Now let’s use it to authenticate to Graph.</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/ZeDtwH0.gif?w=1170&#038;ssl=1" title="MSAL Auth"><img src="https://i2.wp.com/i.imgur.com/ZeDtwH0.gif?w=1170&#038;ssl=1" alt="MSAL Auth" /></a></p>
+
+<p>Now that we’ve got our authentication token, let’s first have a look at what policy “templates” we have available to us.</p>
+
+<p>As you should see by now, the code is a fairly simple rest call - we are just setting up the auth header and calling the <strong>deviceManagement/templates</strong> endpoint from the beta version of graph.</p>
+
+<p>If you run the above code you’ll get back a lot of results. There’s 27 templates in total - a lot more than that are available to us in the UI.</p>
+
+<p>Here’s all of them for reference.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>displayName</strong></th>
+      <th><strong>description</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Microsoft Defender ATP baseline</td>
+      <td>Microsoft Defender ATP baseline as recommended by Microsoft</td>
+    </tr>
+    <tr>
+      <td>Account protection</td>
+      <td>Account protection policies help protect user credential by using technology such as Windows Hello for Business and Credential Guard.</td>
+    </tr>
+    <tr>
+      <td>Attack surface reduction rules</td>
+      <td>Attack surface reduction rules target behaviors that malware and malicious apps typically use to infect computers, including: Executable files and scripts used in Office apps or web mail that attempt to download or run files Obfuscated or otherwise suspicious scripts Behaviors that apps don’t usually initiate during normal day-to-day work</td>
+    </tr>
+    <tr>
+      <td>App and browser isolation</td>
+      <td>Windows Defender Application Guard (Application Guard) is designed to help prevent old and newly emerging attacks to help keep employees productive. Using our unique hardware isolation approach, our goal is to destroy the playbook that attackers use by making current attack methods obsolete.</td>
+    </tr>
+    <tr>
+      <td>Windows 10 compliance policy</td>
+      <td>Windows 10 compliance policy</td>
+    </tr>
+    <tr>
+      <td>Microsoft Defender Antivirus</td>
+      <td>Windows Defender Antivirus is the next-generation protection component of Microsoft Defender Advanced Threat Protection (Microsoft Defender ATP). Next-generation protection brings together machine learning, big-data analysis, in-depth threat resistance research, and cloud infrastructure to protect devices in your enterprise organization.</td>
+    </tr>
+    <tr>
+      <td>Exploit protection</td>
+      <td>Exploit protection helps protect against malware that uses exploits to infect devices and spread. Exploit protection consists of a number of mitigations that can be applied to either the operating system or individual apps.</td>
+    </tr>
+    <tr>
+      <td>Microsoft Defender Firewall</td>
+      <td>Windows Defender Firewall with Advanced Security is an important part of a layered security model. By providing host-based, two-way network traffic filtering for a device, Windows Defender Firewall blocks unauthorized network traffic flowing into or out of the local device.</td>
+    </tr>
+    <tr>
+      <td>MDM Security Baseline for May 2019</td>
+      <td>MDM Security Baseline as recommended by Microsoft</td>
+    </tr>
+    <tr>
+      <td>Device control</td>
+      <td>Microsoft recommends a layered approach to securing removable media, and Microsoft Defender ATP provides multiple monitoring and control features to help prevent threats in unauthorized peripherals from compromising your devices.</td>
+    </tr>
+    <tr>
+      <td>Windows 8 compliance policy</td>
+      <td>Windows 8 compliance policy</td>
+    </tr>
+    <tr>
+      <td>BitLocker</td>
+      <td>BitLocker Drive Encryption is a data protection feature that integrates with the operating system and addresses the threats of data theft or exposure from lost, stolen, or inappropriately decommissioned computers.</td>
+    </tr>
+    <tr>
+      <td>FileVault</td>
+      <td>FileVault provides built-in Full Disk Encryption for macOS devices.</td>
+    </tr>
+    <tr>
+      <td>macOS firewall</td>
+      <td>Enable and configure the built-in firewall for macOS devices.</td>
+    </tr>
+    <tr>
+      <td>Endpoint detection and response</td>
+      <td>Microsoft Defender ATP endpoint detection and response capabilities provide advanced attack detections that are near real-time and actionable. Security analysts can prioritize alerts effectively, gain visibility into the full scope of a breach, and take response actions to remediate threats.</td>
+    </tr>
+    <tr>
+      <td>Antivirus</td>
+      <td>Customers using Microsoft Defender Advanced Threat Protection for Mac can configure and deploy Antivirus settings macOS managed devices.</td>
+    </tr>
+    <tr>
+      <td>Microsoft Defender ATP baseline</td>
+      <td>Microsoft Defender ATP baseline as recommended by Microsoft</td>
+    </tr>
+    <tr>
+      <td>Android work profile compliance policy</td>
+      <td>Android work profile compliance policy</td>
+    </tr>
+    <tr>
+      <td>Web protection</td>
+      <td>Web protection in Microsoft Defender ATP uses network protection to secure your machines against web threats. By integrating with Microsoft Edge and popular third-party browsers like Chrome and Firefox, web protection stops web threats without a web proxy and can protect machines while they are away or on premises. Web protection stops access to phishing sites, malware vectors, exploit sites, untrusted or low-reputation sites, as well as sites that you have blocked in your custom indicator list.</td>
+    </tr>
+    <tr>
+      <td>Android device owner compliance policy</td>
+      <td>Android device owner compliance policy</td>
+    </tr>
+    <tr>
+      <td>Preview: Microsoft Edge baseline</td>
+      <td>Microsoft recommended settings for Microsoft Edge</td>
+    </tr>
+    <tr>
+      <td>Windows Phone compliance policy</td>
+      <td>Windows Phone compliance policy</td>
+    </tr>
+    <tr>
+      <td>Windows Security experience</td>
+      <td>The Windows Security app is used by a number of Windows security features to provide notifications about the health and security of the machine. These include notifications about firewalls, antivirus products, Windows Defender SmartScreen, and others.</td>
+    </tr>
+    <tr>
+      <td>Application control</td>
+      <td>Application control can help mitigate security threats by restricting the applications that users are allowed to run and the code that runs in the System Core (kernel). Application control policies can also block unsigned scripts and MSIs, and restrict Windows PowerShell to run in Constrained Language Mode.</td>
+    </tr>
+    <tr>
+      <td>iOS compliance policy</td>
+      <td>iOS compliance policy</td>
+    </tr>
+    <tr>
+      <td>Mac compliance policy</td>
+      <td>Mac compliance policy</td>
+    </tr>
+    <tr>
+      <td>Android compliance policy</td>
+      <td>Android compliance policy</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For our example, we only need the BitLocker policy, so let’s just capture that. Now we can either do that by filtering down the full list of tables from the previous command, or we can filter from the graph call as shown below:</p>
+
+<p>Running the command should get us the BitLocker template data below.</p>
+
+<p><a href="/assets/images/2020/04/image-6.png" title="Bitlocker template data"><img src="/assets/images/2020/04/image-6.png" alt="Bitlocker template data" /></a></p>
+
+<p>Once we have this, the next step is to create a new “instance” of the template. We will use the id from the <strong>$bitlocker.value.id</strong> variable above to form the next POST request.</p>
+
+<p>If we have done everything correctly to this point, we should get an object returned to us with the details of the new instance of the BitLocker template.</p>
+
+<p><a href="/assets/images/2020/04/image-7.png" title="New instance of bitlocker template"><img src="/assets/images/2020/04/image-7.png" alt="New instance of bitlocker template" /></a></p>
+
+<p>Once we have the new instance details, now we just need to add the configuration properties to it.</p>
+
+<p>Every template has a dedicated list of available settings and the required values that they will accept - and it’s an exhaustive list. To view the settings, we call the <strong>deviceManagement/settingsDefinitions</strong> endpoint.</p>
+
+<p>It’s a little too in depth to cover in this article, but I strongly recommend anyone who is interested in implementing this into production spends some time understanding the schema definitions contained within this endpoint.</p>
+
+<p>As we only configured 5 settings in our original reference policy, we will do the same thing here.</p>
+
+<p>Using the $instance.id value from the previous command we will now “update” the instance with the settings (known at the “intents” - the intent to apply settings).</p>
+
+<p>And that’s it - If we head back to our admin portal we should see a new BitLocker policy named “Win10_BitLocker_Example” and inside, the configuration settings we have applied.</p>
+
+<p>Hopefully this gives you ideas of how we can use PowerShell to control and deploy policies in this exhausting modern management world we find ourselves in!</p>
+
+<p>Next week I’ll spend some time to show you how we can build out automated reporting with these new security policies.</p>
+
+<p>As always, code for this post is available on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/New-PolicyFromTemplate">GitHub</a>, and I’m always up for a chat on <a href="https://twitter.com/powers_hell">Twitter</a>.</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/">&raquo; Set your Azure VPN connections to "Connect Automatically" with PowerShell</a></li>
+        
+        <li><a href="/2020/10/25/deploying-universal-print-printers-with-powershell-intune/">&raquo; Deploying Universal Print Printers With PowerShell & Intune</a></li>
+        
+        <li><a href="/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/">&raquo; Preparing custom image templates with Azure Image Builder & PowerShell</a></li>
+        
+    </ul>
+</div>
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>
