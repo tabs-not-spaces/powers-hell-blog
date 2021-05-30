@@ -127,30 +127,6 @@ It’s a great way to handle working with multiple terminal applications in one 
         <div class="markdown-body drac-text drac-line-height">
           <p>I recently spent some time with my colleague and frequent collaborator <a href="https://twitter.com/OnPremCloudGuy">Steven Hosking</a>. We spoke about a solution I came up with to synchronize SharePoint sites to devices using PowerShell &amp; Intune.</p>
 
-<p>This is something I’ve had in my drafts for quite a while, but it kept ending up being too long to write about. As it turns out, Steve ( and <a href="https://twitter.com/AdamGrossTX">Adam</a>) runs a very valuable and informative <a href="http://intune.training">youtube channel</a> that is dedicated to everything that is “Intune”.</p>
-
-<p>As the solution I wrote for this is directly linked with Intune, we figured it’d be perfect for the channel. We decided to film this little video to show how my solution works better than the official one provided by Microsoft.</p>
-
-<div class="video-container">
-&lt;iframe width="560" height="315" src="https://www.youtube.com/watch?v=Zoac9lbUuG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;"
-</div>
-
-<p>To summarize everything in the video:</p>
-
-<ul>
-  <li>SharePoint sites can be synchronized natively through Intune Administrative Template Policies</li>
-  <li>The native policy has a URI character limit which is very easy to hit</li>
-  <li>Capturing the details required to sync SharePoint sites is very easy using Chrome / Edge Chromium</li>
-  <li>Using PowerShell can overcome current limitations with the native policy solutions.</li>
-</ul>
-
-<p>Here is <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Sync-SharepointFolder">a link to the code mentioned in the video</a> - if anyone wants further info, please let me know!</p>
-
-<p>Enjoy!</p>
-
-<ul>
-  <li>Ben</li>
-</ul>
 
         </div>
       </div>
@@ -168,55 +144,6 @@ It’s a great way to handle working with multiple terminal applications in one 
 
 <p>This doesn’t sound like much, but it essentially unlocks the potential of group tags that was never really there before - we can now use group tags to dynamically control device group membership.</p>
 
-<p>While there have been <a href="https://oofhours.com/2019/11/25/now-you-can-edit-group-tags-and-computer-names-for-windows-autopilot-devices/">quite</a> a few great <a href="https://blog.alschneiter.com/2019/11/26/edit-group-tag-and-computer-name-in-windows-autopilot/">posts</a> about this, most of the code in the articles I’ve read are using community modules that, while there’s nothing wrong with using other people’s code, I find the best way to understand how something works is to dig in and figure out the inner-workings myself.</p>
-
-<p>The good news is that because almost *everything* in Azure is accessible through the omnipresent Microsoft Graph, so it only took a few minutes of analyzing the requests to figure out what was going on. Let’s dive right in!</p>
-
-<p>First let’s set up a few dynamic groups in AAD.</p>
-
-<p>The first one - let’s call this our “baseline” group, will have the following dynamic rule that will capture <strong>all</strong> devices.</p>
-
-<pre class="wp-block-code"><code>(device.devicePhysicalIDs -any _ -contains "[ZTDId]")</code></pre>
-
-<p>The second group - let’s call this our “exclusion” group, will have the following dynamic rule that will capture all devices with a specific group tag.</p>
-
-<pre class="wp-block-code"><code>(device.devicePhysicalIds -any _ -eq "[OrderID]:EXCLUDE")</code></pre>
-
-<p>Once set up and given enough time to update, you should now see all of your devices in the “baseline” group and nothing in the “exclusion” group. Let’s fix that now.</p>
-
-<p>Go and grab the serial numbers of the devices you wish to move to the exclusion group (you can grab this directly from AAD or from the Windows AutoPilot Devices section of Intune - here’s mine as an example - note that there are no group tags assigned)</p>
-
-<p><img loading="lazy" width="1024" height="418" src="/assets/images/2019/12/image-1024x418.png" alt="" class="wp-image-203" srcset="/assets/images/2019/12/image-1024x418.png 1024w, /assets/images/2019/12/image-300x123.png 300w, /assets/images/2019/12/image-768x314.png 768w, /assets/images/2019/12/image.png 1092w" sizes="(max-width: 1024px) 100vw, 1024px" /></p>
-
-<p>For this example, let’s exclude the first device in the screenshot above.</p>
-
-<p>The first step when we interact with Microsoft Graph, as always, is to authenticate and store the Authentication Token in a variable so that we can use it for the next few steps - I’ve spoken about this before, so if you aren’t sure how to do this, <a href="https://powers-hell.com/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/">read this and come back when you are ready</a>!</p>
-
-<p>Alright - we’ve got our auth token, put your serial number into a variable, and then we will form out the first Graph Call.</p>
-
-<p>If we’ve formed our request properly, if we look at the contents of $result, we should see details on the device in question.</p>
-
-<p><a href="/assets/images/2019/12/image-1.png" title="$result data"><img src="/assets/images/2019/12/image-1.png" alt="$result data" /></a></p>
-
-<p>Next, we are going to grab the id of the device from the graph call, build the group tag data and post it back to Graph..</p>
-
-<p>Finally, we are going to perform a sync on our AutoPilot device list..</p>
-
-<p>Now if we jump over to our AutoPilot devices list we should see the group tag updated..</p>
-
-<p><a href="/assets/images/2019/12/image-2.png" title="Updated group tag"><img src="/assets/images/2019/12/image-2.png" alt="Updated group tag" /></a></p>
-
-<p>And of course, our dynamic groups should now be populated correctly..</p>
-
-<p><a href="/assets/images/2019/12/image-3.png" title="Dynamic groups"><img src="/assets/images/2019/12/image-3.png" alt="Dynamic groups" /></a></p>
-
-<p>That’s it! - 3 calls to Graph and a little bit of patience.</p>
-
-<p>Now of course, 3 REST API calls is not how I’m going to leave you - with a little bit of error handling and polish we can build out a very reliable function..</p>
-
-<p>As always, all code from this post will be available on my GitHub and I am always available to chat on <a href="https://twitter.com/powers_hell">Twitter</a>.</p>
-
-<p>– Ben</p>
 
         </div>
       </div>
