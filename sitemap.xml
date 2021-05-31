@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>/2018/12/10/control-advanced-power-settings-with-powercfg-powershell/</loc>
+<lastmod>2018-12-10T13:37:41+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/12/19/upload-files-to-azure-file-share-using-powershell-microsoft-flow/</loc>
+<lastmod>2018-12-18T15:09:42+00:00</lastmod>
+</url>
+<url>
+<loc>/2019/05/09/build-azure-functions-using-powershell-core-6-vs-code/</loc>
+<lastmod>2019-05-08T19:06:33+00:00</lastmod>
+</url>
+<url>
 <loc>/2019/12/13/organize-autopilot-devices-in-dynamic-aad-groups-using-grouptags-powershell/</loc>
 <lastmod>2019-12-12T22:28:06+00:00</lastmod>
 </url>
@@ -71,6 +83,9 @@
 </url>
 <url>
 <loc>/page3/</loc>
+</url>
+<url>
+<loc>/page4/</loc>
 </url>
 <url>
 <loc>/node_modules/@tailwindcss/forms/</loc>
