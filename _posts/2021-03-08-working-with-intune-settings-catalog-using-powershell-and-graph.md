@@ -19,7 +19,8 @@ tags:
   - Intune
   - Powershell
 ---
-Microsoft has recently introduced even more ways to create device configuration profiles.. 
+
+Microsoft has recently introduced even more ways to create device configuration profiles..
 
 The new profile type, named **Settings Catalog**, allows us to explicitly define and configure a policy that has **only** the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the **templates** profile type.
 
