@@ -11,6 +11,7 @@ views:
 categories:
   - Intune
   - Powershell
+  - SharePoint
 tags:
   - Automation
   - Intune
@@ -26,7 +27,7 @@ This is something I've had in my drafts for quite a while, but it kept ending up
 As the solution I wrote for this is directly linked with Intune, we figured it'd be perfect for the channel. We decided to film this little video to show how my solution works better than the official one provided by Microsoft.
 
 <div class="video-container">
-    <iframe width="560" height="315" src="https://www.youtube.com/watch?v=Zoac9lbUuG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/Zoac9lbUuG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 To summarize everything in the video:
