@@ -3,10 +3,10 @@
   .markdown-body {
     font-family: Fira Code, monospace !important;
   }
-  ol {
+  .markdown-body ol {
     list-style: decimal !important;
   }
-  ul {
+  .markdown-body ul {
     list-style: circle-inside !important;
   }
   .markdown-body h2 {
@@ -44,12 +44,14 @@
     height: 0;
     overflow: hidden;
   }
-
   .video-container iframe, .video-container object, .video-container embed {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+  }
+  .related-footer ul {
+    list-style-type: none !important;
   }
 }
