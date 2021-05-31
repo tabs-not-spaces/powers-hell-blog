@@ -40,7 +40,7 @@ Once set up and given enough time to update, you should now see all of your devi
 
 Go and grab the serial numbers of the devices you wish to move to the exclusion group (you can grab this directly from AAD or from the Windows AutoPilot Devices section of Intune - here's mine as an example - note that there are no group tags assigned)
 
-<img loading="lazy" width="1024" height="418" src="/assets/images/2019/12/image-1024x418.png" alt="" class="wp-image-203" srcset="/assets/images/2019/12/image-1024x418.png 1024w, /assets/images/2019/12/image-300x123.png 300w, /assets/images/2019/12/image-768x314.png 768w, /assets/images/2019/12/image.png 1092w" sizes="(max-width: 1024px) 100vw, 1024px" />  
+[![Autopilot devices](/assets/images/2019/12/image.png)](/assets/images/2019/12/image.png "Autopilot devices")
 
 For this example, let's exclude the first device in the screenshot above.
 
@@ -50,7 +50,7 @@ Alright - we've got our auth token, put your serial number into a variable, and 
 
 If we've formed our request properly, if we look at the contents of $result, we should see details on the device in question.
 
-[![$result data](/assets/images/2019/12/image-1.png)](/assets/images/2019/12/image-1.png "$result data") 
+[![$result data](/assets/images/2019/12/image-1.png)](/assets/images/2019/12/image-1.png "$result data")
 
 Next, we are going to grab the id of the device from the graph call, build the group tag data and post it back to Graph..
 

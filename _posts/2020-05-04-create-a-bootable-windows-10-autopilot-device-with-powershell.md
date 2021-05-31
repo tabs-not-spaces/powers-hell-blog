@@ -27,9 +27,9 @@ I totally agree - the sales pitch we are all given is that your staff can go out
 
 What is never told to us is that before we do any of this, we need to:
 
-  * make sure a CLEAN copy of windows 10 is installed on the device - which it never is.
-  * Capture the hardware hash of the device and upload it to Intune.
-  * Finally, if the device is already past the OOBE, re-image the device and hand it over to the staff member..
+* make sure a CLEAN copy of windows 10 is installed on the device - which it never is.
+* Capture the hardware hash of the device and upload it to Intune.
+* Finally, if the device is already past the OOBE, re-image the device and hand it over to the staff member..
 
 Hardly the autonomous, streamlined sales pitch we've been sold - is it?
 
@@ -63,9 +63,9 @@ Hitting enter will kick off the device provisioning code..
 
 A few things to note on each parameter:
 
-  * **WinPEPath** (Required) - I've put a copy of WinPE up on my own storage account - feel free to use it, but if the cost of storage ends up too much, I will take this down. So grab a copy now and store it locally. Consider this fair warning.
-  * **WindowsIsoPath** (Not required) - as mentioned in the pre-requirements section, you need to source your own copy of Windows 10. This shouldn't be difficult. Try and get a copy of the "multi-edition" so you can build different variants if required. If you don't provide a path to a copy of Windows 10, the device will still be provisioned, but there will be nothing added to the solution except for WinPE.
-  * **GetAutopilotCfg** (Not required) - this is a simple switch to allow you to log in to an Azure tenant and capture the Autopilot configuration files. If you omit this, you will end up with a provisioning device that installs windows 10 and does nothing else.
+* **WinPEPath** (Required) - I've put a copy of WinPE up on my own storage account - feel free to use it, but if the cost of storage ends up too much, I will take this down. So grab a copy now and store it locally. Consider this fair warning.
+* **WindowsIsoPath** (Not required) - as mentioned in the pre-requirements section, you need to source your own copy of Windows 10. This shouldn't be difficult. Try and get a copy of the "multi-edition" so you can build different variants if required. If you don't provide a path to a copy of Windows 10, the device will still be provisioned, but there will be nothing added to the solution except for WinPE.
+* **GetAutopilotCfg** (Not required) - this is a simple switch to allow you to log in to an Azure tenant and capture the Autopilot configuration files. If you omit this, you will end up with a provisioning device that installs windows 10 and does nothing else.
 
 Once our USB has been created, all that is required to do is plug it into our target device and boot from it.
 
