@@ -101,7 +101,10 @@
 
 <p>The original script had a line that attempts to capture the current power policy GUID from an output string and then trimming to store the GUID as a variable.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<div class="language-bat highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="kd">Getting</span> <span class="kd">current</span> <span class="kd">scheme</span> <span class="kd">GUID</span>
+<span class="k">for</span> <span class="na">/f </span><span class="s2">"tokens=* USEBACKQ"</span> <span class="vm">%%a</span> <span class="k">in</span> <span class="o">(</span><span class="sb">`powercfg /getactivescheme`</span><span class="o">)</span> <span class="k">do</span> @set <span class="kd">cfg</span><span class="o">=</span><span class="vm">%%a</span>
+<span class="kd">set</span> <span class="kd">trimcfg</span><span class="o">=</span><span class="vm">%cfg</span>:<span class="o">~</span><span class="m">19</span><span class="o">,</span><span class="m">36</span><span class="err">%</span>
+</code></pre></div></div>
 
 <p>With PowerShell, we can do one better - let’s capture the GUID using a RegEx match statement!</p>
 
@@ -111,7 +114,11 @@
 
 <p>Fairly straight-forward stuff, because we know that GUIDs are always the same format, the RegEx is fairly simple to generate.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-PowerShell">$activeScheme = cmd /c "powercfg /getactivescheme"
+$regEx = '(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}'
+$asGuid = [regex]::Match($activeScheme,$regEx).Value
+$asGuid
+</code></pre>
 
 <p>Now if we run the command above, we should have a usable GUID…</p>
 
@@ -121,7 +128,26 @@
 
 <p>For this example, we just need to know the GUIDs for the “Power Button &amp; Lid Settings” &amp; the “Lid Switch Close Action”. Once we have those, we can form the correct command line argument and execute it via our script.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-Powershell"># grab powercfg guids necessary for lid switch action
+# https://docs.microsoft.com/en-us/windows-hardware/customize/power-settings/power-button-and-lid-settings-lid-switch-close-action
+
+#capture the active scheme GUID
+$activeScheme = cmd /c "powercfg /getactivescheme"
+$regEx = '(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}'
+$asGuid = [regex]::Match($activeScheme,$regEx).Value
+
+#relative GUIDs for Lid Close settings
+$pwrGuid = '4f971e89-eebd-4455-a8de-9e59040e7347'
+$lidClosedGuid = '5ca83367-6e45-459f-a27b-476b1d01c936'
+
+# DC Value // On Battery // 1 = sleep
+cmd /c "powercfg /setdcvalueindex $asGuid $pwrGuid $lidClosedGuid 1"
+#AC Value // While plugged in // 0 = do nothing
+cmd /c "powercfg /setacvalueindex $asGuid $pwrGuid $lidClosedGuid 0"
+
+#apply settings
+cmd /c "powercfg /s $asGuid"
+</code></pre>
 
 <p>This is obviously just the start of what you can do with PowerCFG, but hopefully, it shows you how you can use PowerShell &amp; Intune to answer “Yes!” to any question thrown at you.</p>
 

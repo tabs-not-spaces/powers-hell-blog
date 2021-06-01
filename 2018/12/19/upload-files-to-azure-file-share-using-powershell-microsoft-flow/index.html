@@ -8,8 +8,8 @@
 <meta property="og:title" content="Upload files to Azure File Share using PowerShell &amp; Microsoft Flow" />
 <meta name="author" content="Ben" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output of everything that happens during the installation process and as such, all of the applications I package end up storing log files locally and I passionately and repeatedly urge my support staff to view these log files to identify issues during deployment. However, not everyone has the “read the log files then troubleshoot” mentality, so I find myself having the same conversation over and over… “The application failed to install. What’s wrong?” “I’m not sure, what do the log files say?” “I haven’t checked them yet…” “…”" />
-<meta property="og:description" content="I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output of everything that happens during the installation process and as such, all of the applications I package end up storing log files locally and I passionately and repeatedly urge my support staff to view these log files to identify issues during deployment. However, not everyone has the “read the log files then troubleshoot” mentality, so I find myself having the same conversation over and over… “The application failed to install. What’s wrong?” “I’m not sure, what do the log files say?” “I haven’t checked them yet…” “…”" />
+<meta name="description" content="I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output" />
+<meta property="og:description" content="I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output" />
 <meta property="og:site_name" content="Powers Hell" />
 <meta property="og:image" content="/assets/images/2018/12/kltIrPS.png" />
 <meta property="og:type" content="article" />
@@ -18,7 +18,7 @@
 <meta property="twitter:image" content="/assets/images/2018/12/kltIrPS.png" />
 <meta property="twitter:title" content="Upload files to Azure File Share using PowerShell &amp; Microsoft Flow" />
 <script type="application/ld+json">
-{"author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2018/12/kltIrPS.png","description":"I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output of everything that happens during the installation process and as such, all of the applications I package end up storing log files locally and I passionately and repeatedly urge my support staff to view these log files to identify issues during deployment. However, not everyone has the “read the log files then troubleshoot” mentality, so I find myself having the same conversation over and over… “The application failed to install. What’s wrong?” “I’m not sure, what do the log files say?” “I haven’t checked them yet…” “…”","headline":"Upload files to Azure File Share using PowerShell &amp; Microsoft Flow","dateModified":"2018-12-18T15:09:42+00:00","datePublished":"2018-12-18T15:09:42+00:00","url":"/2018/12/19/upload-files-to-azure-file-share-using-powershell-microsoft-flow/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/12/19/upload-files-to-azure-file-share-using-powershell-microsoft-flow/"},"@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2018/12/kltIrPS.png","description":"I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output","headline":"Upload files to Azure File Share using PowerShell &amp; Microsoft Flow","dateModified":"2018-12-18T15:09:42+00:00","datePublished":"2018-12-18T15:09:42+00:00","url":"/2018/12/19/upload-files-to-azure-file-share-using-powershell-microsoft-flow/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/12/19/upload-files-to-azure-file-share-using-powershell-microsoft-flow/"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -127,7 +127,14 @@ Select the Input field and then select Expression. In the Expression field, we a
 <p>Create a new step and search for and add <strong>Parse JSON</strong>.
 Next, we need to define the JSON data it is going to receive - the easiest way to do that is to create sample JSON payload in PowerShell and paste it in as shown below.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-PowerShell">$payload = [PSCustomObject]@{
+    hostName    = "placeholder"
+    clientName  = "placeholder"
+    appName     = "placeholder"
+    logFileName = "placeholder"
+}
+$payload | ConvertTo-Json | clip
+</code></pre>
 
 <p>The code shown above will copy the JSON object into your clipboard, so back on your Flow, select <strong>Use sample payload</strong> and paste in the JSON object to create the schema required.</p>
 
@@ -162,6 +169,12 @@ Give the connection a name, paste in the storage account name and access key, th
 
 <p>Alright - the script has completed successfully (or failed miserably..) and we now want to send the log file up to our storage account. The first thing we need to do is prepare the log file.</p>
 
+<pre><code class="language-PowerShell">if (Test-Path $inputObject) {
+  $fileBytes = [System.IO.File]::ReadAllBytes($inputObject)
+  $fileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($fileBytes)
+}
+</code></pre>
+
 <p>Simple enough, stream the file into a variable and encode using some dotNet libraries.</p>
 
 <p>Now, let’s build out the request Body - this took me way too long but only because I had no idea how to handle <strong>Multipart / Form-Data</strong> requests. Let my pain help you!</p>
@@ -184,7 +197,19 @@ Give the connection a name, paste in the storage account name and access key, th
 
 <p>Here’s my working example - I’m forming two parts - the binary log file &amp; a JSON object containing the metadata I want to send through for naming purposes.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-PowerShell">$lf = "`r`n"
+$bodyLines = (
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"$(split-path $inputObject -leaf)`"; filename=`"$(split-path $inputObject -leaf)`"",
+    "Content-Type: application/octet-stream$lf",
+    $fileEnc,
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"MetaData`"",
+    "Content-Type: application/json$lf",
+    $jsonMetaData,
+    "--$boundary--$lf"
+) -join $lf
+</code></pre>
 
 <p>A few key things here:</p>
 
@@ -193,11 +218,21 @@ In the <strong>Content-Disposition</strong> for the JSON object, I gave it the n
 
 <p>Finally, we are just going to package everything up and send it off to the Flow web service with an Invoke-WebRequest.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-PowerShell">$req = Invoke-WebRequest -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+return $req
+</code></pre>
 
 <p>So now we have the basics of our function – let’s set up the metadata and point a log file at the function and see what happens.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-PowerShell">$logFile = "C:\bin\TeamsClient.log"
+$metaData = [PSCustomObject]@{
+    hostName    = $ENV:ComputerName
+    clientName  = "Contoso"
+    appName     = "Teams"
+    logFileName = "$ENV:ComputerName`_$(Split-Path -Path $logFile -Leaf)"
+}
+Send-IntuneLogsToFlow -inputObject $logFile -metaData $metaData
+</code></pre>
 
 <p>Checking the Flow app to confirm everything passed…</p>
 
@@ -212,7 +247,42 @@ The best part of this solution is I can use the same Flow app for any client I w
 
 <p>Finally, I’ve put the PowerShell function up on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Send-IntuneLogsToFlow">GitHub</a> as well as below for review.</p>
 
-<p><code class="language-plaintext highlighter-rouge">CODE GOES HERE</code></p>
+<pre><code class="language-PowerShell">function Send-IntuneLogsToFlow {
+    param (
+        $inputObject,
+        $metaData
+    )
+    $Uri = "https://azure.flow.url.com";
+    try {
+        $jsonMetaData = $metaData | ConvertTo-Json -Compress
+        if (Test-Path $inputObject) {
+            $fileBytes = [System.IO.File]::ReadAllBytes("$inputObject")
+            $fileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($fileBytes)
+        }
+        else {
+            throw "Error accessing input object: $inputObject"
+        }
+        $boundary = [System.Guid]::NewGuid().ToString()
+        $lf = "`r`n"
+        $bodyLines = (
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"$(split-path $inputObject -leaf)`"; filename=`"$(split-path $inputObject -leaf)`"",
+            "Content-Type: application/octet-stream$lf",
+            $fileEnc,
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"MetaData`"",
+            "Content-Type: application/json$lf",
+            $jsonMetaData,
+            "--$boundary--$lf"
+        ) -join $lf
+        $req = Invoke-WebRequest -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+        return $req
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+</code></pre>
 
       </article>
     </div>
