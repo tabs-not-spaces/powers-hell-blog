@@ -10,24 +10,19 @@
         "/assets/js/prism.js"
       ]
     },
-    "js/termynal": {
-      "js": [
-        "/assets/js/termynal.js"
-      ]
-    },
     "js/lightbox": {
       "js": [
         "/assets/js/lightbox.js"
       ]
     },
+    "js/termynal": {
+      "js": [
+        "/assets/js/termynal.js"
+      ]
+    },
     "css/app": {
       "css": [
         "/assets/css/app.css"
-      ]
-    },
-    "css/termynal": {
-      "css": [
-        "/assets/css/termynal.css"
       ]
     },
     "css/lightbox": {

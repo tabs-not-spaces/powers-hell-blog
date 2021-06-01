@@ -1,10 +1,9 @@
 {
   "assets/js/app.js": "/assets/js/app.js",
   "assets/js/prism.js": "/assets/js/prism.js",
-  "assets/js/termynal.js": "/assets/js/termynal.js",
   "assets/js/lightbox.js": "/assets/js/lightbox.js",
+  "assets/js/termynal.js": "/assets/js/termynal.js",
   "assets/css/app.css": "/assets/css/app.css",
-  "assets/css/termynal.css": "/assets/css/termynal.css",
   "assets/css/lightbox.css": "/assets/css/lightbox.css",
   "assets/css/prism-dracula.css": "/assets/css/prism-dracula.css"
 }
