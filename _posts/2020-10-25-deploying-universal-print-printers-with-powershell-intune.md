@@ -2,6 +2,7 @@
 id: 450
 title: 'Deploying Universal Print Printers With PowerShell & Intune'
 date: 2020-10-25T15:21:15+10:00
+excerpt: Over the last few weeks I've been playing with **Universal Print** - the cloud print solution developed by Microsoft and I honestly can't praise it enough.
 author: Ben
 layout: post
 guid: http://powers-hell.com/?p=450
@@ -143,7 +144,7 @@ finally {
     }
 }</code></pre>
 
-The remediation script is also quite simple, the **$availablePrinters** array contains the details of each Universal Print printer that we need to map the printer to the device. 
+The remediation script is also quite simple, the **$availablePrinters** array contains the details of each Universal Print printer that we need to map the printer to the device.
 
 Head to **Universal Print > Printer Shares** (In the Azure portal), select each printer share and make note of the **Share ID** and the **Name** of the share. For each printer, you will create a **psCustomObject** containing the **ShareID, SharedName** and whether or not you want this printer to be flagged as a _default_ printer or not.<figure class="wp-block-image size-full">
 

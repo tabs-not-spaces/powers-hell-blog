@@ -2,6 +2,13 @@
 id: 432
 title: 'Preparing custom image templates with Azure Image Builder & PowerShell'
 date: 2020-09-20T20:44:14+10:00
+excerpt: |
+AIB is Microsoft's solution to configure and customize virtual machine images. The concept of it is pretty great..
+
+* pick a reference image from the public market place
+* apply some customization built around HashiCorp's Packer
+* hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.
+
 author: Ben
 layout: post
 guid: http://powers-hell.com/?p=432
@@ -188,7 +195,7 @@ This is going to take a little while - around 10 minutes. Keep an eye on the sta
 
 ## Build the template
 
-Everything is ready - now we just need to kick off the build - again, this is going to take a while. From my experience, I've found it takes anywhere from 15 minutes to an Hour - it entirely depends on what customization options you are adding. 
+Everything is ready - now we just need to kick off the build - again, this is going to take a while. From my experience, I've found it takes anywhere from 15 minutes to an Hour - it entirely depends on what customization options you are adding.
 
 <pre class="wp-block-code"><code lang="powershell" class="language-powershell line-numbers"># Start the template build task
 # check back on the $job variable for the build status
