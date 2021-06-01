@@ -2,9 +2,11 @@
 */
 @import "../../node_modules/@dracula/dracula-ui/styles/dracula-ui.css";
 @import "../../node_modules/github-markdown-dracula-css/github-markdown-dracula.css";
+@import "../../node_modules/@duckdoc/termynal/termynal.css";
 @import "./tailwind.base.css";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "./body.css";
 @import "./paginate.css";
 @import "./link-hover.css";
+@import "./termnyal-custom.css";
