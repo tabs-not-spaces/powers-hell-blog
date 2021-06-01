@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Getting your AAD Tenant Id without authentication! | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Getting your AAD Tenant Id without authentication!" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’ve been doing some work with silent configuration of OneDrive &amp; I needed my tenant Id without having to log in to the tenant - can PowerShell help??" />
+<meta property="og:description" content="I’ve been doing some work with silent configuration of OneDrive &amp; I needed my tenant Id without having to log in to the tenant - can PowerShell help??" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="/assets/images/2018/09/rAjvdrX1.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-09-03T20:35:23+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/assets/images/2018/09/rAjvdrX1.png" />
+<meta property="twitter:title" content="Getting your AAD Tenant Id without authentication!" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"image":"/assets/images/2018/09/rAjvdrX1.png","description":"I’ve been doing some work with silent configuration of OneDrive &amp; I needed my tenant Id without having to log in to the tenant - can PowerShell help??","headline":"Getting your AAD Tenant Id without authentication!","dateModified":"2018-09-03T20:35:23+00:00","datePublished":"2018-09-03T20:35:23+00:00","url":"/2018/09/04/getting-your-aad-tenant-id-without-authentication/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/09/04/getting-your-aad-tenant-id-without-authentication/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Getting your AAD Tenant Id without authentication!</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 3 Sep
+        </p>
+        <p>Another quick post - I’ve been doing some work with silent configuration of OneDrive and the new <strong><a href="https://techcommunity.microsoft.com/t5/Microsoft-OneDrive-Blog/Migrate-Your-Files-to-OneDrive-Easily-with-Known-Folder-Move/ba-p/207076">Known Folder Migration</a></strong> GPO solution all being deployed via Intune for multiple clients.</p>
+
+<!--more-->
+
+<p>One thing that is required for the KFM solution is the Azure Tenant Id. Being the nerd I am, I wanted to see if I could get the Id without having to log in to the tenant.</p>
+
+<p>After a quick search, I found this <a href="https://blog.tyang.org/2018/01/07/getting-azure-ad-tenant-common-configuration-such-as-tenant-id-using-powershell/">great article</a> written by <a href="https://twitter.com/MrTaoYang">Tao Yang</a> which talks about the open REST endpoints that return valuable information on your AAD tenant!</p>
+
+<p>Since Tao posted his findings, Microsoft has <a href="https://cloudblogs.microsoft.com/enterprisemobility/2015/03/06/simplifying-our-azure-ad-authentication-flows/">updated the endpoints</a> to improve and simplify the authentication flow.</p>
+
+<p>So with the findings of Tao &amp; the updated endpoint info, below is a simple function to retrieve the Azure AD Tenant Id via the client domain!</p>
+
+<pre><code class="language-PowerShell">function Get-TenantIdFromDomain {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$FQDN
+    )
+    try {
+        $uri = "https://login.microsoftonline.com/$($FQDN)/.well-known/openid-configuration"
+        $rest = Invoke-RestMethod -Method Get -UseBasicParsing -Uri $uri
+        if ($rest.authorization_endpoint) {
+            $result = $(($rest.authorization_endpoint | Select-String '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}').Matches.Value)
+            if ([guid]::Parse($result)) {
+                return $result.ToString()
+            }
+            else {
+                throw "Tenant ID not found."
+            }
+        }
+        else {
+            throw "Tenant ID not found."
+        }
+    }
+    catch {
+        Write-Error $_.Exception.Message
+    }
+}
+</code></pre>
+
+<p>Now, if I run the function against my own Azure Tenant..</p>
+
+<pre class="wp-block-code"><code>Get-TenantIdFromDomain -FQDN "powers-hell.com"</code></pre>
+
+<p><a href="/assets/images/2018/09/rAjvdrX1.png" title="Successfully captured GUID"><img src="/assets/images/2018/09/rAjvdrX1.png" alt="Successfully captured GUID" /></a></p>
+
+<p>There we have it! A very simple way to <strong>programmatically</strong> retrieve the Id of your AAD Tenant. Now that I have this information I can implement it in my OneDrive KFM solution - which of course will be published here once it’s done!</p>
+
+<p>As always, code from today’s post will be available on my <a href="https://github.com/tabs-not-spaces">GitHub</a> &amp; I am always keen to discuss anything PowerShell related on <a href="https://twitter.com/powers_hell"><g class="gr_ gr\_10 gr-alert sel gr\_spell gr\_replaced gr\_inline\_cards gr\_disable\_anim\_appear ContextualSpelling ins-del multiReplace" id="10" data-gr-id="10">Twitter</g></a>.</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul class="related-footer">
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/">&raquo; Authenticate to Microsoft Graph in PowerShell in two lines of code!</a></li>
+        
+        <li><a href="/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/">&raquo; Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell</a></li>
+        
+        <li><a href="/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/">&raquo; How to force Intune configuration scripts to re-run</a></li>
+        
+        <li><a href="/2020/04/21/creating-endpoint-security-policies-with-powershell/">&raquo; Creating Endpoint Security Policies with PowerShell</a></li>
+        
+    </ul>
+</div>
+
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

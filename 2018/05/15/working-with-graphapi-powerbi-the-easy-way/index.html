@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Working with GraphAPI &amp; PowerBI the easy way! | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Working with GraphAPI &amp; PowerBI the easy way!" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’m sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes." />
+<meta property="og:description" content="I’m sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-14T20:03:30+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Working with GraphAPI &amp; PowerBI the easy way!" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"I’m sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes.","headline":"Working with GraphAPI &amp; PowerBI the easy way!","dateModified":"2018-05-14T20:03:30+00:00","datePublished":"2018-05-14T20:03:30+00:00","url":"/2018/05/15/working-with-graphapi-powerbi-the-easy-way/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/05/15/working-with-graphapi-powerbi-the-easy-way/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Working with GraphAPI & PowerBI the easy way!</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 14 May
+        </p>
+        <p>I’m sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes. I know myself that working with fairly flat data sources, you can very easily create some incredible reports that will make you look like a data wizard to even the most jaded manager out there, however once you want to start working with complex data sets or start veering into the world of custom visualisations, pain is sure to be just around the corner.</p>
+
+<p>This is where I found myself just last year - I was tasked with capturing some data from Intune, AAD &amp; SCCM to present a reporting solution to a prospective client. “Sure, no problem at all” I cluelessly said, as I rapidly pulled in data from SCCM like it was no problem…
+Unfortunately, when it came time to access data from Azure via the fantastic GraphAPI, I ran into some roadblocks. Lets drill into what those roadblocks were.</p>
+
+<p>Firstly, let’s try and gather some very basic info - User details &amp; their managers. Pretty simple process.
+Open up PowerBI and get some data from a web source</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/xfjBQsa.png?w=1170&#038;ssl=1" title="web data"><img src="https://i1.wp.com/i.imgur.com/xfjBQsa.png?w=1170&#038;ssl=1" alt="web data" /></a></p>
+
+<p>Type in your <em>perfectly</em> formed Graph query - in this case, it would be “https://graph.microsoft.com/beta/users?$expand=manager” and hit OK.</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/NFYQx1A.png?w=1170&#038;ssl=1" title="Graph URL"><img src="https://i1.wp.com/i.imgur.com/NFYQx1A.png?w=1170&#038;ssl=1" alt="Graph URL" /></a></p>
+
+<p>Oh, we were never given an option to authenticate… so let’s go and do that - go to organizational account and sign in with your details that <em>totally</em> have the right access for what you want (we are all IT professionals after all, are we not?).</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/q3FcmtA.png?w=1170&#038;ssl=1" title="Auth"><img src="https://i2.wp.com/i.imgur.com/q3FcmtA.png?w=1170&#038;ssl=1" alt="Auth" /></a></p>
+
+<p>After hitting connect, finally, we are greeted with a very underwhelming result - a single list row.</p>
+
+<p><a href="https://i.imgur.com/w3teEJ3.png?w=1170&#038;ssl=1" title="lame list"><img src="https://i.imgur.com/w3teEJ3.png?w=1170&#038;ssl=1" alt="lame list" /></a></p>
+
+<p>No worries… just click on the list value and it’ll expand into the results. Very arduous and there are many more steps (that can all be automated and if there is any demand, I’ll write about them) but once you have formatted the results, you’ll get this data.</p>
+
+<p><a href="https://i0.wp.com/i.imgur.com/iIuyrM1.png?w=1170&#038;ssl=1" title="underwhelming results abound"><img src="https://i0.wp.com/i.imgur.com/iIuyrM1.png?w=1170&#038;ssl=1" alt="underwhelming results abound" /></a></p>
+
+<p>*very exciting stuff*</p>
+
+<p>So cool, that’s simple, we’ve got our generic data for each user in our tenant, lets try and get some data on the devices we manage - it should be the same process, so lets do that, follow the exact steps above but this time, our graph query is going to look like this.</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/TlXjZlK.png?w=1170&#038;ssl=1" title="device management"><img src="https://i1.wp.com/i.imgur.com/TlXjZlK.png?w=1170&#038;ssl=1" alt="device management" /></a></p>
+
+<p>Again, yeah, we aren’t authenticated, so go through that process - again, the account we are using definitely has access - we are all professionals here… so alright, authenticate and we should get our data like last time.</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/a7mgxQD.png?w=1170&#038;ssl=1" title="sad trombone"><img src="https://i2.wp.com/i.imgur.com/a7mgxQD.png?w=1170&#038;ssl=1" alt="sad trombone" /></a></p>
+
+<p>“cool”. Now at this point, you might be going back and thinking you don’t have access to that level of data - hey, even as the prestigious IT professionals that we all definitely are, we all make mistakes.</p>
+
+<p>Here’s the kicker - that’s not the issue. The problem seems to stem from the simple fact that whatever application Id PowerBI is using to authenticate against, it just doesn’t have the access required to traverse most of your tenant data.</p>
+
+<p>The solution seemed so obvious - if PowerBI doesn’t give me the control to authenticate exactly how I want, then why not make my own middleware data gateway?!</p>
+
+<p>All that is required is a function to non-interactively authenticate into Graph, some fairly basic code to form the GraphAPI URL for each request, and a place to store the code that can expose the code via an HTTP endpoint. (I promise it really is easy).</p>
+
+<p>The simplest way to do this is to create a function app inside your Azure tenant and throw the code into it. I will not go into detail on how to create a function app in this post as I expect it is relatively common knowledge at this point, but if anyone has any questions around it, please feel free to contact me directly.</p>
+
+<p>Alright - we all have our function app created? we’ve given it some cool name? I’ve already taken GraphConnector (which I’m very happy about). No, let’s add a function to our app.</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/F6hPIjo.png?w=1170&#038;ssl=1" title="new function"><img src="https://i2.wp.com/i.imgur.com/F6hPIjo.png?w=1170&#038;ssl=1" alt="new function" /></a></p>
+
+<p>Create a custom function, enable <strong>experimental language support</strong>, filter the language to <strong>PowerShell</strong> and select <strong>HTTP trigger</strong></p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/LOcrgXK.png?w=1170&#038;ssl=1" title="HTTP Trigger"><img src="https://i1.wp.com/i.imgur.com/LOcrgXK.png?w=1170&#038;ssl=1" alt="HTTP Trigger" /></a></p>
+
+<p>Give the function a name and create it. You will now be greeted with a <strong>hello world</strong> sample function. Here’s where we will place our connector code. For now, delete everything in the code window and save the file.</p>
+
+<p>The most interesting parts of the code we will use are how we extract data from JSON objects as well as how to capture request data that is sent to the code. We will only be using this connector with the Get method, thus all incoming data is given its own variable name. Below we see that we want to be able to receive tenant details, a query string, and a version string (V1.0 or Beta)</p>
+
+<pre><code class="language-PowerShell">if ($req_query_tenant) {
+    $tenant = $req_query_tenant
+}
+if ($req_query_query) {
+    $query = $req_query_query
+}
+if ($req_query_ver) {
+    $ver = $req_query_ver
+}
+else {
+    $ver = 'v1.0'
+}
+if ($req_query_space) {
+    $space = $req_query_space
+}
+else {
+    $space = "AAD"
+}
+</code></pre>
+
+<p>As this is a completely non-interactive solution, we need to store relevant credentials somewhere, there are *many* ways to do this securely in Azure, one being using a key-vault, another being to store the credentials as strings in the function application settings, but the way I’ve grown accustomed to is to create an application config file and store it in the directory with the rest of the function code - yes, before you mention anything, there is obviously a security risk storing credentials unencrypted anywhere and I strongly recommend that anyone looking at implementing this solution <strong>be aware of these implications and proceed with care.</strong></p>
+
+<p><strong>With that warning out of the way</strong>, let’s add some other required files.</p>
+
+<p>On the right, click on <strong>View Files</strong> to expand the file list out, select <strong>upload</strong> and import the Azure AD *.dlls used by the AzureAD module (these will be provided in the final GitHub Repo). Your folder structure should now look like this.</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/My52dO0.png?w=1170&#038;ssl=1" title="file structure"><img src="https://i2.wp.com/i.imgur.com/My52dO0.png?w=1170&#038;ssl=1" alt="file structure" /></a></p>
+
+<p>Next, select <strong>add</strong> and give the new file the name <strong>appConfig.json</strong>. Below is the json structure to follow for this solution. You can have as many tenant credentials as you want.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"Accounts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"strUn"</span><span class="p">:</span><span class="w">    </span><span class="s2">"testaccount@contoso.com.au"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"strTd"</span><span class="p">:</span><span class="w">    </span><span class="s2">"contoso.com.au"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"strPw"</span><span class="p">:</span><span class="w">    </span><span class="s2">"********"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"strUn"</span><span class="p">:</span><span class="w">    </span><span class="s2">"serviceAccount@companyx.it"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"strTd"</span><span class="p">:</span><span class="w">    </span><span class="s2">"companyx.it"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"strPw"</span><span class="p">:</span><span class="w">    </span><span class="s2">"********"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Now save the contents of your appConfig.json file and go back to the main function code - <strong>run.ps1</strong>. The next step is to import the contents of the <strong>appConfig.json</strong> so that we can use the credentials to authenticate into Graph.</p>
+
+<pre><code class="language-PowerShell">$fp = $EXECUTION_CONTEXT_FUNCTIONDIRECTORY
+$config = Get-Content "$fp\appConfig.json" -raw | ConvertFrom-Json
+$GLOBAL:adal = "$fp/Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+$GLOBAL:adalforms = "$fp/Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
+</code></pre>
+
+<p>As you can see above, the variable $EXECUTION_CONTEXT_FUNCTIONDIRECTORY is the default variable that gives us the same end result as $PSScriptRoot would do in a normal PowerShell environment.
+We are also defining the location of the AzureAD *.dlls for the functions to use each time they are called.</p>
+
+<p>We will now extract the credentials based on the tenant details sent to the function by the requestor.</p>
+
+<pre><code class="language-PowerShell">$account = $config.accounts | Where-Object {$_.strTd -eq "$tenant"}
+</code></pre>
+
+<p>Now that we have our credentials in the session, we can throw them at our functions along with the other relevant variables. Below is the function to create an authentication header.</p>
+
+<pre><code class="language-PowerShell">function Get-AuthHeader {
+    param (
+        [Parameter(Mandatory = $true)]
+        $un,
+        [Parameter(Mandatory = $true)]
+        $pw,
+        [parameter(mandatory = $true)] [ValidateSet('Intune', 'AAD')]
+        $space
+    )
+
+    [System.Reflection.Assembly]::LoadFrom($adal) | Out-Null
+
+    [System.Reflection.Assembly]::LoadFrom($adalforms) | Out-Null
+
+    $userUpn = New-Object "System.Net.Mail.MailAddress" -ArgumentList $un
+    $tenantDomain = $userUpn.Host
+    switch ($space) {
+        "Intune" {
+            $cId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
+            break;
+        }
+        "AAD" {
+            $cId = "1950a258-227b-4e31-a9cf-717495945fc2"
+            break;
+        }
+    }
+
+    $resourceAppIdURI = "https://graph.microsoft.com"
+    $authString = "https://login.microsoftonline.com/$tenantDomain"
+
+    $pw = $pw | ConvertTo-SecureString -AsPlainText -Force
+    $cred = New-Object Microsoft.IdentityModel.Clients.ActiveDirectory.UserPasswordCredential -ArgumentList $userUpn, $pw
+    $authContext = new-object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authString
+    try {
+        $authResult = [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions]::AcquireTokenAsync($authContext, $resourceAppIdURI, $cId, $cred).Result
+        if ($authResult.AccessToken) {
+
+            # Creating header for Authorization token
+
+            $authHeader = @{
+                'Content-Type'  = 'application/json'
+                'Authorization' = "Bearer " + $authResult.AccessToken
+                'ExpiresOn'     = $authResult.ExpiresOn
+            }
+
+            return $authHeader
+        }
+        else {
+            throw;
+        }
+    }
+    Catch {
+        return $false
+    }
+}
+</code></pre>
+
+<p>The only thing I will mention about the above code is that I am specifying what “space” I want to authenticate with - for each token request you need to authenticate against an appropriate <strong>Application Id</strong>. This can be a custom application that you have created in your Azure tenant that has all access you could ever need, or in this example, multiple generic Application Ids - So if I want to access Intune, I switch programmatically to use the generic Intune Application Id, and similarly, if I want to query AAD, I use the AAD Application Id.</p>
+
+<p>Next is the function to form the correct GraphAPI URL, attach the authentication token to the header of the request and send us the results back as an object to work with.</p>
+
+<pre><code class="language-PowerShell">Function Get-JsonFromGraph {
+    [cmdletbinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        $strUn,
+        [Parameter(Mandatory = $true)]
+        $strPw,
+        [Parameter(Mandatory = $true)]
+        $strQuery,
+        [parameter(mandatory = $true)] [ValidateSet('v1.0', 'beta')]
+        $ver,
+        [Parameter(Mandatory = $false)]
+        $space
+
+    )
+    try {
+        switch ($space){
+            "Intune" {
+                $header = Get-AuthHeader -un $strUn -pw $strPw -space Intune
+                break;
+            }
+            "AAD" {
+                $header = Get-AuthHeader -un $strUn -pw $strPw -space AAD
+                break;
+            }
+        }
+
+        if ($header) {
+            #create the URL
+            $url = "https://graph.microsoft.com/$ver/$strQuery"
+
+            #Invoke the Restful call and display content.
+            Write-Verbose $url
+            $query = Invoke-RestMethod -Method Get -Headers $header -Uri $url -ErrorAction STOP
+            if ($query) {
+                if ($query.value) {
+                    #multiple results returned. handle it
+                    $query = Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$ver/$strQuery" -Headers $header
+                    $result = @()
+                    while ($query.'@odata.nextLink') {
+                        Write-Verbose "$($query.value.Count) objects returned from Graph"
+                        $result += $query.value
+                        Write-Verbose "$($result.count) objects in result array"
+                        $query = Invoke-RestMethod -Method Get -Uri $query.'@odata.nextLink' -Headers $header
+                    }
+                    $result += $query.value
+                    Write-Verbose "$($query.value.Count) objects returned from Graph"
+                    Write-Verbose "$($result.count) objects in result array"
+                    return $result
+                }
+                else {
+                    #single result returned. handle it.
+                    $query = Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$ver/$strQuery" -Headers $header
+                    return $query
+                }
+            }
+            else {
+                $error = @{
+                    errNumber = 404
+                    errMsg    = "No results found. Either there literally is nothing there or your query was malformed."
+                }
+            }
+            throw;
+        }
+        else {
+            $error = @{
+                errNumber = 401
+                errMsg    = "Authentication Failed during attempt to create Auth header."
+            }
+            throw;
+        }
+
+    }
+    catch {
+        return $error
+    }
+}
+
+$objRest = Get-JsonFromGraph -strUn $account.strUn -strPw $account.strPw -strQuery $query -ver $ver -space $space
+</code></pre>
+
+<p>Again, nothing revolutionary here - the function just creates the GraphAPI URL and stores the results for us like with the AuthHeader function, there are hundreds of ways to do this and you should simply study my example to understand the basics.</p>
+
+<p>Finally, we will send the results back to the requestor.</p>
+
+<pre><code class="language-PowerShell">$objRest | ConvertTo-Json | out-file -encoding ascii -FilePath $res
+</code></pre>
+
+<p>Here we are simply converting the GraphRequest object into a properly formed JSON object, storing it in a temporary file that is then sent to the requestor - the default variable for the temp file is $res.</p>
+
+<p>Congratulations for sticking with me so far - we are on the home stretch, I promise.</p>
+
+<p>Once you’ve saved all that code (you have saved it haven’t you?), capture the function URL, by clicking <strong>Get Function URL</strong> above the code editing window - save this to your clipboard and let’s move back to PowerBI.
+Create a new web request as we did initially. This time instead of accessing the GraphAPI directly, we will go through our newly created data gateway - paste the Function URL from the previous step and now we will build out the URL to include the content to send to the function.</p>
+
+<p>The basic Get Method URL for a GraphAPI call is quite simple - after the URL, you append each variable and value along with an ampersand. So to form the URL to get the data we want, it would look like this (I’ve broken each URL part into its own row to make it easier to read).</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/dw067Lt.png?w=1170&#038;ssl=1" title="url forming is easy"><img src="https://i1.wp.com/i.imgur.com/dw067Lt.png?w=1170&#038;ssl=1" alt="url forming is easy" /></a></p>
+
+<p>Once you’ve formed your URL, hit OK and if all goes to plan - you should have a beautiful list of records waiting for you to convert to a table!</p>
+
+<p><a href="https://i0.wp.com/i.imgur.com/M2Y9yaM.png?w=1170&#038;ssl=1" title="final results"><img src="https://i0.wp.com/i.imgur.com/M2Y9yaM.png?w=1170&#038;ssl=1" alt="final results" /></a></p>
+
+<p>—</p>
+
+<p>As always, all of today’s code and files will be available on my GitHub (<a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Invoke-GraphConnector" rel="noopener noreferrer" target="_blank">right here</a>) for your review and use.</p>
+
+<p>Hopefully, this has been helpful to you and always, if you have any improvements/complaints or just wish to discuss the solution provided above, leave a comment below or reach me on twitter <a href="https://twitter.com/powers_hell" rel="noopener noreferrer" target="_blank">@powers_hell</a></p>
+
+<p>Enjoy,
+Ben</p>
+
+<p>_P.S.
+I am planning a series of posts that all revolve around what you can do once you start using Azure Functions to work as data-gateways - stay tuned for my next post which will focus on leveraging Azure Functions to monitor Intune for unapproved modifications!</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul class="related-footer">
+        
+        <li><a href="/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/">&raquo; Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell</a></li>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2020/10/25/deploying-universal-print-printers-with-powershell-intune/">&raquo; Deploying Universal Print Printers With PowerShell & Intune</a></li>
+        
+        <li><a href="/2020/06/09/installing-fonts-with-powershell-intune/">&raquo; Installing fonts with PowerShell & Intune</a></li>
+        
+    </ul>
+</div>
+
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Authenticate to Microsoft Graph in PowerShell in two lines of code! | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Authenticate to Microsoft Graph in PowerShell in two lines of code!" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="TWO LINES???!!! you bet!! One of my biggest gripes over the last few years with IT blogs and general talk of working with Azure &amp; PowerShell is how much time is wasted on talking about how to authenticate into Azure\Graph\AAD." />
+<meta property="og:description" content="TWO LINES???!!! you bet!! One of my biggest gripes over the last few years with IT blogs and general talk of working with Azure &amp; PowerShell is how much time is wasted on talking about how to authenticate into Azure\Graph\AAD." />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-16T21:04:29+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Authenticate to Microsoft Graph in PowerShell in two lines of code!" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"TWO LINES???!!! you bet!! One of my biggest gripes over the last few years with IT blogs and general talk of working with Azure &amp; PowerShell is how much time is wasted on talking about how to authenticate into Azure\\Graph\\AAD.","headline":"Authenticate to Microsoft Graph in PowerShell in two lines of code!","dateModified":"2018-08-16T21:04:29+00:00","datePublished":"2018-08-16T21:04:29+00:00","url":"/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">Authenticate to Microsoft Graph in PowerShell in two lines of code!</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 16 Aug
+        </p>
+        <p>TWO LINES???!!! you bet!!</p>
+
+<p>One of my biggest gripes over the last few years with IT blogs and general talk of working with Azure &amp; PowerShell is how much time is wasted on talking about how to authenticate into Azure\Graph\AAD.</p>
+
+<!--more-->
+
+<p>I’d suggest it is one of the harder hurdles to getting into the modern DevOps way of working. OAuth &amp; OAuth 2 can be a very daunting thing and is not what most people want to learn just to get some company data out of Azure AD!</p>
+
+<p>So today while quickly scaffolding out an Azure Function to handle some end-user calls into Graph, I realized there just *has* to be a better way to get authenticated than how I’ve been doing it in the past. thankfully, there is.</p>
+
+<pre><code class="language-PowerShell">$body = "resource=*ENDPOINT*&amp;client_id=*APPLICATIONID*&amp;grant_type=password&amp;username=*USERNAME*&amp;scope=openid&amp;password=*PASSWORD*"
+$auth = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/Common/oauth2/token" -Body $body
+</code></pre>
+
+<p>All you need to do is replace a few of those placeholders (ResourceURL, ClientID, Username, Password) with your own data and you are on your way. The token you need to do further work will be stored in <code class="language-plaintext highlighter-rouge">$auth.access_token</code></p>
+
+<p>I found this handy little solution on an old <a href="https://www.sepago.de/blog/how-to-generate-a-bearer-access-token-for-azure-rest-access-with-username-and-password-only-feasibility-test/" rel="noopener" target="_blank">blog post</a> from <a href="https://twitter.com/MarcelMeurer" rel="noopener" target="_blank">Marcel Meurer</a>.</p>
+
+<p>To understand how this works a little better, I broke everything down and created the Post request in PostMan - to me, this makes a hell of a lot more sense than two busy lines of code.</p>
+
+<p>Below is an example of a request for a Microsoft Graph Token.</p>
+
+<p><a href="https://i0.wp.com/i.imgur.com/6FYeHig.png?w=1170&#038;ssl=1" title="Postman example"><img src="https://i0.wp.com/i.imgur.com/6FYeHig.png?w=1170&#038;ssl=1" alt="Postman example" /></a></p>
+
+<p>So once I realized the simplicity of the request, I decided to turn the solution into a simple function to create an Authentication Header for use in more advanced solutions.</p>
+
+<pre><code class="language-PowerShell">function Get-AuthHeader {
+    param (
+        [Parameter(mandatory = $true)]
+        [string]$un,
+        [Parameter(mandatory = $true)]
+        [string]$pw,
+        [Parameter(mandatory = $true)]
+        [string]$cid,
+        [Parameter(mandatory = $true)]
+        [string]$resourceURL
+    )
+    $body = @{
+        resource   = $resourceURL
+        client_id  = $cid
+        grant_type = "password"
+        username   = $un
+        scope      = "openid"
+        password   = $pw
+    }
+    $response = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/Common/oauth2/token" -Body $body
+    $headers = @{}
+    $headers.Add("Authorization", "Bearer " + $response.access_token)
+    return $headers
+}
+</code></pre>
+
+<p>Now I can use this function in a script to retrieve the details of a user in your organization.</p>
+
+<pre><code class="language-PowerShell">$authHeader = Get-AuthHeader -un "breader@company.onmicrosoft.com" -pw "password" -cid "1950a258-227b-4e31-a9cf-717495945fc2" -resourceURL "https://graph.microsoft.com/"
+
+$restParams = @{
+    Method  = "get"
+    Uri     = "https://graph.microsoft.com/v1.0/me"
+    Headers = $authHeader
+}
+Invoke-RestMethod @restParams
+</code></pre>
+
+<p>And the result…</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/yucKPNq.png?w=1170&#038;ssl=1" title="Result of rest call"><img src="https://i1.wp.com/i.imgur.com/yucKPNq.png?w=1170&#038;ssl=1" alt="Result of rest call" /></a></p>
+
+<p>So simple!</p>
+
+<p>The usual caveats apply here - you are storing your passwords in plain-text, so use common-sense if you choose to use this. Realistically, I’d suggest using this during the development stages of a solution.</p>
+
+<p>And to echo Marcel, this works right now - If Microsoft decides to change how they accept OAuth2 requests, this may break without warning, so again - do not rely on this for production solutions without thoroughly testing and understanding the risks involved.</p>
+
+<p>— Ben</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul class="related-footer">
+        
+        <li><a href="/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/">&raquo; Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2018/09/04/getting-your-aad-tenant-id-without-authentication/">&raquo; Getting your AAD Tenant Id without authentication!</a></li>
+        
+        <li><a href="/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/">&raquo; How to force Intune configuration scripts to re-run</a></li>
+        
+    </ul>
+</div>
+
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

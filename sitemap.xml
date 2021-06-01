@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/</loc>
+<lastmod>2018-04-15T16:30:57+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/04/17/install-microsoft-teams-with-intune-powershell-bits/</loc>
+<lastmod>2018-04-16T16:44:12+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/05/15/working-with-graphapi-powerbi-the-easy-way/</loc>
+<lastmod>2018-05-14T20:03:30+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/</loc>
+<lastmod>2018-05-17T01:14:46+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/</loc>
+<lastmod>2018-08-16T21:04:29+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/08/31/set-multiple-registry-values-to-all-users-hkcu-profiles-using-powershell-active-setup/</loc>
+<lastmod>2018-08-30T20:05:52+00:00</lastmod>
+</url>
+<url>
+<loc>/2018/09/04/getting-your-aad-tenant-id-without-authentication/</loc>
+<lastmod>2018-09-03T20:35:23+00:00</lastmod>
+</url>
+<url>
 <loc>/2018/12/10/control-advanced-power-settings-with-powercfg-powershell/</loc>
 <lastmod>2018-12-10T13:37:41+00:00</lastmod>
 </url>
@@ -86,6 +114,9 @@
 </url>
 <url>
 <loc>/page4/</loc>
+</url>
+<url>
+<loc>/page5/</loc>
 </url>
 <url>
 <loc>/node_modules/@tailwindcss/forms/</loc>

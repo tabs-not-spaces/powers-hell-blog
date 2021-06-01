@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>How to force Intune configuration scripts to re-run | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="How to force Intune configuration scripts to re-run" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="With a little PowerShell magic, everything is easy!!!" />
+<meta property="og:description" content="With a little PowerShell magic, everything is easy!!!" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-15T16:30:57+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="How to force Intune configuration scripts to re-run" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"With a little PowerShell magic, everything is easy!!!","headline":"How to force Intune configuration scripts to re-run","dateModified":"2018-04-15T16:30:57+00:00","datePublished":"2018-04-15T16:30:57+00:00","url":"/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+</head><body>
+    <div class="page-container">
+      <div class="">
+        <nav class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan"><a href="/" onmouseover="changeIn(this)" onmouseout="changeOut(this)">Powers Hell</a></h2>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="drac-text drac-text-cyan drac-text-right drac-line-height">Great power is great fun
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <div class="ml-4 items-center relative">
+                <div>
+                    <a href="/"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm"
+                    >Home</a>
+                    <a href="/about"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+                    <a href="/merch"
+                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10">
+          <div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <h1 class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">How to force Intune configuration scripts to re-run</h1>
+            
+          </div>
+        </header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height">
+
+        <p class="post-date">Published: 15 Apr
+        </p>
+        <p>** EDIT **</p>
+
+<p>Due to constant requests, I’ve updated this solution to use newer authentication methods that allow MFA as well as native support in PowerShell 7.</p>
+
+<p>Please note - the code below is provided as reference material only - authentication is NOT the point of the article and there are countless ways to acquire the correct authentication token.</p>
+
+<p>***</p>
+
+<p>Hi All and welcome.</p>
+
+<p>As I am about to reach the pointy end of a project to implement an Intune MDM solution for a client, I’ve taken a moment to take stock of the lessons learned, problems faced and for the most part; the cool things I’ve run into and decided now is the time to start writing about them! Hopefully you find my posts interesting and I hope to keep the page updated fairly regularly.</p>
+
+<p>Anyway, lets move onto the fun stuff!</p>
+
+<!--more-->
+
+<p>As I mentioned, I’ve been working on an Intune MDM solution for a client who currently has no other management solutions in place (no SCCM, no mobile device management, nothing, nada, zilch. you get the idea) which was daunting to say the least, but it did give us a great opportunity to provide an entirely cloud-centric management solution (absolutely no on-premise requirements - devices are not domain-joined!).</p>
+
+<p>Because of these design decisions, we have had to be very creative with how we deploy applications &amp; how we can replicate group policy configurations - what that essentially means is that we relied <strong>very heavily</strong> on the <a href="https://docs.microsoft.com/en-us/intune/intune-management-extension" target="_blank" rel="noopener noreferrer">Intune Management Extension</a> - previously known as <strong>sidecar</strong>.</p>
+
+<p>Because Intune <em>currently</em> only allows single file line-of-business applications, for anything more complex than that (read: most legacy LOB applications), handling the installation using Powershell via the Intune Management Extension is the best solution.</p>
+
+<p>Now, while I am ecstatic that there is a script deployment solution within Intune; there is definitely challenges with the current implementation - case in point, the client reached out to me and asked me a very good question the other day… “how can we re-run the script if the script returned a successful result, but the expected result of the script was not achieved??”</p>
+
+<p>A quick explanation - The way that the Intune Management Extension handles execution of scripts is that it will attempt to run the script until it successfully completes. If it fails, it will attempt again in an hour (the Intune Management Extension synchronizes to Intune once every hour), however if for any reason you want a script to re-run, the only obvious solution is to delete the configuration item from within the Intune portal, recreate the configuration item and restart the <strong>IntuneManagementExtension</strong> service on the local device (as well as any other device or user that is in the assignment group).</p>
+
+<p>If you are shaking your head and saying “there has to be a better way”, then read on for the solution!</p>
+
+<p>The Intune Management Extension stores details of configuration scripts that have executed in a specific registry location: <strong>HKLM:\SOFTWARE\Microsoft\IntuneManagementExtension\Policies</strong>
+If you have a look there, you’ll see a list of executed items - all with unique GUIDs.</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/RrX1wcZ.png?w=1170&#038;ssl=1" title="Intune Management Extension - policies location"><img src="https://i1.wp.com/i.imgur.com/RrX1wcZ.png?w=1170&#038;ssl=1" alt="Intune Management Extension - policies location" /></a></p>
+
+<p>Inside each folder, you will see a breakdown of what is stored locally.</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/aEfuv4l.png?w=1170&#038;ssl=1" title="Policy results"><img src="https://i2.wp.com/i.imgur.com/aEfuv4l.png?w=1170&#038;ssl=1" alt="Policy results" /></a></p>
+
+<p>As you can see above, the script has downloaded once, there are no errors, and even cooler - the <strong>ResultDetails</strong> property has the full transcript of the script.</p>
+
+<p>Now, the downside here is that aside from digging into the <strong>ResultDetails</strong> item property, there isn’t an easy way to decipher which configuration item you are looking at. If you can figure out how to identify the script from the <strong>ResultDetails</strong> item property, then all that is required to trigger a re-run is to delete that item from the registry and restart the <strong>IntuneManagementExtension</strong> service on the local device.</p>
+
+<p>Now we are getting somewhere.</p>
+
+<p>Because the configuration items are stored in keys named with GUIDs, this should give anyone with experience with Intune or Azure in general, that if we can get a GUID id, then we should be able to extract more data by using the Graph API.</p>
+
+<p>Alright, lets break down the solution.</p>
+
+<p>First up - lets connect to the API…</p>
+
+<p>In the code below I am using a module written by <a href="https://github.com/jasoth">Jason Thompson</a> called <a href="https://www.powershellgallery.com/packages/MSAL.PS/4.10.0.2">MSAL.PS</a> to allow easy authentication to the Graph API using the new <strong>MSAL</strong> authentication libraries.</p>
+
+<pre><code class="language-Powershell">if (!(Get-Module -Name MSAL.PS -ListAvailable -ErrorAction SilentlyContinue)) {
+    Install-Module -Name MSAL.PS -Scope CurrentUser -Force
+}
+$clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" # well known Intune application Id
+$auth = Get-MsalToken -ClientId $clientId -deviceCode #deviceCode requires interaction and solves MFA challenges
+$token = @{ Authorization = $auth.CreateAuthorizationHeader() }
+</code></pre>
+
+<p>Once we have our authentication token, lets capture some handy information to identify each script stored in the <strong>IntuneManagementExtension</strong> registry hive.</p>
+
+<p>First up, lets get some info about the device.</p>
+
+<pre><code class="language-PowerShell">$deviceProps = (invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/v1.0/devices?`$filter=DisplayName eq '$env:ComputerName'" -Headers $token).value
+</code></pre>
+
+<p>Next, using the device id captured above, lets grab some info about the registered user of that device.</p>
+
+<pre><code class="language-PowerShell">$owner = (Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/v1.0/devices/$($deviceProps.id)/registeredOwners" -Headers $token).value
+</code></pre>
+
+<p>and finally, lets capture the script properties from Intune.</p>
+
+<pre><code class="language-PowerShell">$sidecarScripts = (Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts" -Headers $token).value
+</code></pre>
+
+<p>Here’s an example of the data returned from the above API call.</p>
+
+<p><a href="https://i2.wp.com/i.imgur.com/PfGgps7.png?w=1170&#038;ssl=1" title="Intune device management script member types"><img src="https://i2.wp.com/i.imgur.com/PfGgps7.png?w=1170&#038;ssl=1" alt="Intune device management script member types" /></a></p>
+
+<p>Now, using the user id GUID, we simply iterate through each script object stored in Intune, match it up with the policy objects stored locally and present the combined data to the end user.</p>
+
+<pre><code class="language-PowerShell">$deviceScriptStatus = foreach ($script in $sidecarScripts) {
+    $tmpItem = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\IntuneManagementExtension\Policies\$($owner.id)\$($script.id)" -ErrorAction SilentlyContinue
+    if ($tmpItem) {
+        $tmpObj = [PSCustomObject]@{
+            displayName = $script.displayName
+            fileName    = $script.fileName
+            Result      = $tmpItem.Result
+            id          = $script.id
+            psPath      = $tmpItem.PSPath
+        }
+        $tmpObj
+    }
+}
+$intuneScriptToRerun = $deviceScriptStatus | Select-Object displayName,fileName,Result,id | Out-GridView -Title "Intune Script Configuration" -PassThru
+</code></pre>
+
+<p>Here’s the example result of the above snippet - an interactive out-gridview datatable that will pass back any selected objects to the powershell window.</p>
+
+<p><a href="https://i1.wp.com/i.imgur.com/YKLP9Wf.png?w=1170&#038;ssl=1" title="outgrid results"><img src="https://i1.wp.com/i.imgur.com/YKLP9Wf.png?w=1170&#038;ssl=1" alt="outgrid results" /></a></p>
+
+<p>So, for this example, I want to re-run the “ConfigureScheduledTask.ps1” script, so we select that row, hit OK on the Out-GridView to send that object back to the script, and using that object, we simply force a removal of that registry key and restart the <strong>IntuneManagementExtension</strong> service to trigger the script to re-run.</p>
+
+<pre><code class="language-PowerShell">foreach ($item in $intuneScriptToRerun){
+    $itemPath = ($deviceScriptStatus | Where-Object {$_.displayName -eq $item.displayName}).psPath
+    Remove-Item $itemPath -Force
+}
+Get-Service -Name IntuneManagementExtension | Restart-Service
+</code></pre>
+
+<p>You will find that the script / policy will re-run almost immediately once the registry key has been removed. This will save you countless hours over the course of setting up your sidecar scripts - something I wish I had worked out at the start of the project and not the end!!</p>
+
+<p>Well that wraps up my first post - I will have the full solution available on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Reset-SidecarScript">GitHub account</a>, so please have a look, have a play, and if you use the example, or improve the solution, please feel free to let me know below in the comments or on my twitter <a href="https://twitter.com/powers_hell" target="_blank" rel="noopener noreferrer">@powers_hell</a>.</p>
+
+<p>Enjoy,
+Ben</p>
+
+      </article>
+    </div>
+  </div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-cyan" />
+    </div>
+    <h3 class="drac">Related Posts</h3>
+    <ul class="related-footer">
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&raquo; Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/">&raquo; Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell</a></li>
+        
+        <li><a href="/2018/09/04/getting-your-aad-tenant-id-without-authentication/">&raquo; Getting your AAD Tenant Id without authentication!</a></li>
+        
+        <li><a href="/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/">&raquo; Authenticate to Microsoft Graph in PowerShell in two lines of code!</a></li>
+        
+        <li><a href="/2021/01/19/publishing-powershell-scripts-to-intune-with-graph/">&raquo; Publishing PowerShell scripts to Intune with Graph</a></li>
+        
+    </ul>
+</div>
+
+</main>
+</div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<script>
+    function changeIn(obj) {
+    obj.className="drac-text-cyan-green"
+}
+function changeOut(obj) {
+    obj.className="drac-text-purple-cyan"
+}
+</script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+<svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z"/>
+</svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by 
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank" class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>
