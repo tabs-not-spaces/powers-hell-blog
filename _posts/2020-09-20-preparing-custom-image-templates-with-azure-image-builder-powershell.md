@@ -4,11 +4,9 @@ title: 'Preparing custom image templates with Azure Image Builder & PowerShell'
 date: 2020-09-20T20:44:14+10:00
 excerpt: |
     AIB is Microsoft's solution to configure and customize virtual machine images. The concept of it is pretty great..
-
     * pick a reference image from the public market place
     * apply some customization built around HashiCorp's Packer
     * hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.
-
 author: Ben
 layout: post
 guid: http://powers-hell.com/?p=432
