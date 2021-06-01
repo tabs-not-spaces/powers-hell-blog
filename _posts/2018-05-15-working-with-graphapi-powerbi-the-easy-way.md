@@ -1,8 +1,8 @@
 ---
 id: 99
-title: 'Working with GraphAPI &#038; PowerBI the easy way!'
+title: 'Working with GraphAPI & PowerBI the easy way!'
 date: 2018-05-15T06:03:30+10:00
-excerpt: 'I\'m sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes.'
+excerpt: I'm sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes.
 author: Ben
 layout: post
 guid: http://powers-hell.com/?p=99
