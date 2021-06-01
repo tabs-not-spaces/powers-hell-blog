@@ -6,8 +6,11 @@ termnyal: test
 lines:
     - line:
         message: "Invoke-WebRequest -Method Get -Uri 'https://powers-hell.com/fatfingered' -ContentType 'Application/JSON'"
-        input: "input"
+        formatting: "input"
+        bell: "PS >"
     - line:
         message: {"statusCode": "404"}
-        input: "-"
+        formatting: "-"
+        bell: ""
+        class: "error"
 ---

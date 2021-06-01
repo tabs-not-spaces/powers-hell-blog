@@ -13,7 +13,7 @@ lines: ["one", "two", "three"]
                 <p>Type 'help' to get help.</p>
             </div>
             {%- for line in page.lines -%}
-            <span data-ty="{{ line.line.input }}" data-ty-prompt=">">{{ line.line.message }}</span>
+            <span class="{{ line.line.class }}"data-ty="{{ line.line.formatting }}" data-ty-prompt="{{ line.line.bell }}">{{ line.line.message }}</span>
             {%- endfor -%}
             <span data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">{{ site.url }}</span>
         </div>
