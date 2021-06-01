@@ -1,0 +1,37 @@
+.pagination a {
+    color: var(--cyan);
+    background: var(--blackBlack);
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-right: 1px solid var(--blackBlack);
+    cursor: pointer;
+}
+.pagination a.active {
+    background: linear-gradient(var(--gradientDegree),var(--yellow) 0,var(--pink) 100%);
+    color: var(--black);
+}
+.pagination a:hover:not(.active):not(.nothing) {
+    background: linear-gradient(var(--gradientDegree),var(--purple) 0,var(--cyan) 100%);
+    color: var(--black);
+}
+.pagination a:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-left: 0px;
+    border-right: 1px solid var(--blackBlack);
+}
+.pagination a:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-right: 0px;
+}
+.pagination a.nothing {
+    color: var(--disabled);
+    cursor: default;
+}
+#pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}

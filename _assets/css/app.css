@@ -6,3 +6,5 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "./body.css";
+@import "./paginate.css";
+@import "./link-hover.css";

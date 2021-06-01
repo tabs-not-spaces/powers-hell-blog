@@ -4,21 +4,21 @@ layout: default
 <main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
   {%- for post in paginator.posts -%}
   <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
-    <a href="{{ post.url | relative_url }}">
-      <div
-        class="main-overlay drac-bg-black drac-text-white rounded-lg shadow-2xl px-5 py-6 sm:px-6"
-      >
-        {%- assign date_format = site.date_format | default: "%-d %b" -%}
-        <h2 class="drac-heading drac-text-purple-cyan drac-heading-xl drac-text-white">
-          {{ post.title | escape }}
-        </h2>
-        <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">{{ post.date | date: date_format }}</font></div>
-        <div class="markdown-body drac-text drac-line-height">
+    <div class="main-overlay drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      {%- assign date_format = site.date_format | default: "%-d %b" -%}
+      <a href="{{ post.url | relative_url }}">
+          <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan">
+            {{ post.title | escape }}
+          </h2>
+        </a>
+        <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">{{ post.date | date:
+            date_format }}</font>
+        </div>
+        <div class="markdown-body drac-text drac-line-height drac-text-white">
           {{ post.excerpt }}
         </div>
       </div>
-    </a>
-    </div>
+  </div>
   {%- endfor -%}
   {%- include paginate.html -%}
 </main>

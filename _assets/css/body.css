@@ -2,6 +2,9 @@
 :root {
   --blackBlack: #14141b;
 }
+ul {
+  list-style: circle-inside !important;
+}
 .page-container {
   position: relative;
   min-height: 100vh;
