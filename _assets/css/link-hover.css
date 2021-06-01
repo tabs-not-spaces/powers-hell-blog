@@ -1,4 +1,4 @@
-#link-hover a, h2 {
+.link-hover a {
     -webkit-text-fill-color: transparent;
     -moz-text-fill-color: transparent;
     background-clip: text;
@@ -9,7 +9,7 @@
     background-size: 100%;
     -webkit-box-decoration-break: clone;
 }
-#link-hover a:hover, h2:hover {
+.link-hover a:hover {
     -webkit-text-fill-color: transparent;
     -moz-text-fill-color: transparent;
     background-clip: text;
