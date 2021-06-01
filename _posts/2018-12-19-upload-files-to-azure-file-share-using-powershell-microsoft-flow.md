@@ -2,6 +2,7 @@
 id: 143
 title: 'Upload files to Azure File Share using PowerShell & Microsoft Flow'
 date: 2018-12-19T01:09:42+10:00
+excerpt: 'I’m a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output'
 author: Ben
 layout: post
 guid: http://powers-hell.com/?p=143
@@ -64,7 +65,15 @@ I also wanted a way to handle the _metadata_ of the log file - things like the c
 Create a new step and search for and add **Parse JSON**.
 Next, we need to define the JSON data it is going to receive - the easiest way to do that is to create sample JSON payload in PowerShell and paste it in as shown below.
 
-`CODE GOES HERE`
+```PowerShell
+$payload = [PSCustomObject]@{
+    hostName    = "placeholder"
+    clientName  = "placeholder"
+    appName     = "placeholder"
+    logFileName = "placeholder"
+}
+$payload | ConvertTo-Json | clip
+```
 
 The code shown above will copy the JSON object into your clipboard, so back on your Flow, select **Use sample payload** and paste in the JSON object to create the schema required.
 
@@ -99,7 +108,12 @@ Now let's get into the PowerShell fun!
 
 Alright - the script has completed successfully (or failed miserably..) and we now want to send the log file up to our storage account. The first thing we need to do is prepare the log file.
 
-
+```PowerShell
+if (Test-Path $inputObject) {
+  $fileBytes = [System.IO.File]::ReadAllBytes($inputObject)
+  $fileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($fileBytes)
+}
+```
 
 Simple enough, stream the file into a variable and encode using some dotNet libraries.
 
@@ -121,7 +135,20 @@ For every additional _part_ that you want to add, you simply add another block o
 
 Here's my working example - I'm forming two parts - the binary log file & a JSON object containing the metadata I want to send through for naming purposes.
 
-`CODE GOES HERE`
+```PowerShell
+$lf = "`r`n"
+$bodyLines = (
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"$(split-path $inputObject -leaf)`"; filename=`"$(split-path $inputObject -leaf)`"",
+    "Content-Type: application/octet-stream$lf",
+    $fileEnc,
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"MetaData`"",
+    "Content-Type: application/json$lf",
+    $jsonMetaData,
+    "--$boundary--$lf"
+) -join $lf
+```
 
 A few key things here:
 
@@ -130,11 +157,23 @@ In the **Content-Disposition** for the JSON object, I gave it the name "MetaData
 
 Finally, we are just going to package everything up and send it off to the Flow web service with an Invoke-WebRequest.
 
-`CODE GOES HERE`
+```PowerShell
+$req = Invoke-WebRequest -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+return $req
+```
 
 So now we have the basics of our function – let’s set up the metadata and point a log file at the function and see what happens.
 
-`CODE GOES HERE`
+```PowerShell
+$logFile = "C:\bin\TeamsClient.log"
+$metaData = [PSCustomObject]@{
+    hostName    = $ENV:ComputerName
+    clientName  = "Contoso"
+    appName     = "Teams"
+    logFileName = "$ENV:ComputerName`_$(Split-Path -Path $logFile -Leaf)"
+}
+Send-IntuneLogsToFlow -inputObject $logFile -metaData $metaData
+```
 
 Checking the Flow app to confirm everything passed&#8230;
 
@@ -149,4 +188,40 @@ The best part of this solution is I can use the same Flow app for any client I w
 
 Finally, I've put the PowerShell function up on my [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/Send-IntuneLogsToFlow) as well as below for review.
 
-`CODE GOES HERE`
+```PowerShell
+function Send-IntuneLogsToFlow {
+    param (
+        $inputObject,
+        $metaData
+    )
+    $Uri = "https://azure.flow.url.com";
+    try {
+        $jsonMetaData = $metaData | ConvertTo-Json -Compress
+        if (Test-Path $inputObject) {
+            $fileBytes = [System.IO.File]::ReadAllBytes("$inputObject")
+            $fileEnc = [System.Text.Encoding]::GetEncoding('UTF-8').GetString($fileBytes)
+        }
+        else {
+            throw "Error accessing input object: $inputObject"
+        }
+        $boundary = [System.Guid]::NewGuid().ToString()
+        $lf = "`r`n"
+        $bodyLines = (
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"$(split-path $inputObject -leaf)`"; filename=`"$(split-path $inputObject -leaf)`"",
+            "Content-Type: application/octet-stream$lf",
+            $fileEnc,
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"MetaData`"",
+            "Content-Type: application/json$lf",
+            $jsonMetaData,
+            "--$boundary--$lf"
+        ) -join $lf
+        $req = Invoke-WebRequest -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+        return $req
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+```
