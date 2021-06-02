@@ -5,6 +5,27 @@
     -webkit-animation: blink 1s infinite;
             animation: blink 1s infinite;
 }
+[data-termynal]:before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    /* A little hack to display the window buttons in one pseudo element. */
+    background: var(--red);
+    box-shadow: 25px 0 0 var(--yellow), 50px 0 0 var(--green);
+}
+[data-termynal]:after {
+    content: 'Powers Hell' !Important;
+}
+[data-ty="input"]:before,
+[data-ty-prompt]:before {
+    margin-right: 0.75em;
+    color: var(--cyan);
+}
 .error {
     color: var(--red);
 }

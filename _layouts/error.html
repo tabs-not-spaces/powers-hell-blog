@@ -15,7 +15,7 @@ lines: ["one", "two", "three"]
             {%- for line in page.lines -%}
             <span class="{{ line.line.class }}"data-ty="{{ line.line.formatting }}" data-ty-prompt="{{ line.line.bell }}">{{ line.line.message }}</span>
             {%- endfor -%}
-            <span data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">{{ site.url }}</span>
+            <a href="{{ site.url }}"><span class="drac-text-purple-cyan" data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">{{ site.url }}</span></a>
         </div>
     </div>
 </main>
