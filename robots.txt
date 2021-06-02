@@ -1,1 +1,1 @@
-Sitemap: /sitemap.xml
+Sitemap: https://powers-hell.com/sitemap.xml
