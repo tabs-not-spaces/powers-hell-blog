@@ -1,23 +1,18 @@
 ---
 layout: default
-lines: ["one", "two", "three"]
 ---
 
 <main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
     <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8" id="pagination">
         <div id="termynal" class=" main-overlay drac-text drac-text" data-termynal data-ty-typeDelay="20">
-            <div data-ty="-" style="margin-top: -3rem; margin-bottom: 3rem;">
-                <p>PowerShell 7.1.3</p>
-                <p>Copyright (c) Microsoft Corporation</p>
-                <br>
-                <p>https://aka.ms/powershell</p>
-                <p>Type 'help' to get help.</p>
-            </div>
+            {{ page.pwshheader }}
             {%- for line in page.lines -%}
-            <span class="{{ line.line.class }}"data-ty="{{ line.line.formatting }}" data-ty-prompt="{{ line.line.bell }}">{{ line.line.message }}</span>
+            <span class="{{ line.line.class }}" data-ty="{{ line.line.formatting }}"
+                data-ty-prompt="{{ line.line.bell }}">{{ line.line.message }}</span>
             {%- endfor -%}
-            <span class="drac-text-yellow-pink" data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">{{ site.url }}</span> 
-            <span data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">🔌😈</span>
+            <span class="drac-text-yellow-pink" data-ty="input" data-ty-cursor="▋" data-ty-prompt=""
+                style="text-align: right;">{{ site.url }}</span>
+            <span data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">{{ page.emojis }}</span>
         </div>
     </div>
 </main>
