@@ -3,6 +3,7 @@ description: Great power is great fun
 permalink: /:year/:month/:day/:title/
 twitter_username: powers_hell
 github_username: tabs-not-spaces
+url: https://powers-hell.com
 
 plugins:
   - jekyll-paginate
