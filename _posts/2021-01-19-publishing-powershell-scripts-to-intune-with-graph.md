@@ -5,7 +5,7 @@ date: 2021-01-19T13:22:12+10:00
 author: Ben
 excerpt: |
   I've recently been asked the question - "How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?"
-  
+
   I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't "fat finger" your way into frustration!
 layout: post
 guid: http://powers-hell.com/?p=499
@@ -60,11 +60,11 @@ The problem arises however, because the default architecture setting is set to 3
 
 Luckily, we can move away from the Endpoint portal and use PowerShell and Graph to change the default settings to values and standardize our script publishing to avoid any of those absent-minded "user errors" that are so frustratingly common.
 
-Like all other configuration settings / device management endpoints that are exposed via Graph, all that is required is to: 
+Like all other configuration settings / device management endpoints that are exposed via Graph, all that is required is to:
 
-  * Understand how the JSON payload data is formed
-  * Authenticate to Graph
-  * Build and publish the JSON payload to Graph
+* Understand how the JSON payload data is formed
+* Authenticate to Graph
+* Build and publish the JSON payload to Graph
 
 The one extra step for script deployment is that we need to encode the script content into a base64 encoded string so that we can post the file within the JSON payload.
 
@@ -163,7 +163,7 @@ function Publish-ScriptToIntune {
 
         [Parameter(Mandatory = $true)]
         [string]$Description,
-        
+
         [Parameter(Mandatory = $false)]
         [ValidateSet("System", "User")]
         [string]$RunAsAccount = "System",

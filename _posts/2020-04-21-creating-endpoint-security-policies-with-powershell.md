@@ -35,7 +35,7 @@ Stepping through the new policy options shows that configuring policies is a sig
 
 This got me to thinking - if these policies aren't visible in the original portal, then there must be some new Graph API endpoints for me to play with.
 
-Turns out I was right - all of these new policies exist as what Microsoft are calling "templates". 
+Turns out I was right - all of these new policies exist as what Microsoft are calling "templates".
 
 To work with them, all we need to do is create an "instance" of a template and add the settings to the new policy.
 
@@ -43,7 +43,7 @@ So let's dive in and learn how to create some security policies in the new endpo
 
 Firstly, I created a reference policy, using **Disk Encryption** as the policy type to show what we will be creating.
 
-[![Reference policy](/assets/images/2020/04/image-5.png)](/assets/images/2020/04/image-5.png "Reference policy") 
+[![Reference policy](/assets/images/2020/04/image-5.png)](/assets/images/2020/04/image-5.png "Reference policy")
 
 The 5 settings displayed above are literally all we need for most scenarios to encrypt devices. This interface is a marked improvement from the original portal!
 
@@ -51,11 +51,35 @@ Alright, enough of graphical user interfaces. Let's pop open PowerShell and star
 
 Firstly we need to authenticate to Graph - This has been discussed ad-nauseum over the last few years, so I wont go into how to do this. I will say however, that as I've been working predominantly with PowerShell 7, I've had to move away from the ADAL libraries and over to the new MSAL libraries. There's a [module available](https://github.com/jasoth/MSAL.PS/issues) for us to auth, so let's grab that.
 
+```PowerShell
+Install-Module -Name MSAL.PS -scope CurrentUser -Force
+```
+
 Now let's use it to authenticate to Graph.
+
+```PowerShell
+#region Auth
+$authParams = @{
+    clientId = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' #well known intune / graph application
+    tenantId = 'powers-hell.com' #replace with your tenantId or FQDN
+    Interactive = $true
+    DeviceCode = $true
+}
+$auth = Get-MsalToken @authParams
+#endregion Auth
+```
 
 [![MSAL Auth](https://i2.wp.com/i.imgur.com/ZeDtwH0.gif?w=1170&#038;ssl=1)](https://i2.wp.com/i.imgur.com/ZeDtwH0.gif?w=1170&#038;ssl=1 "MSAL Auth")
 
 Now that we've got our authentication token, let's first have a look at what policy "templates" we have available to us.
+
+```PowerShell
+#region Get deviceManagement/templates
+$authHeader = @{Authorization = "Bearer $($auth.AccessToken)"}
+$templates = Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/beta/deviceManagement/templates" -Headers $authHeader
+$templates.value
+#endregion Get deviceManagement/templates
+```
 
 As you should see by now, the code is a fairly simple rest call - we are just setting up the auth header and calling the **deviceManagement/templates** endpoint from the beta version of graph.
 
@@ -95,11 +119,30 @@ Here's all of them for reference.
 
 For our example, we only need the BitLocker policy, so let's just capture that. Now we can either do that by filtering down the full list of tables from the previous command, or we can filter from the graph call as shown below:
 
+```PowerShell
+#region get BitLocker template from graph
+$bitlocker = Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/beta/deviceManagement/templates?`$filter=startswith(displayName,'BitLocker')" -Headers $authHeader
+$bitlocker.value
+#endregion get BitLocker template from graph
+```
+
 Running the command should get us the BitLocker template data below.
 
 [![Bitlocker template data](/assets/images/2020/04/image-6.png)](/assets/images/2020/04/image-6.png "Bitlocker template data")
 
 Once we have this, the next step is to create a new "instance" of the template. We will use the id from the **$bitlocker.value.id** variable above to form the next POST request.
+
+```PowerShell
+#region new template instance
+$request = @{
+    displayName = "Win10_BitLocker_Example"
+    description = "Win10 BitLocker Example for Powers-Hell.com"
+    templateId = $bitlocker.value.id
+} | ConvertTo-Json
+$instance = Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/deviceManagement/templates/$($bitlocker.value.id)/createInstance" -Headers $authHeader -ContentType 'Application/Json' -body $request
+$instance
+#endregion new template instance
+```
 
 If we have done everything correctly to this point, we should get an object returned to us with the details of the new instance of the BitLocker template.
 
@@ -107,13 +150,51 @@ If we have done everything correctly to this point, we should get an object retu
 
 Once we have the new instance details, now we just need to add the configuration properties to it.
 
-Every template has a dedicated list of available settings and the required values that they will accept - and it's an exhaustive list. To view the settings, we call the **deviceManagement/settingsDefinitions** endpoint. 
+Every template has a dedicated list of available settings and the required values that they will accept - and it's an exhaustive list. To view the settings, we call the **deviceManagement/settingsDefinitions** endpoint.
 
 It's a little too in depth to cover in this article, but I strongly recommend anyone who is interested in implementing this into production spends some time understanding the schema definitions contained within this endpoint.
 
-As we only configured 5 settings in our original reference policy, we will do the same thing here. 
+As we only configured 5 settings in our original reference policy, we will do the same thing here.
 
 Using the $instance.id value from the previous command we will now "update" the instance with the settings (known at the "intents" - the intent to apply settings).
+
+```PowerShell
+#region update instance settings
+$definitionBase = 'deviceConfiguration--windows10EndpointProtectionConfiguration_'
+$request = @(
+    @{
+        "settings" = @(
+            @{
+                "@odata.type"  = "#microsoft.graph.deviceManagementBooleanSettingInstance"
+                "definitionId" = "$($definitionBase)bitLockerEncryptDevice"
+                "value"        = $true
+            }
+            @{
+                "@odata.type"  = "#microsoft.graph.deviceManagementBooleanSettingInstance"
+                "definitionId" = "$($definitionBase)bitLockerEnableStorageCardEncryptionOnMobile"
+                "value"        = $true
+            }
+            @{
+                "@odata.type"  = "#microsoft.graph.deviceManagementBooleanSettingInstance"
+                "definitionId" = "$($definitionBase)bitLockerDisableWarningForOtherDiskEncryption"
+                "value"        = $true
+            }
+            @{
+                "@odata.type"  = "#microsoft.graph.deviceManagementBooleanSettingInstance"
+                "definitionId" = "$($definitionBase)bitLockerAllowStandardUserEncryption"
+                "value"        = $true
+            }
+            @{
+                "@odata.type"  = "#microsoft.graph.deviceManagementStringSettingInstance"
+                "definitionId" = "$($definitionBase)bitLockerRecoveryPasswordRotation"
+                "value"        = "enabledForAzureAd"
+            }
+        )
+    }
+) | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/deviceManagement/intents/$($instance.id)/updateSettings" -ContentType 'Application/JSON' -Headers $authHeader -Body $request
+#endregion update instance settings
+```
 
 And that's it - If we head back to our admin portal we should see a new BitLocker policy named "Win10\_BitLocker\_Example" and inside, the configuration settings we have applied.
 

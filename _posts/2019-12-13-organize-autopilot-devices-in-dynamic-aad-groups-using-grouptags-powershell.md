@@ -46,7 +46,17 @@ For this example, let's exclude the first device in the screenshot above.
 
 The first step when we interact with Microsoft Graph, as always, is to authenticate and store the Authentication Token in a variable so that we can use it for the next few steps - I've spoken about this before, so if you aren't sure how to do this, [read this and come back when you are ready](https://powers-hell.com/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/)!
 
+```PowerShell
+$authToken = Get-AuthToken #use one of a million ways to get the authtoken...
+```
+
 Alright - we've got our auth token, put your serial number into a variable, and then we will form out the first Graph Call.
+
+```PowerShell
+$serialNumber = "Put Your Serial Number Here"
+$graphUri = "https://graph.microsoft.com/beta/deviceManagement/windowsAutopilotDeviceIdentities?`$filter=contains(serialNumber,'$serialNumber')"
+$result = (Invoke-RestMethod -Method Get -Uri $graphUri -headers $authToken).value
+```
 
 If we've formed our request properly, if we look at the contents of $result, we should see details on the device in question.
 
@@ -54,7 +64,19 @@ If we've formed our request properly, if we look at the contents of $result, we 
 
 Next, we are going to grab the id of the device from the graph call, build the group tag data and post it back to Graph..
 
+```PowerShell
+$id = $result.id
+$body = @{
+    groupTag = "EXCLUDE"
+}
+Invoke-RestMethod -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/windowsAutopilotDeviceIdentities/$id/updateDeviceProperties" -Body ($body | ConvertTo-Json -Compress) -Headers $script:authToken
+```
+
 Finally, we are going to perform a sync on our AutoPilot device list..
+
+```PowerShell
+Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/deviceManagement/windowsAutopilotSettings/sync" -Headers $script:authToken
+```
 
 Now if we jump over to our AutoPilot devices list we should see the group tag updated..
 
@@ -67,6 +89,60 @@ And of course, our dynamic groups should now be populated correctly..
 That's it! - 3 calls to Graph and a little bit of patience.
 
 Now of course, 3 REST API calls is not how I'm going to leave you - with a little bit of error handling and polish we can build out a very reliable function..
+
+```PowerShell
+function Update-AutoPilotGroupTag {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [string[]]$deviceSerial,
+
+        [parameter(Mandatory = $false)]
+        [string]$groupTag,
+
+        [parameter(Mandatory = $false)]
+        [switch]$sync
+    )
+    try {
+        if (!($script:authToken)) {
+            $script:authToken = Get-AuthToken -user $upn
+        }
+        $baseUri = 'https://graph.microsoft.com/beta/deviceManagement/windowsAutopilotDeviceIdentities'
+        $apDevices = foreach ($sn in $deviceSerial) {
+            #make sure the device identity exists
+            $deviceId = (Invoke-RestMethod -Method Get -Uri "$baseUri`?`$filter=contains(serialNumber,'$sn')" -Headers $script:authToken).value
+            if ($deviceId) {
+                Write-Host "Found device with id: $deviceSerial"
+                $deviceId
+                $body = @{
+                    groupTag = $(if ($groupTag) { $groupTag } else { '' })
+                }
+                $update = Invoke-WebRequest -Method Post -Uri "$baseUri/$($deviceId.id)/updateDeviceProperties" -Body ($body | ConvertTo-Json -Compress) -Headers $script:authToken -UseBasicParsing
+                if ($update.StatusCode -eq 200) {
+                   Write-Host "Updated device: $deviceSerial with grouptag: $groupTag"
+                }
+                else {
+                    throw "Web requested failed with status code: $update.statusCode"
+                }
+            }
+        }
+    }
+    catch {
+        $errorMsg = $_.Exception.Message
+    }
+    finally {
+        if ($errorMsg) {
+            Write-Warning $errorMsg
+        }
+        else {
+            if ($sync) {
+                Write-Host "Autopilot device sync requested.."
+                Invoke-RestMethod -Method Post -Uri "https://graph.microsoft.com/beta/deviceManagement/windowsAutopilotSettings/sync" -Headers $script:authToken
+            }
+        }
+    }
+}
+```
 
 As always, all code from this post will be available on my GitHub and I am always available to chat on [Twitter](https://twitter.com/powers_hell).
 

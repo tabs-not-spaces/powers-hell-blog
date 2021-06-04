@@ -158,8 +158,8 @@ Now, I'll be the first to admit that the solution here is a little "kludgy" - I 
 
 ## Notes
 
-  * the Proactive Remediation detection and remediation scripts need to be run in the **user context** as opposed to system - make sure you set that in the solution.
-  * The default printer value will **NOT** work the way it is intended if you have the **Let Windows manage my default printer** setting enabled (found within the **Printers & scanners** section of settings). Which makes sense - but just be aware of that.
+* the Proactive Remediation detection and remediation scripts need to be run in the **user context** as opposed to system - make sure you set that in the solution.
+* The default printer value will **NOT** work the way it is intended if you have the **Let Windows manage my default printer** setting enabled (found within the **Printers & scanners** section of settings). Which makes sense - but just be aware of that.
 
 I will continue to dig into this solution to try and make it a little more elegant - with the hopes that any advancements I make with the provisioning process might just make it into the official solution once it leaves Public Preview.
 

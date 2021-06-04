@@ -30,5 +30,15 @@
 			"</div>"
 		],
 		"description": "Insert youtube into blog"
+	},
+	"PowerShell code block":{
+		"scope": "markdown",
+		"prefix": "mdps",
+		"body": [
+			"```PowerShell",
+      "${1:code}",
+      "```"
+		],
+		"description": "PWSH BABY"
 	}
 }
