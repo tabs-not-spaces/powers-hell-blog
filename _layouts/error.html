@@ -10,9 +10,7 @@ layout: default
             <span class="{{ line.line.class }}" data-ty="{{ line.line.formatting }}"
                 data-ty-prompt="{{ line.line.bell }}">{{ line.line.message }}</span>
             {%- endfor -%}
-            <span class="drac-text-yellow-pink" data-ty="input" data-ty-cursor="▋" data-ty-prompt=""
-                style="text-align: right;">{{ site.url }}</span>
-            <span data-ty="input" data-ty-cursor="▋" data-ty-prompt="" style="text-align: right;">{{ page.emojis }}</span>
+            {{ page.footer | flatify}}
         </div>
     </div>
 </main>
