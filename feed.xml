@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-06-02T01:37:49+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-06-04T08:27:21+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>Great power is great fun</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -366,7 +366,7 @@ function Publish-ScriptToIntune {
 
         [Parameter(Mandatory = $true)]
         [string]$Description,
-        
+
         [Parameter(Mandatory = $false)]
         [ValidateSet(&quot;System&quot;, &quot;User&quot;)]
         [string]$RunAsAccount = &quot;System&quot;,
@@ -1012,7 +1012,7 @@ $job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name 
 
 &lt;!--more--&gt;
 
-&lt;p&gt;I get it though. At one point, as &lt;a href=&quot;https://twitter.com/mniehaus&quot;&gt;Michael Neihaus&lt;/a&gt; &lt;a href=&quot;https://oofhours.com/2019/12/20/configuring-time-zones-part-2/&quot;&gt;has written about previously&lt;/a&gt;, even if we could configure the time zone during the Out of Box Experience, everything was hinged on the timings of certificates and policies reaching the device within an agreed time frame.&lt;br /&gt;
+&lt;p&gt;I get it though. At one point, as &lt;a href=&quot;https://twitter.com/mniehaus&quot;&gt;Michael Neihaus&lt;/a&gt; &lt;a href=&quot;https://oofhours.com/2019/12/20/configuring-time-zones-part-2/&quot;&gt;has written about previously&lt;/a&gt;, even if we could configure the time zone during the Out of Box Experience, everything was hinged on the timings of certificates and policies reaching the device within an agreed time frame.
 If the time zone changed on a device during that process it had the possibility to break the entire enrollment process. This has since been (for the most part) resolved if you are using Windows 10 2004 (20h1) as your operating system.&lt;/p&gt;
 
 &lt;p&gt;I’m hopeful that eventually, we will be able to configure the time zone as part of the OOBE, but until that time comes, I’d like to share some ways that I currently solve this problem using Azure Maps &amp;amp; PowerShell.&lt;/p&gt;
@@ -1047,6 +1047,14 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;Now let’s grab our GPS data and send it to the Azure Maps API!&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-Type -AssemblyName System.Device
+$gw = New-Object System.Device.Location.GeoCoordinateWatcher
+$gw.Start()
+while (($gw.Status -ne 'Ready') -and ($gw.Permission -ne 'Denied')) {
+    Start-Sleep -Milliseconds 100 #Wait for discovery.
+}
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;The above code is fairly simple - we are adding the &lt;strong&gt;System.Device&lt;/strong&gt; assembly to our session and creating and starting a new &lt;strong&gt;GeoCoordinateWatcher&lt;/strong&gt; object to capture the GPS data of our device.&lt;/p&gt;
 
 &lt;p&gt;If we look at the results that are stored in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$gw&lt;/code&gt; variable we should see the property name &lt;strong&gt;Permission&lt;/strong&gt;. If we step into that, we should see the location data required for the next step.&lt;/p&gt;
@@ -1054,6 +1062,16 @@ If the time zone changed on a device during that process it had the possibility 
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-5.png&quot; title=&quot;$gw variable&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-5.png&quot; alt=&quot;$gw variable&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Now that we have our Latitude and Longitude data stored in a variable, next we need to form the request to the Azure Maps API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$apiKey = &quot;00000000000000000000000000&quot; #replace with your subscription Key
+$baseUri = &quot;https://atlas.microsoft.com/timezone&quot;
+$restParams = @{
+    Method      = &quot;Get&quot;
+    Uri         = &quot;$baseUri/byCoordinates/json?subscription-key=$apiKey&amp;amp;api-version=1.0&amp;amp;query=$($gw.Position.Location.Latitude),$($gw.Position.Location.Longitude)&quot;
+    ContentType = 'Application/Json'
+}
+$locData = Invoke-RestMethod @restParams
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Looking at the contents of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData&lt;/code&gt; we should now see some cool data.&lt;/p&gt;
 
@@ -1065,6 +1083,17 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;The final step is to convert the value we see in &lt;strong&gt;Id&lt;/strong&gt; from the IANA code, to the format our computer needs to set the time zone.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$apiKey = '000000000000000000000000000000' #use a subscription key from your Azure Maps Account
+$restParams = @{
+    Method = 'Get'
+    Uri = &quot;https://atlas.microsoft.com/timezone/enumWindows/json?subscription-key=$apiKey&amp;amp;api-version=1.0&quot;
+    ContentType = 'Application/Json'
+}
+$tzList = Invoke-RestMethod @restParams
+$result = $tzList | Where-Object { $locData.TimeZones.id -in $_.IanaIds }
+Set-TimeZone -Id $result
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;All we are doing above is getting a list of Windows time zone IDs and matching them to the IANA time zone ID. Once we have a match, using the native &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Set-TimeZone&lt;/code&gt; allows us to dynamically set our device time zone with relative ease!&lt;/p&gt;
 
 &lt;h2 id=&quot;setting-time-zone-from-public-ip-address&quot;&gt;Setting Time Zone from public IP address&lt;/h2&gt;
@@ -1075,13 +1104,42 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;Once you’ve registered and signed in, grab a copy of the access token from the dashboard - we will use it below.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$apiKey = '000000000000000000000000000000' # replace with access key from your ipinfo.io account
+$locData = Invoke-RestMethod &quot;https://ipinfo.io?token=$apiKey&quot; -ContentType 'Application/Json'
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;If we look at the value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData&lt;/code&gt; we should see similar data from our first example.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-9.png&quot; title=&quot;$locData&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-9.png&quot; alt=&quot;$locData&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Jackpot! The value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData.timezone&lt;/code&gt; is a properly formatted IANA Id. We could reuse the code from the first example to match up the IANA Id to the Windows time zone Id - or we can save an API call and grab a copy of the results and compare them in the code. Let’s see how that would look.&lt;/p&gt;
 
-&lt;p&gt;Obviously, that’s a LOT more code, but it does save us another API call, which if we are deploying to tens of thousands of devices could in the end save us being charged for API use!&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$tzList = @{
+    #region snippet of the countr / iana code table
+    &quot;Africa/Abidjan&quot;      = &quot;Greenwich Standard Time&quot;
+    &quot;Africa/Accra&quot;        = &quot;Greenwich Standard Time&quot;
+    &quot;Africa/Addis_Ababa&quot;  = &quot;E. Africa Standard Time&quot;
+    &quot;Africa/Algiers&quot;      = &quot;W. Central Africa Standard Time&quot;
+    &quot;Africa/Asmera&quot;       = &quot;E. Africa Standard Time&quot;
+    &quot;Africa/Bamako&quot;       = &quot;Greenwich Standard Time&quot;
+    &quot;Africa/Bangui&quot;       = &quot;W. Central Africa Standard Time&quot;
+    &quot;Africa/Banjul&quot;       = &quot;Greenwich Standard Time&quot;
+    &quot;Africa/Bissau&quot;       = &quot;Greenwich Standard Time&quot;
+    &quot;Africa/Blantyre&quot;     = &quot;South Africa Standard&quot;
+    #endregion
+}
+$windowsId = $tzList.Get_Item($locData.timezone)
+if ($windowsId) {
+    $result = $windowsId
+}
+else {
+    $result = ($tzList.GetEnumerator() | Where-Object { $_.Key -like &quot;*$($locData.timezone)*&quot; }).Value
+}
+Write-Host &quot;Setting timezone to $result..&quot;
+Set-TimeZone -Id $result
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Obviously, that’s a LOT more code (cut for readability), but it does save us another API call, which if we are deploying to tens of thousands of devices could in the end save us being charged for API use!&lt;/p&gt;
 
 &lt;p&gt;I personally prefer and actually do use the second method for setting time zones as during my testing I’m invariably building VMs before I move to physical devices (sometimes I don’t even end up onto physical devices!), so being able to get a rough estimate of the location-based on public IP is much more reliable.&lt;/p&gt;
 
@@ -1113,9 +1171,15 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;For simplicities sake, I will not deep dive into manually creating MSAL requests, as luckily there is already a great module available to us on the PowerShell Gallery - &lt;a href=&quot;https://www.powershellgallery.com/packages/MSAL.PS&quot;&gt;MSAL.PS&lt;/a&gt; (Written by &lt;a href=&quot;https://github.com/jasoth&quot;&gt;Jason Thompson&lt;/a&gt;). So Let’s go ahead and install that on our computer.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module MSAL.PS -Scope CurrentUser
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;One of the benefits of MSAL is that it has been designed from the ground up to be completely cross-platform compatible, which means we get a few new ways to authenticate to devices that are “input constrained”. This is called “device code flow”.&lt;/p&gt;
 
 &lt;p&gt;Using the well-known Intune app id, lets try out Device Code Flow.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Get-MsalToken -ClientId 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' -TenantId 'powers-hell.com' -DeviceCode
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/msalDeviceCode.gif&quot; title=&quot;device code flow&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/msalDeviceCode.gif&quot; alt=&quot;device code flow&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -1126,6 +1190,9 @@ If the time zone changed on a device during that process it had the possibility 
 &lt;p&gt;The answer to that is “Yes. But not with the well-known Intune app id..”&lt;/p&gt;
 
 &lt;p&gt;Let’s try it now..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Get-MsalToken -ClientId 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' -TenantId 'powers-hell.com' -DeviceCode
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/msalInteractiveFail.gif&quot; title=&quot;failing interactive auth&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/msalInteractiveFail.gif&quot; alt=&quot;failing interactive auth&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -1177,6 +1244,26 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;So now we have a new AAD application registered with the correct permission scopes AND the correct reply URL, let’s see the authentication flow in a simple Graph call.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;[cmdletbinding()]
+param (
+    [Parameter(Mandatory = $true)]
+    [guid]$clientId,
+
+    [Parameter(Mandatory = $true)]
+    [string]$tenantId
+)
+#region Get the auth token and build the auth header
+$auth = Get-MsalToken -ClientId $clientId -TenantId $tenantId -Interactive
+$authHeader = @{Authorization = $auth.CreateAuthorizationHeader()}
+#endregion
+
+#region Build the request and return the ID and Name of all win32 apps
+$baseGraphUri = &quot;https://graph.microsoft.com/beta/deviceappmanagement/mobileapps&quot;
+$results = (Invoke-RestMethod -Method Get -Uri &quot;$baseGraphUri`?`$filter=isOf('microsoft.graph.win32LobApp')&quot; -Headers $authHeader -ContentType 'Application/Json').value
+$results | Select-Object id, displayName
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;The code above is a very simple example that grabs the authentication interactively and then queries Intune for any Win32 applications that have been packaged. Let’s see it in action..&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/get-win32apps.gif&amp;quot;&quot; title=&quot;Get Win32 Apps&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/get-win32apps.gif&amp;quot;&quot; alt=&quot;Get Win32 Apps&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
@@ -1201,9 +1288,13 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;!--more--&gt;
 
-&lt;h2 id=&quot;create&quot;&gt;Create.&lt;/h2&gt;
+&lt;h2 id=&quot;create&quot;&gt;Create&lt;/h2&gt;
 
 &lt;p&gt;First let’s scaffold out our new application project we are going to make - in the example code below we are just going to put everything in the root of our system drive.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;New-Item &quot;$env:SystemDrive\FontsToDeploy\Fonts&quot; -ItemType Directory -Force
+New-Item &quot;$env:SystemDrive\FontsToDeploy\Fonts\install.ps1&quot; -ItemType File -Force
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now, let’s grab the fonts that the marketing department has asked us to install and place them inside the &lt;strong&gt;Fonts&lt;/strong&gt; folder.&lt;/p&gt;
 
@@ -1211,13 +1302,48 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;We will begin by inserting a very simple function into our install script that will do all of the heavy lifting of this installation.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region functions
+function Install-Fonts {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$FontFile
+    )
+    try {
+        $font = $fontFile | split-path -Leaf
+        If (!(Test-Path &quot;c:\windows\fonts\$($font)&quot;)) {
+            switch (($font -split &quot;\.&quot;)[-1]) {
+                &quot;TTF&quot; {
+                    $fn = &quot;$(($font -split &quot;\.&quot;)[0]) (TrueType)&quot;
+                    break
+                }
+                &quot;OTF&quot; {
+                    $fn = &quot;$(($font -split &quot;\.&quot;)[0]) (OpenType)&quot;
+                    break
+                }
+            }
+            Copy-Item -Path $fontFile -Destination &quot;C:\Windows\Fonts\$font&quot; -Force
+            New-ItemProperty -Name $fn -Path &quot;HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts&quot; -PropertyType string -Value $font
+        }
+    }
+    catch {
+        write-warning $_.exception.message
+    }
+}
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;As you can see, not much is required - the function is just checking if the font file is a *.TTF or *.OTF file, copying the file to the font folder and setting a registry entry in HKLM to expose the new font on the system to all users of the device.&lt;/p&gt;
 
 &lt;p&gt;Now that we have our function added, all we need to do is step through our fonts folder and send each font through the function to be installed on the system.&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;foreach ($f in $(Get-ChildItem $PSScriptRoot\fonts)) {
+    Install-Fonts -FontFile $f.fullName
+}
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;We should probably also add some error handling to the solution - this will be provided in the final solution in GitHub.&lt;/p&gt;
 
-&lt;h2 id=&quot;package&quot;&gt;Package.&lt;/h2&gt;
+&lt;h2 id=&quot;package&quot;&gt;Package&lt;/h2&gt;
 
 &lt;p&gt;Once our install.ps1 file is created, we need to convert the project to a single file that we can upload to Intune.&lt;/p&gt;
 
@@ -1229,9 +1355,12 @@ If the time zone changed on a device during that process it had the possibility 
   &lt;li&gt;Call the Win32 Content Prep Tool from PowerShell.&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;&amp;amp; C:\PathToTools\IntuneWinAppUtil.exe -c C:\Fonts -s Install.ps1 -o C:\Fonts
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/createwin32.gif&quot; title=&quot;Create Win32 App Package&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/createwin32.gif&quot; alt=&quot;Create Win32 App Package&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;deploy&quot;&gt;Deploy.&lt;/h2&gt;
+&lt;h2 id=&quot;deploy&quot;&gt;Deploy&lt;/h2&gt;
 
 &lt;p&gt;Now that we have our *.intunewin package, we can move over to endpoint.microsoft.com and add a new “Windows App (Win32)” application.&lt;/p&gt;
 
@@ -1262,9 +1391,15 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;Let’s begin by installing the module..&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module Intune.HV.Tools -Scope CurrentUser -Force
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;Once the module is installed, we need to set up our device using the functions contained within..&lt;/p&gt;
 
-&lt;p&gt;Let’s start by initializing everything..&lt;/p&gt;
+&lt;p&gt;Now let’s initialize everything..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Initialize-HVTools -Path &quot;C:\lab&quot;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;All we are doing here is specifying where we want our VMs to be stored and preparing the configuration file - which we can look at by running the “Get-HVToolsConfig” command..&lt;/p&gt;
 
@@ -1272,7 +1407,10 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;Now that we have our configuration file initialized, let’s add stuff to it!&lt;/p&gt;
 
-&lt;p&gt;The first thing we need to add is details of our windows installation media - in the example below we are using the latest “2004” build of windows 10..&lt;/p&gt;
+&lt;p&gt;The next thing we need to add is details of our windows installation media - in the example below we are using the latest “2004” build of windows 10..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-ImageToConfig -ImageName &quot;2004&quot; -IsoPath C:\Path\To\Images\en_windows_10_business_editions_version_2004_x64_dvd_d06ef8c5.iso
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We can add as many images to the solution as we want - all we need to do is make sure each one has a unique name - as shown below, I’ve added builds 1909 and 2004 to my lab..&lt;/p&gt;
 
@@ -1280,11 +1418,17 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;Once we have our image library added to the config, let’s add some of our tenants (one at a time of course..)&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-TenantToConfig -TenantName &quot;Powers-Hell&quot; -ImageName &quot;2004&quot; -AdminUpn &quot;AdminEmail@Powers-Hell.com&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;What’s cool about the &lt;strong&gt;Add-TenantToConfig&lt;/strong&gt; cmdlet is that the &lt;strong&gt;ImageName&lt;/strong&gt; parameter autocompletes from the available images that we added in the step before. Only have one image? press Tab and it’ll autocomplete. You added a few images? Tab through and find the one you want to use!&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-tenantoconfig.gif&quot; title=&quot;Add tenant to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-tenantoconfig.gif&quot; alt=&quot;Add tenant to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Alright, we’ve got our images and our tenants configured, lastly we need to add our Hyper-V VLAN details - most of us probably just have the “Default Switch” that was set up when we install Hyper-V, but *some* of us have complex setups, so let’s solve that.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-NetworkToConfig -VSwitchName 'SuperUniqueSwitchName'
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The cmdlet actually auto-completes against any virtual switches you might have set up, so as always, just tab through and find the switch you want to assign to your machines..&lt;/p&gt;
 
@@ -1293,6 +1437,9 @@ If the time zone changed on a device during that process it had the possibility 
 &lt;p&gt;If you have a virtual network that requires a &lt;strong&gt;VLanID&lt;/strong&gt; you can also apply that by using the &lt;strong&gt;-VlandID&lt;/strong&gt; parameter..&lt;/p&gt;
 
 &lt;p&gt;Alright, once our configuration is set up, it’s time to build our VMs. For this example I’m going to build 3 VMs with a single CPU and 2gb of memory to enroll to the “Powers-Hell” tenant..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;New-ClientVM -TenantName 'Powers-Hell' -NumberOfVMs 3 -CPUsPerVM 1 -VMMemory 2gb
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The first time you build a VM from an image it needs to create a &lt;strong&gt;reference image&lt;/strong&gt; which can take some time - this will only need to be done once per image.&lt;/p&gt;
 
@@ -1342,17 +1489,30 @@ If the time zone changed on a device during that process it had the possibility 
 
 &lt;p&gt;The module was written primarily for &lt;a href=&quot;https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7&quot;&gt;PowerShell 7&lt;/a&gt; - if you don’t have it yet, there’s a bunch of ways to get it on your machine. Below is probably the easiest of the lot..&lt;/p&gt;
 
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Invoke-Expression &quot;&amp;amp; { $(Invoke-RestMethod -Method Get -Uri &quot;https://aka.ms/install-powershell.ps1&quot;) } -UseMSI&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;Some of the helper functions rely on other modules - so let’s install those (using PowerShell 7 of course..)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module WindowsAutoPilotIntune -Scope CurrentUser -Force
+Install-Module Microsoft.Graph.Intune -Scope CurrentUser -Force
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The module uses Windows 10 installation media to create the bootable media. This can be procured from many locations - if you do not have access to this, someone you work with will - just make sure you have a copy of the latest *.iso on your device.&lt;/p&gt;
 
 &lt;p&gt;Finally, let’s install the Intune.USB.Creator module..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module Intune.USB.Creator -Scope CurrentUser -Force
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&quot;how-to-use&quot;&gt;How to use&lt;/h2&gt;
 
 &lt;p&gt;Once all the pre-requirements are installed, plug a USB into our device and let’s create an Autopilot provisioning device.&lt;/p&gt;
 
 &lt;p&gt;Open up PowerShell 7 as an administrator and we will type in the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Publish-ImageToUSB -winPEPath &quot;https://githublfs.blob.core.windows.net/storage/WinPE.zip&quot; -windowsIsoPath &quot;C:\path\to\win10.iso&quot; -getAutopilotCfg
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Hitting enter will kick off the device provisioning code..&lt;/p&gt;
 

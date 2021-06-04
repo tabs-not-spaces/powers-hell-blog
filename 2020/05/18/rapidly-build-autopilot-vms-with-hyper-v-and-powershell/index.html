@@ -95,9 +95,15 @@
 
 <p>Let’s begin by installing the module..</p>
 
+<pre><code class="language-PowerShell">Install-Module Intune.HV.Tools -Scope CurrentUser -Force
+</code></pre>
+
 <p>Once the module is installed, we need to set up our device using the functions contained within..</p>
 
-<p>Let’s start by initializing everything..</p>
+<p>Now let’s initialize everything..</p>
+
+<pre><code class="language-PowerShell">Initialize-HVTools -Path "C:\lab"
+</code></pre>
 
 <p>All we are doing here is specifying where we want our VMs to be stored and preparing the configuration file - which we can look at by running the “Get-HVToolsConfig” command..</p>
 
@@ -105,7 +111,10 @@
 
 <p>Now that we have our configuration file initialized, let’s add stuff to it!</p>
 
-<p>The first thing we need to add is details of our windows installation media - in the example below we are using the latest “2004” build of windows 10..</p>
+<p>The next thing we need to add is details of our windows installation media - in the example below we are using the latest “2004” build of windows 10..</p>
+
+<pre><code class="language-PowerShell">Add-ImageToConfig -ImageName "2004" -IsoPath C:\Path\To\Images\en_windows_10_business_editions_version_2004_x64_dvd_d06ef8c5.iso
+</code></pre>
 
 <p>We can add as many images to the solution as we want - all we need to do is make sure each one has a unique name - as shown below, I’ve added builds 1909 and 2004 to my lab..</p>
 
@@ -113,11 +122,17 @@
 
 <p>Once we have our image library added to the config, let’s add some of our tenants (one at a time of course..)</p>
 
+<pre><code class="language-PowerShell">Add-TenantToConfig -TenantName "Powers-Hell" -ImageName "2004" -AdminUpn "AdminEmail@Powers-Hell.com"
+</code></pre>
+
 <p>What’s cool about the <strong>Add-TenantToConfig</strong> cmdlet is that the <strong>ImageName</strong> parameter autocompletes from the available images that we added in the step before. Only have one image? press Tab and it’ll autocomplete. You added a few images? Tab through and find the one you want to use!</p>
 
 <p><a href="/assets/images/2020/05/add-tenantoconfig.gif" title="Add tenant to config"><img src="/assets/images/2020/05/add-tenantoconfig.gif" alt="Add tenant to config" /></a></p>
 
 <p>Alright, we’ve got our images and our tenants configured, lastly we need to add our Hyper-V VLAN details - most of us probably just have the “Default Switch” that was set up when we install Hyper-V, but *some* of us have complex setups, so let’s solve that.</p>
+
+<pre><code class="language-PowerShell">Add-NetworkToConfig -VSwitchName 'SuperUniqueSwitchName'
+</code></pre>
 
 <p>The cmdlet actually auto-completes against any virtual switches you might have set up, so as always, just tab through and find the switch you want to assign to your machines..</p>
 
@@ -126,6 +141,9 @@
 <p>If you have a virtual network that requires a <strong>VLanID</strong> you can also apply that by using the <strong>-VlandID</strong> parameter..</p>
 
 <p>Alright, once our configuration is set up, it’s time to build our VMs. For this example I’m going to build 3 VMs with a single CPU and 2gb of memory to enroll to the “Powers-Hell” tenant..</p>
+
+<pre><code class="language-PowerShell">New-ClientVM -TenantName 'Powers-Hell' -NumberOfVMs 3 -CPUsPerVM 1 -VMMemory 2gb
+</code></pre>
 
 <p>The first time you build a VM from an image it needs to create a <strong>reference image</strong> which can take some time - this will only need to be done once per image.</p>
 

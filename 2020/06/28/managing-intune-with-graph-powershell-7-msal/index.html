@@ -101,9 +101,15 @@
 
 <p>For simplicities sake, I will not deep dive into manually creating MSAL requests, as luckily there is already a great module available to us on the PowerShell Gallery - <a href="https://www.powershellgallery.com/packages/MSAL.PS">MSAL.PS</a> (Written by <a href="https://github.com/jasoth">Jason Thompson</a>). So Let’s go ahead and install that on our computer.</p>
 
+<pre><code class="language-PowerShell">Install-Module MSAL.PS -Scope CurrentUser
+</code></pre>
+
 <p>One of the benefits of MSAL is that it has been designed from the ground up to be completely cross-platform compatible, which means we get a few new ways to authenticate to devices that are “input constrained”. This is called “device code flow”.</p>
 
 <p>Using the well-known Intune app id, lets try out Device Code Flow.</p>
+
+<pre><code class="language-PowerShell">Get-MsalToken -ClientId 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' -TenantId 'powers-hell.com' -DeviceCode
+</code></pre>
 
 <p><a href="/assets/images/2020/06/msalDeviceCode.gif" title="device code flow"><img src="/assets/images/2020/06/msalDeviceCode.gif" alt="device code flow" /></a></p>
 
@@ -114,6 +120,9 @@
 <p>The answer to that is “Yes. But not with the well-known Intune app id..”</p>
 
 <p>Let’s try it now..</p>
+
+<pre><code class="language-PowerShell">Get-MsalToken -ClientId 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' -TenantId 'powers-hell.com' -DeviceCode
+</code></pre>
 
 <p><a href="/assets/images/2020/06/msalInteractiveFail.gif" title="failing interactive auth"><img src="/assets/images/2020/06/msalInteractiveFail.gif" alt="failing interactive auth" /></a></p>
 
@@ -164,6 +173,26 @@
 <p>I’ve already gone ahead and created this in my tenant and will be using it for all of my existing workflows and tools.</p>
 
 <p>So now we have a new AAD application registered with the correct permission scopes AND the correct reply URL, let’s see the authentication flow in a simple Graph call.</p>
+
+<pre><code class="language-PowerShell">[cmdletbinding()]
+param (
+    [Parameter(Mandatory = $true)]
+    [guid]$clientId,
+
+    [Parameter(Mandatory = $true)]
+    [string]$tenantId
+)
+#region Get the auth token and build the auth header
+$auth = Get-MsalToken -ClientId $clientId -TenantId $tenantId -Interactive
+$authHeader = @{Authorization = $auth.CreateAuthorizationHeader()}
+#endregion
+
+#region Build the request and return the ID and Name of all win32 apps
+$baseGraphUri = "https://graph.microsoft.com/beta/deviceappmanagement/mobileapps"
+$results = (Invoke-RestMethod -Method Get -Uri "$baseGraphUri`?`$filter=isOf('microsoft.graph.win32LobApp')" -Headers $authHeader -ContentType 'Application/Json').value
+$results | Select-Object id, displayName
+#endregion
+</code></pre>
 
 <p>The code above is a very simple example that grabs the authentication interactively and then queries Intune for any Win32 applications that have been packaged. Let’s see it in action..</p>
 

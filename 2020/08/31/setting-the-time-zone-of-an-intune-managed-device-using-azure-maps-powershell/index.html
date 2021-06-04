@@ -83,7 +83,7 @@
 
 <!--more-->
 
-<p>I get it though. At one point, as <a href="https://twitter.com/mniehaus">Michael Neihaus</a> <a href="https://oofhours.com/2019/12/20/configuring-time-zones-part-2/">has written about previously</a>, even if we could configure the time zone during the Out of Box Experience, everything was hinged on the timings of certificates and policies reaching the device within an agreed time frame.<br />
+<p>I get it though. At one point, as <a href="https://twitter.com/mniehaus">Michael Neihaus</a> <a href="https://oofhours.com/2019/12/20/configuring-time-zones-part-2/">has written about previously</a>, even if we could configure the time zone during the Out of Box Experience, everything was hinged on the timings of certificates and policies reaching the device within an agreed time frame.
 If the time zone changed on a device during that process it had the possibility to break the entire enrollment process. This has since been (for the most part) resolved if you are using Windows 10 2004 (20h1) as your operating system.</p>
 
 <p>I’m hopeful that eventually, we will be able to configure the time zone as part of the OOBE, but until that time comes, I’d like to share some ways that I currently solve this problem using Azure Maps &amp; PowerShell.</p>
@@ -118,6 +118,14 @@ If the time zone changed on a device during that process it had the possibility 
 
 <p>Now let’s grab our GPS data and send it to the Azure Maps API!</p>
 
+<pre><code class="language-PowerShell">Add-Type -AssemblyName System.Device
+$gw = New-Object System.Device.Location.GeoCoordinateWatcher
+$gw.Start()
+while (($gw.Status -ne 'Ready') -and ($gw.Permission -ne 'Denied')) {
+    Start-Sleep -Milliseconds 100 #Wait for discovery.
+}
+</code></pre>
+
 <p>The above code is fairly simple - we are adding the <strong>System.Device</strong> assembly to our session and creating and starting a new <strong>GeoCoordinateWatcher</strong> object to capture the GPS data of our device.</p>
 
 <p>If we look at the results that are stored in the <code class="language-plaintext highlighter-rouge">$gw</code> variable we should see the property name <strong>Permission</strong>. If we step into that, we should see the location data required for the next step.</p>
@@ -125,6 +133,16 @@ If the time zone changed on a device during that process it had the possibility 
 <p><a href="/assets/images/2020/08/image-5.png" title="$gw variable"><img src="/assets/images/2020/08/image-5.png" alt="$gw variable" /></a></p>
 
 <p>Now that we have our Latitude and Longitude data stored in a variable, next we need to form the request to the Azure Maps API.</p>
+
+<pre><code class="language-PowerShell">$apiKey = "00000000000000000000000000" #replace with your subscription Key
+$baseUri = "https://atlas.microsoft.com/timezone"
+$restParams = @{
+    Method      = "Get"
+    Uri         = "$baseUri/byCoordinates/json?subscription-key=$apiKey&amp;api-version=1.0&amp;query=$($gw.Position.Location.Latitude),$($gw.Position.Location.Longitude)"
+    ContentType = 'Application/Json'
+}
+$locData = Invoke-RestMethod @restParams
+</code></pre>
 
 <p>Looking at the contents of <code class="language-plaintext highlighter-rouge">$locData</code> we should now see some cool data.</p>
 
@@ -136,6 +154,17 @@ If the time zone changed on a device during that process it had the possibility 
 
 <p>The final step is to convert the value we see in <strong>Id</strong> from the IANA code, to the format our computer needs to set the time zone.</p>
 
+<pre><code class="language-PowerShell">$apiKey = '000000000000000000000000000000' #use a subscription key from your Azure Maps Account
+$restParams = @{
+    Method = 'Get'
+    Uri = "https://atlas.microsoft.com/timezone/enumWindows/json?subscription-key=$apiKey&amp;api-version=1.0"
+    ContentType = 'Application/Json'
+}
+$tzList = Invoke-RestMethod @restParams
+$result = $tzList | Where-Object { $locData.TimeZones.id -in $_.IanaIds }
+Set-TimeZone -Id $result
+</code></pre>
+
 <p>All we are doing above is getting a list of Windows time zone IDs and matching them to the IANA time zone ID. Once we have a match, using the native <code class="language-plaintext highlighter-rouge">Set-TimeZone</code> allows us to dynamically set our device time zone with relative ease!</p>
 
 <h2 id="setting-time-zone-from-public-ip-address">Setting Time Zone from public IP address</h2>
@@ -146,13 +175,42 @@ If the time zone changed on a device during that process it had the possibility 
 
 <p>Once you’ve registered and signed in, grab a copy of the access token from the dashboard - we will use it below.</p>
 
+<pre><code class="language-PowerShell">$apiKey = '000000000000000000000000000000' # replace with access key from your ipinfo.io account
+$locData = Invoke-RestMethod "https://ipinfo.io?token=$apiKey" -ContentType 'Application/Json'
+</code></pre>
+
 <p>If we look at the value of <code class="language-plaintext highlighter-rouge">$locData</code> we should see similar data from our first example.</p>
 
 <p><a href="/assets/images/2020/08/image-9.png" title="$locData"><img src="/assets/images/2020/08/image-9.png" alt="$locData" /></a></p>
 
 <p>Jackpot! The value of <code class="language-plaintext highlighter-rouge">$locData.timezone</code> is a properly formatted IANA Id. We could reuse the code from the first example to match up the IANA Id to the Windows time zone Id - or we can save an API call and grab a copy of the results and compare them in the code. Let’s see how that would look.</p>
 
-<p>Obviously, that’s a LOT more code, but it does save us another API call, which if we are deploying to tens of thousands of devices could in the end save us being charged for API use!</p>
+<pre><code class="language-PowerShell">$tzList = @{
+    #region snippet of the countr / iana code table
+    "Africa/Abidjan"      = "Greenwich Standard Time"
+    "Africa/Accra"        = "Greenwich Standard Time"
+    "Africa/Addis_Ababa"  = "E. Africa Standard Time"
+    "Africa/Algiers"      = "W. Central Africa Standard Time"
+    "Africa/Asmera"       = "E. Africa Standard Time"
+    "Africa/Bamako"       = "Greenwich Standard Time"
+    "Africa/Bangui"       = "W. Central Africa Standard Time"
+    "Africa/Banjul"       = "Greenwich Standard Time"
+    "Africa/Bissau"       = "Greenwich Standard Time"
+    "Africa/Blantyre"     = "South Africa Standard"
+    #endregion
+}
+$windowsId = $tzList.Get_Item($locData.timezone)
+if ($windowsId) {
+    $result = $windowsId
+}
+else {
+    $result = ($tzList.GetEnumerator() | Where-Object { $_.Key -like "*$($locData.timezone)*" }).Value
+}
+Write-Host "Setting timezone to $result.."
+Set-TimeZone -Id $result
+</code></pre>
+
+<p>Obviously, that’s a LOT more code (cut for readability), but it does save us another API call, which if we are deploying to tens of thousands of devices could in the end save us being charged for API use!</p>
 
 <p>I personally prefer and actually do use the second method for setting time zones as during my testing I’m invariably building VMs before I move to physical devices (sometimes I don’t even end up onto physical devices!), so being able to get a rough estimate of the location-based on public IP is much more reliable.</p>
 

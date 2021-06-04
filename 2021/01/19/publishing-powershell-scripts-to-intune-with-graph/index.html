@@ -252,7 +252,7 @@ function Publish-ScriptToIntune {
 
         [Parameter(Mandatory = $true)]
         [string]$Description,
-        
+
         [Parameter(Mandatory = $false)]
         [ValidateSet("System", "User")]
         [string]$RunAsAccount = "System",

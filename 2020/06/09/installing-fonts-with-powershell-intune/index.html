@@ -87,9 +87,13 @@
 
 <!--more-->
 
-<h2 id="create">Create.</h2>
+<h2 id="create">Create</h2>
 
 <p>First let’s scaffold out our new application project we are going to make - in the example code below we are just going to put everything in the root of our system drive.</p>
+
+<pre><code class="language-PowerShell">New-Item "$env:SystemDrive\FontsToDeploy\Fonts" -ItemType Directory -Force
+New-Item "$env:SystemDrive\FontsToDeploy\Fonts\install.ps1" -ItemType File -Force
+</code></pre>
 
 <p>Now, let’s grab the fonts that the marketing department has asked us to install and place them inside the <strong>Fonts</strong> folder.</p>
 
@@ -97,13 +101,48 @@
 
 <p>We will begin by inserting a very simple function into our install script that will do all of the heavy lifting of this installation.</p>
 
+<pre><code class="language-PowerShell">#region functions
+function Install-Fonts {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$FontFile
+    )
+    try {
+        $font = $fontFile | split-path -Leaf
+        If (!(Test-Path "c:\windows\fonts\$($font)")) {
+            switch (($font -split "\.")[-1]) {
+                "TTF" {
+                    $fn = "$(($font -split "\.")[0]) (TrueType)"
+                    break
+                }
+                "OTF" {
+                    $fn = "$(($font -split "\.")[0]) (OpenType)"
+                    break
+                }
+            }
+            Copy-Item -Path $fontFile -Destination "C:\Windows\Fonts\$font" -Force
+            New-ItemProperty -Name $fn -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -PropertyType string -Value $font
+        }
+    }
+    catch {
+        write-warning $_.exception.message
+    }
+}
+#endregion
+</code></pre>
+
 <p>As you can see, not much is required - the function is just checking if the font file is a *.TTF or *.OTF file, copying the file to the font folder and setting a registry entry in HKLM to expose the new font on the system to all users of the device.</p>
 
 <p>Now that we have our function added, all we need to do is step through our fonts folder and send each font through the function to be installed on the system.</p>
 
+<pre><code class="language-PowerShell">foreach ($f in $(Get-ChildItem $PSScriptRoot\fonts)) {
+    Install-Fonts -FontFile $f.fullName
+}
+</code></pre>
+
 <p>We should probably also add some error handling to the solution - this will be provided in the final solution in GitHub.</p>
 
-<h2 id="package">Package.</h2>
+<h2 id="package">Package</h2>
 
 <p>Once our install.ps1 file is created, we need to convert the project to a single file that we can upload to Intune.</p>
 
@@ -115,9 +154,12 @@
   <li>Call the Win32 Content Prep Tool from PowerShell.</li>
 </ul>
 
+<pre><code class="language-PowerShell">&amp; C:\PathToTools\IntuneWinAppUtil.exe -c C:\Fonts -s Install.ps1 -o C:\Fonts
+</code></pre>
+
 <p><a href="/assets/images/2020/06/createwin32.gif" title="Create Win32 App Package"><img src="/assets/images/2020/06/createwin32.gif" alt="Create Win32 App Package" /></a></p>
 
-<h2 id="deploy">Deploy.</h2>
+<h2 id="deploy">Deploy</h2>
 
 <p>Now that we have our *.intunewin package, we can move over to endpoint.microsoft.com and add a new “Windows App (Win32)” application.</p>
 

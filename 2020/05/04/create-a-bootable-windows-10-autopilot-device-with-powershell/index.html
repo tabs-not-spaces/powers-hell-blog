@@ -107,17 +107,30 @@
 
 <p>The module was written primarily for <a href="https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7">PowerShell 7</a> - if you don’t have it yet, there’s a bunch of ways to get it on your machine. Below is probably the easiest of the lot..</p>
 
+<pre><code class="language-PowerShell">Invoke-Expression "&amp; { $(Invoke-RestMethod -Method Get -Uri "https://aka.ms/install-powershell.ps1") } -UseMSI"
+</code></pre>
+
 <p>Some of the helper functions rely on other modules - so let’s install those (using PowerShell 7 of course..)</p>
+
+<pre><code class="language-PowerShell">Install-Module WindowsAutoPilotIntune -Scope CurrentUser -Force
+Install-Module Microsoft.Graph.Intune -Scope CurrentUser -Force
+</code></pre>
 
 <p>The module uses Windows 10 installation media to create the bootable media. This can be procured from many locations - if you do not have access to this, someone you work with will - just make sure you have a copy of the latest *.iso on your device.</p>
 
 <p>Finally, let’s install the Intune.USB.Creator module..</p>
+
+<pre><code class="language-PowerShell">Install-Module Intune.USB.Creator -Scope CurrentUser -Force
+</code></pre>
 
 <h2 id="how-to-use">How to use</h2>
 
 <p>Once all the pre-requirements are installed, plug a USB into our device and let’s create an Autopilot provisioning device.</p>
 
 <p>Open up PowerShell 7 as an administrator and we will type in the following command:</p>
+
+<pre><code class="language-PowerShell">Publish-ImageToUSB -winPEPath "https://githublfs.blob.core.windows.net/storage/WinPE.zip" -windowsIsoPath "C:\path\to\win10.iso" -getAutopilotCfg
+</code></pre>
 
 <p>Hitting enter will kick off the device provisioning code..</p>
 
