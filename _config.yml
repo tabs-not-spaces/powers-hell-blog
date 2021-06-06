@@ -12,6 +12,7 @@ plugins:
   - jekyll-sitemap
   - jekyll/tagging
   - jekyll-tagging-related_posts
+  - jekyll-archives
 
 paginate: 5
 paginate_path: "/page:num/"
@@ -20,6 +21,11 @@ date_format: "%-d %b"
 excerpt_separator: <!--more-->
 markdown: kramdown
 theme: minima
+
+collections:
+  archives:
+    output: true
+    permalink: /archives/:path/
 
 include:
   - node_modules
