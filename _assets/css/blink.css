@@ -1,0 +1,19 @@
+
+#tagalign {
+    display: flex;
+    align-items: baseline;
+}
+.cursor {
+    background: var(--cyan);
+    line-height: 5px;
+    margin-left: 10px;
+    -webkit-animation: blink 0.8s infinite;
+    width: 10px;
+    height: 1px;
+  }
+
+  @-webkit-keyframes blink {
+    0% {background: var(--blackBlack)}
+    50% {background: var(--cyan)}
+    100% {background: var(--blackBlack)}
+  }

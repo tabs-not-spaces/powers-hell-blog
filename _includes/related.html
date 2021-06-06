@@ -4,9 +4,9 @@
         <hr class="drac-divider drac-border-cyan" />
     </div>
     <h3 class="drac">Related Posts</h3>
-    <ul class="related-footer">
+    <ul class="related">
         {% for related_post in site.related_posts limit: 5 %}
-        <li><a href="{{ related_post.url }}">&raquo; {{ related_post.title }}</a></li>
+        <li><a href="{{ related_post.url }}"><span class="drac-text-cyan">&raquo;</span> {{ related_post.title }}</a></li>
         {% endfor %}
     </ul>
 </div>
