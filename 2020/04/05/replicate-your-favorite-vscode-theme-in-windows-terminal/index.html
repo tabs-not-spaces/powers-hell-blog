@@ -24,36 +24,73 @@
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
-
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
 </head><body><div class="page-container">
     <div class="">
-        <nav class="nav sticky drac-bg-blackBlack">
+        <nav x-data="{ open: false }" class="nav sticky drac-bg-blackBlack">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 px-4 sm:px-0">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 link-hover">
                             <h2 class="drac-heading drac-heading-xl"><a href="/">Powers Hell</a></h2>
                         </div>
-                        <div class="hidden md:block">
+                        <div class="hidden md:block flex-shrink-0">
                             <div class="ml-10 flex items-baseline space-x-4">
-                                <div class="drac-text drac-text-cyan drac-text-right drac-line-height">
-                                    Great power is great fun
+                                <div id="tagalign" class="drac-text drac-text-cyan drac-text-right drac-line-height">
+                                    great/power/is/great/fun >
+                                    <div class="cursor"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="hidden sm:block">
-                        <div class="ml-4 items-center relative">
-                            <div>
-                                <a href="/"
-                                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
-                                <a href="/about"
-                                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
-                                <a href="/merch"
-                                    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
-                            </div>
-                        </div>
+                    <div class="hidden md:block flex-shrink-0">
+                        <div class="ml-3 items-center relative">
+    <a href="/"
+        class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    <a href="/about"
+        class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    <a href="/merch"
+        class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
                     </div>
+                    <div class="mr-2 flex md:hidden">
+                        <!-- Mobile menu button -->
+                        <button type="button"
+                            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm items-center justify-center p-2"
+                            aria-controls="mobile-menu" aria-expanded="false" @click="open = !open" ara-expanded="false"
+                            x-bind-aria-expanded="open.toString()">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'hidden':open, 'block': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'block':open, 'hidden': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="drac-bg-black md:hidden" x-show="open">
+                <div class="px-2 py-3 space-y-1 sm:px-3 items-center">
+                    <div id="tagalign" class="ml-3 drac-text drac-text-cyan drac-line-height">
+                        great/power/is/great/fun >
+                        <div class="cursor"></div>
+                    </div>
+                    <div class="ml-3 items-center relative">
+    <a href="/"
+        class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    <a href="/about"
+        class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    <a href="/merch"
+        class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
                 </div>
             </div>
         </nav>      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
@@ -440,7 +477,6 @@ I didn’t come up with it myself. Go and <a href="https://gist.github.com/timab
   </div><script src="/assets/js/app.js"></script>
 <script src="/assets/js/prism.js"></script>
 <script type="text/javascript" src="/assets/js/lightbox.js"></script>
-<script src="/assets/js/termynal.js" data-termynal-container="#termynal"></script>
 <link rel="stylesheet" href="/assets/css/lightbox.css">
 </div>
 <div>
