@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://powers-hell.com/archives/archivedata/</loc>
+<lastmod>2021-06-06T10:01:38+00:00</lastmod>
+</url>
+<url>
 <loc>https://powers-hell.com/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/</loc>
 <lastmod>2018-04-15T16:30:57+00:00</lastmod>
 </url>
