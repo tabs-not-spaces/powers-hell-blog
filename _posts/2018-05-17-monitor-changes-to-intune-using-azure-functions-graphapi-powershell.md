@@ -11,13 +11,13 @@ views:
   - "3311"
 categories:
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Azure
   - GraphAPI
   - Intune
   - Microsoft
-  - Powershell
+  - PowerShell
 ---
 <a href="http://powers-hell.com/working-with-graphapi-powerbi-the-easy-way/" rel="noopener" target="_blank">In my last post</a>, I showed you how to move a very common task - authenticating into the GraphAPI, up into an Azure Function App.
 
@@ -53,7 +53,7 @@ While we are in the storage account, lets also create a **Shared Access Signatur
 
 Alright - your storage is set up, access & security is set up to it, now let's set up the functions. Head over to the Function App blade and add a new function to your newly created Function App. Let's start with the snapshot creation endpoint.
 
-As always (or until Powershell moves out of the experimental phase), set **Experimental Language Support** to **Enabled**, choose **PowerShell** as your language of choice, and create a **HTTP trigger**.
+As always (or until PowerShell moves out of the experimental phase), set **Experimental Language Support** to **Enabled**, choose **PowerShell** as your language of choice, and create a **HTTP trigger**.
 
 [![Snapshot function](https://i2.wp.com/i.imgur.com/c96Tqph.png?w=1170&#038;ssl=1)](https://i2.wp.com/i.imgur.com/c96Tqph.png?w=1170&#038;ssl=1 "Snapshot function")
 

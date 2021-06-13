@@ -12,7 +12,7 @@ image: /assets/images/2020/08/gpsdata.jpg
 categories:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Intune
 ---

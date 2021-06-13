@@ -13,11 +13,11 @@ categories:
   - Azure
   - Graph
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
 ---
 
 Microsoft has recently introduced even more ways to create device configuration profiles..

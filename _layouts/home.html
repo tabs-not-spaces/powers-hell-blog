@@ -1,24 +1,35 @@
 ---
 layout: default
 ---
-<main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96">
-  {%- for post in paginator.posts -%}
-  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
-    <div class="main-overlay drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
-      {%- assign date_format = site.date_format | default: "%-d %b" -%}
-      <a href="{{ post.url | relative_url }}">
-          <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan">
-            {{ post.title | escape }}
-          </h2>
-        </a>
-        <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">{{ post.date | date:
-            date_format }}</font>
+<main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96 4xl:-mt-112">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+    <!-- Main 3 column grid -->
+    <div class="grid grid-cols-1 gap-4 items-start lg:grid-cols-5 lg:gap-8">
+      <!-- Left column -->
+      <div class="grid grid-cols-1 gap-4 lg:col-span-4">
+        {%- for post in paginator.posts -%}
+        <div class="main-overlay drac-bg-black rounded-lg shadow-2xl overflow-hidden">
+          <div class="p-6">
+            {%- assign date_format = site.date_format | default: "%-d %b" -%}
+            <a href="{{ post.url | relative_url }}">
+              <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan">
+                {{ post.title | escape }}
+              </h2>
+            </a>
+            <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">{{ post.date | date:
+                date_format }}</font>
+            </div>
+            <div class="markdown-body drac-text drac-line-height drac-text-white">
+              {{ post.excerpt }}
+            </div>
+          </div>
         </div>
-        <div class="markdown-body drac-text drac-line-height drac-text-white">
-          {{ post.excerpt }}
-        </div>
+        {%- endfor -%}
+        {%- include paginate.html -%}
       </div>
+      {%- include home-side-column.html -%}
+    </div>
   </div>
-  {%- endfor -%}
-  {%- include paginate.html -%}
+  <br>
+
 </main>

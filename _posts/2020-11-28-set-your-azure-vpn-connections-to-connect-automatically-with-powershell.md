@@ -15,7 +15,7 @@ views:
 categories:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Intune
 ---

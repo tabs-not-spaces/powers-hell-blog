@@ -11,7 +11,7 @@ views:
 categories:
   - Graph
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Intune
 ---

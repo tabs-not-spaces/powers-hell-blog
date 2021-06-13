@@ -10,10 +10,10 @@ views:
   - "12410"
 categories:
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Intune
-  - Powershell
+  - PowerShell
 ---
 On the surface, installing printers on end user devices seems like a fairly simple process that's been solved for decades - a nice combination of Group Policies and PowerShell has made this a non-issue.
 

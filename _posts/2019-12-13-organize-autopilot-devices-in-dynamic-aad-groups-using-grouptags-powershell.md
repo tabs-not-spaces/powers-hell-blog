@@ -10,11 +10,11 @@ views:
   - "3883"
 categories:
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Automation
   - Intune
-  - Powershell
+  - PowerShell
 ---
 Don't ever say Microsoft doesn't listen! One of my biggest pet peeves was solved at the beginning of the month when Microsoft announced the ability to edit device group tags!
 

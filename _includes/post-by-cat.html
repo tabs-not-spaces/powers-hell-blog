@@ -1,0 +1,13 @@
+<div class="markdown-body drac-text">
+    <h2 class="drac-text-purple-cyan">
+        Categories
+    </h2>
+    <ul>
+        {%- assign sorted_cats = site.categories | sort -%}
+        {% for category in sorted_cats %}
+        {% assign category_name = category[0] %}
+        <li class="drac-text drac-text-xs">
+            <a href="/category/{{ category_name | slugify }}/">{{ category_name | replace: "-", " " }}</a>
+        </li>
+        {% endfor %}
+</div>

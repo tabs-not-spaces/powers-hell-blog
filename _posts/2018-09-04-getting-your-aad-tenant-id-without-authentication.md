@@ -11,12 +11,12 @@ views:
   - "3055"
 image: /assets/images/2018/09/rAjvdrX1.png
 categories:
-  - Powershell
+  - PowerShell
 tags:
   - AAD
   - Automation
   - Azure
-  - Powershell
+  - PowerShell
 ---
 Another quick post - I've been doing some work with silent configuration of OneDrive and the new **[Known Folder Migration](https://techcommunity.microsoft.com/t5/Microsoft-OneDrive-Blog/Migrate-Your-Files-to-OneDrive-Easily-with-Known-Folder-Move/ba-p/207076)** GPO solution all being deployed via Intune for multiple clients.
 

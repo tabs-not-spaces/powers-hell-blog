@@ -11,11 +11,11 @@ views:
   - "30869"
 categories:
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
   - Sidecar
 ---
 \*\* EDIT \*\*
@@ -38,7 +38,7 @@ As I mentioned, I've been working on an Intune MDM solution for a client who cur
 
 Because of these design decisions, we have had to be very creative with how we deploy applications & how we can replicate group policy configurations - what that essentially means is that we relied **very heavily** on the <a href="https://docs.microsoft.com/en-us/intune/intune-management-extension" target="_blank" rel="noopener noreferrer">Intune Management Extension</a> - previously known as **sidecar**.
 
-Because Intune _currently_ only allows single file line-of-business applications, for anything more complex than that (read: most legacy LOB applications), handling the installation using Powershell via the Intune Management Extension is the best solution.
+Because Intune _currently_ only allows single file line-of-business applications, for anything more complex than that (read: most legacy LOB applications), handling the installation using PowerShell via the Intune Management Extension is the best solution.
 
 Now, while I am ecstatic that there is a script deployment solution within Intune; there is definitely challenges with the current implementation - case in point, the client reached out to me and asked me a very good question the other day&#8230; "how can we re-run the script if the script returned a successful result, but the expected result of the script was not achieved??"
 
@@ -69,7 +69,7 @@ First up - lets connect to the API&#8230;
 
 In the code below I am using a module written by [Jason Thompson](https://github.com/jasoth) called [MSAL.PS](https://www.powershellgallery.com/packages/MSAL.PS/4.10.0.2) to allow easy authentication to the Graph API using the new **MSAL** authentication libraries.
 
-```Powershell
+```PowerShell
 if (!(Get-Module -Name MSAL.PS -ListAvailable -ErrorAction SilentlyContinue)) {
     Install-Module -Name MSAL.PS -Scope CurrentUser -Force
 }

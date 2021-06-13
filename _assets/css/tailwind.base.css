@@ -1,5 +1,12 @@
 @tailwind base;
 @layer base {
+  .-mt-104 {
+    margin-top: -26rem;
+  }
+  .-mt-112 {
+    margin-top: -28rem;
+
+  }
   .markdown-body {
     font-family: Fira Code, monospace !important;
   }

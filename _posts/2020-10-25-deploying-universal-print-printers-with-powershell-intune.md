@@ -20,11 +20,11 @@ categories:
   - Azure
   - Graph
   - Intune
-  - Powershell
+  - PowerShell
   - Universal Print
 tags:
   - Intune
-  - Powershell
+  - PowerShell
   - Universal Print
 ---
 Over the last few weeks I've been playing with **[Universal Print](https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-whatis)** - the cloud print solution developed by Microsoft and I honestly can't praise it enough.

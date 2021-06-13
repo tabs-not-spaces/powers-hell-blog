@@ -10,7 +10,7 @@ views:
   - "5835"
 image: /assets/images/2020/04/install-vscodetheme.gif
 categories:
-  - Powershell
+  - PowerShell
   - VSCode
   - Windows Terminal
 tags:

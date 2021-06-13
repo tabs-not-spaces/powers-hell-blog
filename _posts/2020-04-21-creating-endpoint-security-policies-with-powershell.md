@@ -12,11 +12,11 @@ image: https://i2.wp.com/i.imgur.com/idlGMwI.gif?w=1170&#038;ssl=1
 categories:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Automation
   - Intune
-  - Powershell
+  - PowerShell
 ---
 
 Keeping up with the rapid momentum of everything in the modern management world is a full time job. It's exhausting, but it's also fun.

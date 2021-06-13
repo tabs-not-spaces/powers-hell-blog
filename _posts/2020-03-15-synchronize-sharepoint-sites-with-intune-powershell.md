@@ -10,12 +10,12 @@ views:
   - "5585"
 categories:
   - Intune
-  - Powershell
+  - PowerShell
   - SharePoint
 tags:
   - Automation
   - Intune
-  - Powershell
+  - PowerShell
 ---
 
 I recently spent some time with my good friend and frequent collaborator [Steven Hosking](https://twitter.com/OnPremCloudGuy). We spoke about a solution I came up with to synchronize SharePoint sites to devices using PowerShell & Intune.

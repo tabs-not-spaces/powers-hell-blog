@@ -7,9 +7,12 @@ layout: default
     <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
       <article class="markdown-body drac-text drac-line-height line-numbers">
 
-        <p class="post-date">
-          {%- assign date_format = site.date_format | default: "%b %-d, %Y" -%}
-          Published: {{ page.date | date: date_format }}
+        <p class="post-date drac-text drac-text-xs">
+          {%- assign date_format = site.post_date_format | default: "%b %-d, %Y" -%}
+          <font class="drac-text-black-secondary">Published:</font><font class="drac-text-cyan"> {{ page.date | date: date_format }}</font>
+          <br/>
+          <font class="drac-text-black-secondary">Filed under:</font>
+          {%- include catlist.html -%}
         </p>
         {{ content }}
       </article>

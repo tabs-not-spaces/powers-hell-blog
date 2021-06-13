@@ -13,11 +13,11 @@ image: /assets/images/2020/05/usb-provision.gif
 categories:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Autopilot
   - Intune
-  - Powershell
+  - PowerShell
 ---
 The most common complaint that I've received from people over the last few years around Intune / Autopilot / Modern Management is that people find it frustrating how much effort is involved in getting a device prepared to handover to a client for Autopilot enrollment.
 

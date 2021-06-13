@@ -17,11 +17,11 @@ categories:
   - Azure
   - Graph
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Graph
   - Intune
-  - Powershell
+  - PowerShell
 ---
 I've recently been asked the question - "How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?"
 

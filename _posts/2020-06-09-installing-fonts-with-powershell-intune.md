@@ -11,9 +11,9 @@ views:
 image: /assets/images/2020/06/createwin32.gif
 categories:
   - Intune
-  - Powershell
+  - PowerShell
 tags:
-  - Powershell
+  - PowerShell
 ---
 So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices..
 

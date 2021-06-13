@@ -18,14 +18,23 @@ paginate: 5
 paginate_path: "/page:num/"
 
 date_format: "%-d %b"
+post_date_format: "%-d %b %Y"
 excerpt_separator: <!--more-->
 markdown: kramdown
 theme: minima
 
-collections:
-  archives:
-    output: true
-    permalink: /archives/:path/
+jekyll-archives:
+  enabled:
+    - year
+    - month
+    - categories
+  layouts:
+    year: archive-years
+    month: archive-months
+    category: archive-categories
+  permalinks:
+    year: 'year/:year/'
+    category: '/category/:name/'
 
 include:
   - node_modules

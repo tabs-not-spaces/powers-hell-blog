@@ -10,13 +10,13 @@ views:
   - "3680"
 categories:
   - Graph
-  - Powershell
+  - PowerShell
 tags:
   - Azure
   - Graph
   - Microsoft
   - OAuth2
-  - Powershell
+  - PowerShell
 ---
 TWO LINES???!!! you bet!!
 

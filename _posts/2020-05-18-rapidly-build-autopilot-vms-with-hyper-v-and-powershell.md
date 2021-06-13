@@ -12,7 +12,7 @@ image: /assets/images/2020/05/new-clientVMDemo-1.gif
 categories:
   - Azure
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Hyper-V
   - Intune

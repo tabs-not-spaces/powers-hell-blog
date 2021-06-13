@@ -11,11 +11,11 @@ views:
   - "3638"
 categories:
   - PowerBI
-  - Powershell
+  - PowerShell
 tags:
   - GraphAPI
   - PowerBI
-  - Powershell
+  - PowerShell
 ---
 I'm sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes. I know myself that working with fairly flat data sources, you can very easily create some incredible reports that will make you look like a data wizard to even the most jaded manager out there, however once you want to start working with complex data sets or start veering into the world of custom visualisations, pain is sure to be just around the corner.
 

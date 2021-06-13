@@ -12,9 +12,9 @@ views:
 categories:
   - Azure
   - Function Apps
-  - Powershell
+  - PowerShell
 tags:
-  - Powershell
+  - PowerShell
 ---
 I've been creating Azure Function using PowerShell since it was added as an option in their "Experimental Language Support" in V1.0. In fact, It was almost a year to the day that I wrote my first blog post about how I used [Azure Functions to make PowerBI work nicely with Graph](http://powers-hell.com/2018/05/15/working-with-graphapi-powerbi-the-easy-way/).
 
@@ -24,7 +24,7 @@ So, it only seems fitting now that the public preview of [PowerShell support for
 
 Before we get into this amazing new era of serverless computing, we need to set up our development environment with the following pre-requirements:
 
-* [Powershell Core (6.2 Minimum)](https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/PowerShell-6.2.0-win-x64.msi)
+* [PowerShell Core (6.2 Minimum)](https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/PowerShell-6.2.0-win-x64.msi)
 * [.NET Core SDK 2.2+](https://www.microsoft.com/net/download)
 * [Node.js & NPM](https://nodejs.org/en/download/)
 * [Azure Functions Core Tools v2.x](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local#v2)
@@ -50,7 +50,7 @@ Now let's get started onto the fun stuff. Open up the command palette (F1), sear
 
 Save your project somewhere locally, then select **PowerShell (Preview)** as your development language.
 
-[![Powershell as language](/assets/images/2019/05/Snag_33d46fe8.png)](/assets/images/2019/05/Snag_33d46fe8.png "Powershell as language")
+[![PowerShell as language](/assets/images/2019/05/Snag_33d46fe8.png)](/assets/images/2019/05/Snag_33d46fe8.png "PowerShell as language")
 
 For this scenario we are going to create a basic web API, so select HTTP trigger, but take some time to view all the options now made available to us in Azure Functions V2.0
 

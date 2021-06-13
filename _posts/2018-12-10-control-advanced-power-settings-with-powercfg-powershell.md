@@ -11,11 +11,11 @@ views:
 image: /assets/images/2018/12/Capture.png
 categories:
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Automation
   - Intune
-  - Powershell
+  - PowerShell
 ---
 One of the most common questions I get asked about Intune & Modern Device Management is "Would it be possible to do X with Intune?"
 
@@ -70,7 +70,7 @@ The rest of the code is fairly straightforward - find out the GUIDs that associa
 
 For this example, we just need to know the GUIDs for the "Power Button & Lid Settings" & the "Lid Switch Close Action". Once we have those, we can form the correct command line argument and execute it via our script.
 
-```Powershell
+```PowerShell
 # grab powercfg guids necessary for lid switch action
 # https://docs.microsoft.com/en-us/windows-hardware/customize/power-settings/power-button-and-lid-settings-lid-switch-close-action
 

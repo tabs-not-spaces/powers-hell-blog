@@ -10,7 +10,7 @@ permalink: /2018/08/31/set-multiple-registry-values-to-all-users-hkcu-profiles-u
 views:
   - "8864"
 categories:
-  - Powershell
+  - PowerShell
 ---
 This is a quick one - an improvement on an almost perfect script that doesn't quite work how it should.
 the script **Set-RegistryValueForAllUsers.ps1** found on the <a href="https://gallery.technet.microsoft.com/scriptcenter/Easily-set-a-registry-b3449784" rel="noopener" target="_blank">TechNet Gallery</a> has one major fault.

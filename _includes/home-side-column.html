@@ -1,0 +1,20 @@
+<!-- Right column -->
+<div class="hidden lg:block grid grid-cols-1 gap-4">
+    <section aria-labelledby="side-panel-title">
+        <h2 class="sr-only" id="side-panel-title">Side Panel</h2>
+        <div class="main-overlay drac-bg-black rounded-lg shadow-2xl overflow-hidden">
+            <div class=" drac-bg-animated p-6">
+                <img class="object-scale-down"
+                    src="/assets/images/static/MVP_Logo_Horizontal_Secondary_Black_CMYK_300ppi.png">
+
+            </div>
+            <div class="p-6">
+                {%- include post-by-year.html -%}
+            </div>
+            <hr class="drac-divider drac-border-cyan" />
+            <div class="p-6">
+                {%- include post-by-cat.html -%}
+            </div>
+        </div>
+    </section>
+</div>

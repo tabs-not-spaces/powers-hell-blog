@@ -13,11 +13,11 @@ image: /assets/images/2018/12/kltIrPS.png
 categories:
   - Flow
   - Intune
-  - Powershell
+  - PowerShell
 tags:
   - Flow
   - Intune
-  - Powershell
+  - PowerShell
 ---
 I'm a big fan of using Start-Transcript in my application install wrappers as it provides a very neat and tidy way to capture the output of everything that happens during the installation process and as such, all of the applications I package end up storing log files locally and I passionately and repeatedly urge my support staff to view these log files to identify issues during deployment. However, not everyone has the "read the log files then troubleshoot" mentality, so I find myself having the same conversation over and over&#8230;
 
