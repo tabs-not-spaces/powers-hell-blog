@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="How to force Intune configuration scripts to re-run" />
 <script type="application/ld+json">
-{"author":{"@type":"Person","name":"Ben"},"description":"With a little PowerShell magic, everything is easy!!!","headline":"How to force Intune configuration scripts to re-run","url":"https://powers-hell.com/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/","@type":"BlogPosting","dateModified":"2018-04-15T16:30:57+00:00","datePublished":"2018-04-15T16:30:57+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/"},"@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"Ben"},"description":"With a little PowerShell magic, everything is easy!!!","url":"https://powers-hell.com/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/","headline":"How to force Intune configuration scripts to re-run","@type":"BlogPosting","dateModified":"2018-04-15T16:30:57+00:00","datePublished":"2018-04-15T16:30:57+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -113,8 +113,18 @@
     <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
       <article class="markdown-body drac-text drac-line-height line-numbers">
 
-        <p class="post-date">Published: 15 Apr
-        </p>
+        <p class="post-date drac-text drac-text-xs"><font class="drac-text-black-secondary">Published:</font><font class="drac-text-cyan"> 15 Apr 2018</font>
+          <br/>
+          <font class="drac-text-black-secondary">Filed under:</font>
+
+
+<font class="drac-text drac-text-xs">
+    
+        <a href="/category/intune/">Intune</a>
+      
+        <a href="/category/powershell/">PowerShell</a>
+    
+</font></p>
         <p>** EDIT **</p>
 
 <p>Due to constant requests, I’ve updated this solution to use newer authentication methods that allow MFA as well as native support in PowerShell 7.</p>
@@ -135,7 +145,7 @@
 
 <p>Because of these design decisions, we have had to be very creative with how we deploy applications &amp; how we can replicate group policy configurations - what that essentially means is that we relied <strong>very heavily</strong> on the <a href="https://docs.microsoft.com/en-us/intune/intune-management-extension" target="_blank" rel="noopener noreferrer">Intune Management Extension</a> - previously known as <strong>sidecar</strong>.</p>
 
-<p>Because Intune <em>currently</em> only allows single file line-of-business applications, for anything more complex than that (read: most legacy LOB applications), handling the installation using Powershell via the Intune Management Extension is the best solution.</p>
+<p>Because Intune <em>currently</em> only allows single file line-of-business applications, for anything more complex than that (read: most legacy LOB applications), handling the installation using PowerShell via the Intune Management Extension is the best solution.</p>
 
 <p>Now, while I am ecstatic that there is a script deployment solution within Intune; there is definitely challenges with the current implementation - case in point, the client reached out to me and asked me a very good question the other day… “how can we re-run the script if the script returned a successful result, but the expected result of the script was not achieved??”</p>
 
@@ -166,7 +176,7 @@ If you have a look there, you’ll see a list of executed items - all with uniqu
 
 <p>In the code below I am using a module written by <a href="https://github.com/jasoth">Jason Thompson</a> called <a href="https://www.powershellgallery.com/packages/MSAL.PS/4.10.0.2">MSAL.PS</a> to allow easy authentication to the Graph API using the new <strong>MSAL</strong> authentication libraries.</p>
 
-<pre><code class="language-Powershell">if (!(Get-Module -Name MSAL.PS -ListAvailable -ErrorAction SilentlyContinue)) {
+<pre><code class="language-PowerShell">if (!(Get-Module -Name MSAL.PS -ListAvailable -ErrorAction SilentlyContinue)) {
     Install-Module -Name MSAL.PS -Scope CurrentUser -Force
 }
 $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547" # well known Intune application Id

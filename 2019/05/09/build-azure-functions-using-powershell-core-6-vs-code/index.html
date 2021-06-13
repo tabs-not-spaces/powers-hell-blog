@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Build Azure Functions using PowerShell Core 6 &amp; VS Code!" />
 <script type="application/ld+json">
-{"author":{"@type":"Person","name":"Ben"},"description":"Now that the public preview of PowerShell support for Azure Functions V2 has been released, it only seems fitting that I demonstrate not only how to create a PowerShell function app, but how to create, test AND deploy the function entirely in VS Code!","headline":"Build Azure Functions using PowerShell Core 6 &amp; VS Code!","url":"https://powers-hell.com/2019/05/09/build-azure-functions-using-powershell-core-6-vs-code/","@type":"BlogPosting","dateModified":"2019-05-08T19:06:33+00:00","datePublished":"2019-05-08T19:06:33+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2019/05/09/build-azure-functions-using-powershell-core-6-vs-code/"},"@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"Ben"},"description":"Now that the public preview of PowerShell support for Azure Functions V2 has been released, it only seems fitting that I demonstrate not only how to create a PowerShell function app, but how to create, test AND deploy the function entirely in VS Code!","url":"https://powers-hell.com/2019/05/09/build-azure-functions-using-powershell-core-6-vs-code/","headline":"Build Azure Functions using PowerShell Core 6 &amp; VS Code!","@type":"BlogPosting","dateModified":"2019-05-08T19:06:33+00:00","datePublished":"2019-05-08T19:06:33+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2019/05/09/build-azure-functions-using-powershell-core-6-vs-code/"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -113,8 +113,20 @@
     <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
       <article class="markdown-body drac-text drac-line-height line-numbers">
 
-        <p class="post-date">Published: 8 May
-        </p>
+        <p class="post-date drac-text drac-text-xs"><font class="drac-text-black-secondary">Published:</font><font class="drac-text-cyan"> 8 May 2019</font>
+          <br/>
+          <font class="drac-text-black-secondary">Filed under:</font>
+
+
+<font class="drac-text drac-text-xs">
+    
+        <a href="/category/azure/">Azure</a>
+    , 
+        <a href="/category/function-apps/">Function Apps</a>
+    ,  
+        <a href="/category/powershell/">PowerShell</a>
+    
+</font></p>
         <p>I’ve been creating Azure Function using PowerShell since it was added as an option in their “Experimental Language Support” in V1.0. In fact, It was almost a year to the day that I wrote my first blog post about how I used <a href="http://powers-hell.com/2018/05/15/working-with-graphapi-powerbi-the-easy-way/">Azure Functions to make PowerBI work nicely with Graph</a>.</p>
 
 <!--more-->
@@ -124,7 +136,7 @@
 <p>Before we get into this amazing new era of serverless computing, we need to set up our development environment with the following pre-requirements:</p>
 
 <ul>
-  <li><a href="https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/PowerShell-6.2.0-win-x64.msi">Powershell Core (6.2 Minimum)</a></li>
+  <li><a href="https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/PowerShell-6.2.0-win-x64.msi">PowerShell Core (6.2 Minimum)</a></li>
   <li><a href="https://www.microsoft.com/net/download">.NET Core SDK 2.2+</a></li>
   <li><a href="https://nodejs.org/en/download/">Node.js &amp; NPM</a></li>
   <li><a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local#v2">Azure Functions Core Tools v2.x</a></li>
@@ -151,7 +163,7 @@
 
 <p>Save your project somewhere locally, then select <strong>PowerShell (Preview)</strong> as your development language.</p>
 
-<p><a href="/assets/images/2019/05/Snag_33d46fe8.png" title="Powershell as language"><img src="/assets/images/2019/05/Snag_33d46fe8.png" alt="Powershell as language" /></a></p>
+<p><a href="/assets/images/2019/05/Snag_33d46fe8.png" title="PowerShell as language"><img src="/assets/images/2019/05/Snag_33d46fe8.png" alt="PowerShell as language" /></a></p>
 
 <p>For this scenario we are going to create a basic web API, so select HTTP trigger, but take some time to view all the options now made available to us in Azure Functions V2.0</p>
 
@@ -223,9 +235,9 @@ Finally, Hit <strong>F5</strong> to launch the function app into VS Code!</p>
         
         <li><a href="/2020/10/25/deploying-universal-print-printers-with-powershell-intune/"><span class="drac-text-cyan">&raquo;</span> Deploying Universal Print Printers With PowerShell & Intune</a></li>
         
-        <li><a href="/2020/06/09/installing-fonts-with-powershell-intune/"><span class="drac-text-cyan">&raquo;</span> Installing fonts with PowerShell & Intune</a></li>
+        <li><a href="/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/"><span class="drac-text-cyan">&raquo;</span> Preparing custom image templates with Azure Image Builder & PowerShell</a></li>
         
-        <li><a href="/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/"><span class="drac-text-cyan">&raquo;</span> Create a bootable Windows 10 Autopilot device with PowerShell!</a></li>
+        <li><a href="/2020/06/09/installing-fonts-with-powershell-intune/"><span class="drac-text-cyan">&raquo;</span> Installing fonts with PowerShell & Intune</a></li>
         
     </ul>
 </div>

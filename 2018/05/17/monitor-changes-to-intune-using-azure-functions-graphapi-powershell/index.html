@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell" />
 <script type="application/ld+json">
-{"author":{"@type":"Person","name":"Ben"},"description":"In my last post, I showed you how to move a very common task – authenticating into the GraphAPI, up into an Azure Function App","headline":"Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell","url":"https://powers-hell.com/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/","@type":"BlogPosting","dateModified":"2018-05-17T01:14:46+00:00","datePublished":"2018-05-17T01:14:46+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/"},"@context":"https://schema.org"}</script>
+{"author":{"@type":"Person","name":"Ben"},"description":"In my last post, I showed you how to move a very common task – authenticating into the GraphAPI, up into an Azure Function App","url":"https://powers-hell.com/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/","headline":"Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell","@type":"BlogPosting","dateModified":"2018-05-17T01:14:46+00:00","datePublished":"2018-05-17T01:14:46+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/"},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="stylesheet" href="/assets/css/prism-dracula.css">
@@ -113,8 +113,18 @@
     <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
       <article class="markdown-body drac-text drac-line-height line-numbers">
 
-        <p class="post-date">Published: 17 May
-        </p>
+        <p class="post-date drac-text drac-text-xs"><font class="drac-text-black-secondary">Published:</font><font class="drac-text-cyan"> 17 May 2018</font>
+          <br/>
+          <font class="drac-text-black-secondary">Filed under:</font>
+
+
+<font class="drac-text drac-text-xs">
+    
+        <a href="/category/intune/">Intune</a>
+      
+        <a href="/category/powershell/">PowerShell</a>
+    
+</font></p>
         <p><a href="http://powers-hell.com/working-with-graphapi-powerbi-the-easy-way/" rel="noopener" target="_blank">In my last post</a>, I showed you how to move a very common task - authenticating into the GraphAPI, up into an Azure Function App.</p>
 
 <p>Now that our authentication function has been turned into a REST Endpoint, we can stop focusing on <em>how</em> we get authenticated and start doing some really interesting stuff inside the environment. Case in point, myself and a colleague <a href="https://twitter.com/onpremcloudguy" rel="noopener" target="_blank">@OnPremCloudGuy</a> were wondering if we could create a solution to monitor the Intune configuration of a tenant for any changes that might get made without our approval. After a bit of digging around the GraphAPI documentation, and a few beers later, we had a very rough proof of concept to show that, indeed you can indeed report on changes in Intune!</p>
@@ -151,7 +161,7 @@
 
 <p>Alright - your storage is set up, access &amp; security is set up to it, now let’s set up the functions. Head over to the Function App blade and add a new function to your newly created Function App. Let’s start with the snapshot creation endpoint.</p>
 
-<p>As always (or until Powershell moves out of the experimental phase), set <strong>Experimental Language Support</strong> to <strong>Enabled</strong>, choose <strong>PowerShell</strong> as your language of choice, and create a <strong>HTTP trigger</strong>.</p>
+<p>As always (or until PowerShell moves out of the experimental phase), set <strong>Experimental Language Support</strong> to <strong>Enabled</strong>, choose <strong>PowerShell</strong> as your language of choice, and create a <strong>HTTP trigger</strong>.</p>
 
 <p><a href="https://i2.wp.com/i.imgur.com/c96Tqph.png?w=1170&#038;ssl=1" title="Snapshot function"><img src="https://i2.wp.com/i.imgur.com/c96Tqph.png?w=1170&#038;ssl=1" alt="Snapshot function" /></a></p>
 
@@ -365,9 +375,9 @@ else {
         
         <li><a href="/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/"><span class="drac-text-cyan">&raquo;</span> Authenticate to Microsoft Graph in PowerShell in two lines of code!</a></li>
         
-        <li><a href="/2018/05/15/working-with-graphapi-powerbi-the-easy-way/"><span class="drac-text-cyan">&raquo;</span> Working with GraphAPI & PowerBI the easy way!</a></li>
-        
         <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/"><span class="drac-text-cyan">&raquo;</span> Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2018/05/15/working-with-graphapi-powerbi-the-easy-way/"><span class="drac-text-cyan">&raquo;</span> Working with GraphAPI & PowerBI the easy way!</a></li>
         
         <li><a href="/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/"><span class="drac-text-cyan">&raquo;</span> How to force Intune configuration scripts to re-run</a></li>
         
