@@ -7,5 +7,5 @@
     {% assign cat_array = cat_array | push: cat_name %}
 {% endfor %}
 <font class="drac-text drac-text-xs">
-    {{ cat_array | array_to_sentence_string: '' }}
+    {{ cat_array | array_to_sentence_string: '' | replace: ' , ', ', '}}
 </font>
