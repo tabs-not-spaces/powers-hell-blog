@@ -1,0 +1,22 @@
+---
+layout: default
+---
+<main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96 4xl:-mt-112">
+    <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+        <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+            <article class="drac-text drac-line-height drac-text-center">
+                <ul>
+                    {%- assign sorted_cats = site.categories | sort -%}
+                    {% for category in sorted_cats %}
+                    {% assign category_name = category[0] %}
+                    <li>
+                        <a class="drac-heading drac-heading-xl drac-text-yellow-pink"
+                            href="/category/{{ category_name | slugify }}/">{{ category_name | replace: "-", " " }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </article>
+        </div>
+    </div>
+    {%- include related.html -%}
+</main>
