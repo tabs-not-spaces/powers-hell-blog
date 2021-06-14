@@ -5,6 +5,7 @@ permalink: /:year/:month/:day/:title/
 twitter_username: powers_hell
 github_username: tabs-not-spaces
 url: https://powers-hell.com
+google_analytics: G-SGKQTF5F0T
 
 plugins:
   - jekyll-paginate
