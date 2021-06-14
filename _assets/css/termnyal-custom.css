@@ -29,3 +29,9 @@
 .error {
     color: var(--red);
 }
+.yellow {
+    color: var(--yellow);
+}
+.pink {
+    color: var(--pink);
+}
