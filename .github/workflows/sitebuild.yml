@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - 'readme.md'
       - 'sitebuild.yml'
+      - '_drafts/*.*'
+      - '.vscode/*.*'
   workflow_dispatch:
 
 jobs:
