@@ -28,6 +28,14 @@ pre {
   position: relative;
   z-index: 2;
 }
-svg>path{
+
+.wave path {
   fill: var(--blackBlack);
+}
+
+.pwsh-start {
+  stop-color: var(--purple);
+}
+.pwsh-stop {
+  stop-color: var(--pink);
 }
