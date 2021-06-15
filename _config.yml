@@ -24,6 +24,23 @@ excerpt_separator: <!--more-->
 markdown: kramdown
 theme: minima
 
+jekyll_compose:
+  default_front_matter:
+    drafts:
+      id: 
+      author: Ben
+      views: 0
+      image:
+      categories:
+        - PowerShell
+    posts:
+      id: 
+      author: Ben
+      views: 0
+      image:
+      categories:
+        - PowerShell
+
 jekyll-archives:
   enabled:
     - year

@@ -26,7 +26,7 @@
 		"prefix": "mdvideo",
 		"body": [
 			"<div class=\"video-container\">",
-			"<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/${1:code}\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media;\"",
+			"<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/${1:code}\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media;\" allowfullscreen></iframe>",
 			"</div>"
 		],
 		"description": "Insert youtube into blog"
