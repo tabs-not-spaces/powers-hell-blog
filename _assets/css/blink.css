@@ -7,7 +7,7 @@
     background: var(--cyan);
     line-height: 5px;
     margin-left: 10px;
-    -webkit-animation: blink 0.8s infinite;
+    -webkit-animation: blink 0.8s 6;
     width: 10px;
     height: 1px;
   }
