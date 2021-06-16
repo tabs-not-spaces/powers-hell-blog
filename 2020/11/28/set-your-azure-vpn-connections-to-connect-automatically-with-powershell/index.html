@@ -215,7 +215,7 @@ $currentUser = (Get-CimInstance -ClassName WIn32_Process -Filter 'Name="explorer
 $objUser = New-Object System.Security.Principal.NTAccount($currentUser.user)
 $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
 $requiredFolder = "C:\Users\$($currentUser.user)\AppData\Local\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState"
-$rasManKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config" 
+$rasManKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config"
 #endregion
 #region PBK Configuration
 $PBKConfig - @"
@@ -236,42 +236,42 @@ if (!(Test-Path $RequiredFolder -ErrorAction SilentlyContinue)) {
   New-Item $RequiredFolder -ItemType Directory | Out-Null
   $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
   Start-Transcript -Path $LogLocation -Force -Append
-  
+
   Write-Log "Required folder $RequiredFolder was created on the machine since it wasn't found."
   New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-  
+
   Write-Log "File rasphone.pbk has been created in $RequiredFolder."
   Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-  
+
   Write-Log "File rasphone.pbk has been populated with configuration details."
   Stop-Transcript | Out-Null
 }
 else {
   $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
   Start-Transcript -Path $LogLocation -Force -Append
-  
+
   Write-Log "Folder $RequiredFolder already exists, that means that Azure VPN Client is already installed."
   if (!(Test-Path "$RequiredFolder\rasphone.pbk" -ErrorAction SilentlyContinue)) {
-    
+
     Write-Log "File rasphone.pbk doesn't exist in $RequiredFolder."
     New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-    
+
     Write-Log "File rasphone.pbk has been created in $RequiredFolder."
     Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-    
+
     Write-Log "File rasphone.pbk has been populated with configuration details."
     Stop-Transcript | Out-Null
   }
   else {
     Write-Log "File rasphone.pbk already exists in $RequiredFolder."
-    Rename-Item -Path "$RequiredFolder\rasphone.pbk" -NewName "$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')"    
-    
+    Rename-Item -Path "$RequiredFolder\rasphone.pbk" -NewName "$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')"
+
     Write-Log "File rasphone.pbk has been renamed to rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss'). This file contains old configuration if it will be required in the future (in case it is, just rename it back to rasphone.pbk)."
     New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-    
+
     Write-Log "New rasphone.pbk file has been created in $RequiredFolder."
     Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-    
+
     Write-Log "File rasphone.pbk has been populated with configuration details."
     Stop-Transcript | Out-Null
   }

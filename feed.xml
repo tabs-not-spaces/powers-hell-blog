@@ -1,4 +1,421 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-06-15T08:36:41+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-06-16T07:55:02+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Create advanced dynamic groups with PowerShell &amp;amp; Azure Functions</title><link href="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/" rel="alternate" type="text/html" title="Create advanced dynamic groups with PowerShell &amp;amp; Azure Functions" /><published>2021-06-16T06:56:00+00:00</published><updated>2021-06-16T06:56:00+00:00</updated><id>https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions</id><content type="html" xml:base="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/">&lt;p&gt;I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The time it takes to analyze the dynamic group rules is nowhere near fast enough.&lt;/li&gt;
+  &lt;li&gt;The available properties available for dynamic group rules are limited to the data available in AAD - not Intune.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;While the first issue has been remediated with the introduction of &lt;a href=&quot;https://docs.microsoft.com/en-us/mem/intune/fundamentals/filters&quot;&gt;filters&lt;/a&gt;, the fact that I can’t create a rule on ANY property I want still bugs me.&lt;/p&gt;
+
+&lt;p&gt;I recently sat down with my good friend &lt;a href=&quot;https://twitter.com/OnPremCloudGuy&quot;&gt;Steven Hosking&lt;/a&gt; and discussed ways to create dynamic groups using Power Automate, proving that with a little bit of effort (and deep-diving into Graph), you can build dynamic groups using custom logic. Check out the video below.&lt;/p&gt;
+
+&lt;div class=&quot;video-container&quot;&gt;
+    &lt;iframe src=&quot;https://www.youtube.com/embed/OLIA5_YW0Pg&quot; title=&quot;S02E36 - Building Custom Dynamic Groups with Power Automate - (I.T)&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now that we know how &lt;em&gt;relatively simple&lt;/em&gt; it is to build out custom dynamic groups with Power Automate, Let’s look into how we can achieve the same result with nothing but PowerShell &amp;amp; Azure Functions.&lt;/p&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;Like the video above, we can make sure that compliant devices are members of a specific security group. If they are no longer compliant, we want to make sure they are removed.&lt;/p&gt;
+
+&lt;p&gt;The solution we will build has two core elements:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;An AAD application configured with &lt;strong&gt;application-scoped&lt;/strong&gt; API permissions.&lt;/li&gt;
+  &lt;li&gt;An Azure function app to handle the group membership logic.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;aad-application&quot;&gt;AAD application&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app&quot;&gt;Create an AAD application&lt;/a&gt; with the following API permissions:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;API Permission Name&lt;/th&gt;
+      &lt;th&gt;Type&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Device.Read.All&lt;/td&gt;
+      &lt;td&gt;Application&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementManagedDevices.Read.All&lt;/td&gt;
+      &lt;td&gt;Application&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Group.Read.All&lt;/td&gt;
+      &lt;td&gt;Application&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;GroupMember.ReadWrite.All&lt;/td&gt;
+      &lt;td&gt;Application&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Grant admin consent for the above permissions.&lt;/li&gt;
+  &lt;li&gt;Generate a &lt;strong&gt;client secret&lt;/strong&gt; and store it, along with the &lt;strong&gt;application ID&lt;/strong&gt; for future use.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;function-application&quot;&gt;Function application&lt;/h2&gt;
+
+&lt;p&gt;Create a &lt;strong&gt;consumption&lt;/strong&gt; function app (either in the &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal&quot;&gt;Azure portal&lt;/a&gt;, or &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-powershell&quot;&gt;VSCode&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/06/functionapp.png&quot; title=&quot;Basic function app creation&quot;&gt;&lt;img src=&quot;/assets/images/2021/06/functionapp.png&quot; alt=&quot;Basic function app creation&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;From here on out, I’ll be sharing screens from VSCode, but you can achieve the same results directly from the portal as well.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/06/pwsh_001.gif&quot; title=&quot;Function app creation in VSCode&quot;&gt;&lt;img src=&quot;/assets/images/2021/06/pwsh_001.gif&quot; alt=&quot;Function app creation in VSCode&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Tip:&lt;/strong&gt; Because this function app doesn’t rely on any external modules, we can speed up its &lt;strong&gt;cold-start&lt;/strong&gt; performance by setting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;managedDependency enabled&lt;/code&gt; value to &lt;strong&gt;false&lt;/strong&gt; in the host.json file.
+&lt;a href=&quot;/assets/images/2021/06/pwsh_002.png&quot; title=&quot;disable managed dependency for faster cold start times&quot;&gt;&lt;img src=&quot;/assets/images/2021/06/pwsh_002.png&quot; alt=&quot;disable managed dependency for faster cold start times&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Once you have your function app created, we will need to set up the following application variables:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Variable Name&lt;/th&gt;
+      &lt;th&gt;Variable Value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;TENANT_ID&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Your tenant ID \ AAD domain name&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;APPLICATION_ID&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Your AAD application ID&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;CLIENT_SECRET&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Your AAD application client secret&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;GROUP_ID&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;The object id of the security group you want to manage&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;For those who want to build this locally, you can put the above variables in your &lt;strong&gt;local.settings.json&lt;/strong&gt; file within your function app project.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/06/pwsh_004.png&quot; title=&quot;local.settings.json&quot;&gt;&lt;img src=&quot;/assets/images/2021/06/pwsh_004.png&quot; alt=&quot;local.settings.json&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now comes the fun part. Writing the function app logic. The script can be broken down into three main parts:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Authentication&lt;/li&gt;
+  &lt;li&gt;Getting compliance data with Graph&lt;/li&gt;
+  &lt;li&gt;Adding / Deleting group memberships with Graph&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let’s look at each section now.&lt;/p&gt;
+
+&lt;h3 id=&quot;authentication&quot;&gt;Authentication&lt;/h3&gt;
+
+&lt;p&gt;Nothing super fancy here - I’ve discussed the ways to authenticate to Graph many times before. We will leverage the app variables we set up earlier to authenticate to our AAD application and store the token for the next few steps of the solution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;function Get-AuthHeader {
+    param (
+        [Parameter(mandatory = $true)]
+        [string]$TenantId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientSecret,
+        [Parameter(mandatory = $true)]
+        [string]$ResourceUrl
+    )
+    $body = @{
+        resource      = $ResourceUrl
+        client_id     = $ClientId
+        client_secret = $ClientSecret
+        grant_type    = &quot;client_credentials&quot;
+        scope         = &quot;openid&quot;
+    }
+    try {
+        $response = Invoke-RestMethod -Method post -Uri &quot;https://login.microsoftonline.com/$TenantId/oauth2/token&quot; -Body $body -ErrorAction Stop
+        $headers = @{ &quot;Authorization&quot; = &quot;Bearer $($response.access_token)&quot; }
+        return $headers
+    }
+    catch {
+        Write-Error $_.Exception
+    }
+}
+$params = @{
+    TenantId     = $env:TENANT_ID
+    ClientId     = $env:CLIENT_ID
+    ClientSecret = $env:CLIENT_SECRET
+    ResourceUrl  = &quot;https://graph.microsoft.com&quot;
+}
+$authHeader = Get-AuthHeader @params
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;compliance-validation&quot;&gt;Compliance validation&lt;/h3&gt;
+
+&lt;p&gt;Now that we have authenticated into Graph let’s grab all the devices and check their compliance state.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$graphUri = 'https://graph.microsoft.com/Beta/deviceManagement/managedDevices'
+$params = @{
+    Method      = 'Get'
+    Headers     = $authHeader
+    Uri         = $graphUri
+    ContentType = 'Application/Json'
+}
+$query = Invoke-RestMethod @params
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The results of the query are now stored in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$query&lt;/code&gt; variable. If we dive into the returned object data, selecting only the properties we want to see, we should start seeing some usable data.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$query.Value | Select-Object deviceName, complianceState
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/06/pwsh_003.gif&quot; title=&quot;results of our first Graph query&quot;&gt;&lt;img src=&quot;/assets/images/2021/06/pwsh_003.gif&quot; alt=&quot;results of our first Graph query&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we know how to capture the compliance state of our devices, we can move onto managing their group memberships!&lt;/p&gt;
+
+&lt;h3 id=&quot;managing-group-memberships&quot;&gt;Managing group memberships&lt;/h3&gt;
+
+&lt;p&gt;Because security groups in Azure are an &lt;em&gt;AAD thing&lt;/em&gt; we need to trade the Intune device object we got in the previous code snippet for the AAD device object. Luckily, the Intune object above contains the &lt;strong&gt;azureADDeviceId&lt;/strong&gt; property, so it’s easy to get what we need. Let’s see how we would get the AAD object of just one of the devices in the returned objects.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$firstDevice = $query.Value[0]
+$graphUri = &quot;https://graph.microsoft.com/beta/devices?`$filter=deviceId eq '$($firstDevice.azureADDeviceId)'&quot;
+$params = @{
+    Method      = 'Get'
+    Headers     = $authHeader
+    Uri         = $graphUri
+    ContentType = 'Application/Json'
+}
+$AADDevice = Invoke-RestMethod @params
+$AADDevice.Value
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let’s get the current group members of the security group we want to manage.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$graphUri = &quot;https://graph.microsoft.com/beta/groups/$env:GROUP_ID/members&quot;
+$params = @{
+    Method      = 'Get'
+    Headers     = $authHeader
+    Uri         = $graphUri
+    ContentType = 'Application/Json'
+}
+$groupMembers = Invoke-RestMethod @params
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let’s check if the device is already a member - if it’s not and the &lt;strong&gt;complianceState&lt;/strong&gt; value is true, let’s add it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;if ($firstDevice.complianceState -eq &quot;Compliant&quot;) {
+    if ($groupMembers.value -notcontains $AADDevice.value[0].deviceId) {
+        #region Device is compliant and not in the group
+        $graphUri = &quot;https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/`$ref&quot;
+        $params = @{
+            Method      = 'Post'
+            Headers     = $authHeader
+            Uri         = $graphUri
+            ContentType = 'Application/Json'
+            body        = @{&quot;@odata.id&quot; = &quot;https://graph.microsoft.com/v1.0/directoryObjects/$($AADDevice.value[0].id)&quot; } | ConvertTo-Json
+        }
+        Invoke-RestMethod @params
+        #endregion
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Conversely, if the device is NOT compliant and exists in the group, let’s handle that as well.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;if ($firstDevice.complianceState -ne &quot;Compliant&quot;) {
+    if ($groupMembers.value -contains $AADDevice.value[0].deviceId) {
+        #region device not compliant and exists in group
+        $graphUri = &quot;https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/$($AADDevice.value[0].id)/`$ref&quot;
+        $params = @{
+            Method      = 'DELETE'
+            Headers     = $authHeader
+            Uri         = $graphUri
+            ContentType = 'Application/Json'
+        }
+        Invoke-RestMethod @params
+        #endregion
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So now we have the basic logic for our function app, with a bit of refactoring (to remove duplicate code) some code to help us build a result output, we should end up with a solution that will add all of my compliant devices to a security group!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;using namespace System.Net
+
+# Input bindings are passed in via param block.
+param($Request, $TriggerMetadata)
+$result = [System.Collections.ArrayList]::new()
+$expectedComplianceValue = &quot;compliant&quot;
+#region functions
+function Get-AuthHeader {
+    param (
+        [Parameter(mandatory = $true)]
+        [string]$TenantId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientSecret,
+        [Parameter(mandatory = $true)]
+        [string]$ResourceUrl
+    )
+    $body = @{
+        resource      = $ResourceUrl
+        client_id     = $ClientId
+        client_secret = $ClientSecret
+        grant_type    = &quot;client_credentials&quot;
+        scope         = &quot;openid&quot;
+    }
+    try {
+        $response = Invoke-RestMethod -Method post -Uri &quot;https://login.microsoftonline.com/$TenantId/oauth2/token&quot; -Body $body -ErrorAction Stop
+        $headers = @{ &quot;Authorization&quot; = &quot;Bearer $($response.access_token)&quot; }
+        return $headers
+    }
+    catch {
+        Write-Error $_.Exception
+    }
+}
+function Invoke-GraphCall {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $false)]
+        [ValidateSet('Get', 'Post', 'Delete')]
+        [string]$Method = 'Get',
+
+        [parameter(Mandatory = $false)]
+        [hashtable]$Headers = $script:authHeader,
+
+        [parameter(Mandatory = $true)]
+        [string]$Uri,
+
+        [parameter(Mandatory = $false)]
+        [string]$ContentType = 'Application/Json',
+
+        [parameter(Mandatory = $false)]
+        [hashtable]$Body
+    )
+    try {
+        $params = @{
+            Method      = $Method
+            Headers     = $Headers
+            Uri         = $Uri
+            ContentType = $ContentType
+        }
+        if ($Body) {
+            $params.Body = $Body | ConvertTo-Json -Depth 20
+        }
+        $query = Invoke-RestMethod @params
+        return $query
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+function Format-Result {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [string]$DeviceID,
+
+        [parameter(Mandatory = $true)]
+        [bool]$IsCompliant,
+
+        [parameter(Mandatory = $true)]
+        [bool]$IsMember,
+
+        [parameter(Mandatory = $true)]
+        [ValidateSet('Added', 'Removed', 'NoActionTaken')]
+        [string]$Action
+    )
+    $result = [PSCustomObject]@{
+        DeviceID    = $DeviceID
+        IsCompliant = $IsCompliant
+        IsMember    = $IsMember
+        Action      = $Action
+    }
+    return $result
+}
+#endregion
+#region authentication
+$params = @{
+    TenantId     = $env:TENANT_ID
+    ClientId     = $env:CLIENT_ID
+    ClientSecret = $env:CLIENT_SECRET
+    ResourceUrl  = &quot;https://graph.microsoft.com&quot;
+}
+$script:authHeader = Get-AuthHeader @params
+#endregion
+#region get devices &amp;amp; group members
+$graphUri = 'https://graph.microsoft.com/Beta/deviceManagement/managedDevices'
+$query = Invoke-GraphCall -Uri $graphUri
+
+$graphUri = &quot;https://graph.microsoft.com/beta/groups/$env:GROUP_ID/members&quot;
+$groupMembers = Invoke-GraphCall -Uri $graphUri
+#endregion
+#region check each device.
+foreach ($device in $query.value) {
+    #region get aad object from intune object
+    $graphUri = &quot;https://graph.microsoft.com/beta/devices?`$filter=deviceId eq '$($device.azureADDeviceId)'&quot;
+    $AADDevice = (Invoke-GraphCall -Uri $graphUri).value
+    #endregion
+    if ($device.complianceState -eq $expectedComplianceValue) {
+        if ($groupMembers.value.deviceId -notcontains $AADDevice.deviceId) {
+            #region Device is compliant and not in the group
+            $graphUri = &quot;https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/`$ref&quot;
+            $body = @{&quot;@odata.id&quot; = &quot;https://graph.microsoft.com/v1.0/directoryObjects/$($AADDevice.id)&quot; }
+            Invoke-GraphCall -Uri $graphUri -Method Post -Body $body
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $true -IsMember $true -Action Added)) | Out-Null
+            #endregion
+        }
+        else {
+            #region device is compliant and already a member
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $true -IsMember $true -Action NoActionTaken)) | Out-Null
+            #endregion
+        }
+    }
+    else {
+        if ($groupMembers.value.deviceId -contains $AADDevice.deviceId) {
+            #region device not compliant and exists in group
+            $graphUri = &quot;https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/$($AADDevice.id)/`$ref&quot;
+            Invoke-GraphCall -Uri $graphUri -Method Delete
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $false -IsMember $false -Action Removed)) | Out-Null
+            #endregion
+        }
+        else {
+            #region device not compliant and is not a member
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $false -IsMember $false -Action NoActionTaken))
+            #endregion
+        }
+    }
+}
+#endregion
+# Associate values to output bindings by calling 'Push-OutputBinding'.
+Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::OK
+        Body       = $result | ConvertTo-Json -Depth 20
+    })
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, if we spin up a local instance of our function app (or run it from Azure for those testing in production🤠) we can trigger the function app from the URI and see the results…&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/06/pwsh_005.gif&quot; title=&quot;It lives!&quot;&gt;&lt;img src=&quot;/assets/images/2021/06/pwsh_005.gif&quot; alt=&quot;It lives!&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Awesome! Now, there is plenty that would need to be done to the above solution before I used it in production - specifically putting in some logic to handle large amounts of devices via batched Graph calls and I’d be switching out the HTTP Trigger binding for a CRON job to automate the task, but I hope this will give you ideas for ways to build your dynamic group automation.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerShell" /><category term="Azure" /><category term="Intune" /><category term="Azure Functions" /><summary type="html">I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues: The time it takes to analyze the dynamic group rules is nowhere near fast enough. The available properties available for dynamic group rules are limited to the data available in AAD - not Intune.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/06/pwsh_005.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/06/pwsh_005.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Working with Intune Settings Catalog using PowerShell and Graph</title><link href="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/" rel="alternate" type="text/html" title="Working with Intune Settings Catalog using PowerShell and Graph" /><published>2021-03-08T12:46:00+00:00</published><updated>2021-03-08T12:46:00+00:00</updated><id>https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph</id><content type="html" xml:base="https://powers-hell.com/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">&lt;p&gt;Microsoft has recently introduced even more ways to create device configuration profiles..&lt;/p&gt;
 
 &lt;p&gt;The new profile type, named &lt;strong&gt;Settings Catalog&lt;/strong&gt;, allows us to explicitly define and configure a policy that has &lt;strong&gt;only&lt;/strong&gt; the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the &lt;strong&gt;templates&lt;/strong&gt; profile type.&lt;/p&gt;
 
@@ -481,7 +898,7 @@ $currentUser = (Get-CimInstance -ClassName WIn32_Process -Filter 'Name=&quot;exp
 $objUser = New-Object System.Security.Principal.NTAccount($currentUser.user)
 $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
 $requiredFolder = &quot;C:\Users\$($currentUser.user)\AppData\Local\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState&quot;
-$rasManKeyPath = &quot;HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config&quot; 
+$rasManKeyPath = &quot;HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config&quot;
 #endregion
 #region PBK Configuration
 $PBKConfig - @&quot;
@@ -502,42 +919,42 @@ if (!(Test-Path $RequiredFolder -ErrorAction SilentlyContinue)) {
   New-Item $RequiredFolder -ItemType Directory | Out-Null
   $LogLocation = &quot;$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log&quot;
   Start-Transcript -Path $LogLocation -Force -Append
-  
+
   Write-Log &quot;Required folder $RequiredFolder was created on the machine since it wasn't found.&quot;
   New-Item &quot;$RequiredFolder\rasphone.pbk&quot; -ItemType File | Out-Null
-  
+
   Write-Log &quot;File rasphone.pbk has been created in $RequiredFolder.&quot;
   Set-Content &quot;$RequiredFolder\rasphone.pbk&quot; $PBKConfig
-  
+
   Write-Log &quot;File rasphone.pbk has been populated with configuration details.&quot;
   Stop-Transcript | Out-Null
 }
 else {
   $LogLocation = &quot;$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log&quot;
   Start-Transcript -Path $LogLocation -Force -Append
-  
+
   Write-Log &quot;Folder $RequiredFolder already exists, that means that Azure VPN Client is already installed.&quot;
   if (!(Test-Path &quot;$RequiredFolder\rasphone.pbk&quot; -ErrorAction SilentlyContinue)) {
-    
+
     Write-Log &quot;File rasphone.pbk doesn't exist in $RequiredFolder.&quot;
     New-Item &quot;$RequiredFolder\rasphone.pbk&quot; -ItemType File | Out-Null
-    
+
     Write-Log &quot;File rasphone.pbk has been created in $RequiredFolder.&quot;
     Set-Content &quot;$RequiredFolder\rasphone.pbk&quot; $PBKConfig
-    
+
     Write-Log &quot;File rasphone.pbk has been populated with configuration details.&quot;
     Stop-Transcript | Out-Null
   }
   else {
     Write-Log &quot;File rasphone.pbk already exists in $RequiredFolder.&quot;
-    Rename-Item -Path &quot;$RequiredFolder\rasphone.pbk&quot; -NewName &quot;$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')&quot;    
-    
+    Rename-Item -Path &quot;$RequiredFolder\rasphone.pbk&quot; -NewName &quot;$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')&quot;
+
     Write-Log &quot;File rasphone.pbk has been renamed to rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss'). This file contains old configuration if it will be required in the future (in case it is, just rename it back to rasphone.pbk).&quot;
     New-Item &quot;$RequiredFolder\rasphone.pbk&quot; -ItemType File | Out-Null
-    
+
     Write-Log &quot;New rasphone.pbk file has been created in $RequiredFolder.&quot;
     Set-Content &quot;$RequiredFolder\rasphone.pbk&quot; $PBKConfig
-    
+
     Write-Log &quot;File rasphone.pbk has been populated with configuration details.&quot;
     Stop-Transcript | Out-Null
   }
@@ -1461,85 +1878,4 @@ function Install-Fonts {
 
 &lt;p&gt;As always, &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.HV.Tools&quot;&gt;Source code for this post can be found here&lt;/a&gt;, the official module can be found &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.HV.Tools&quot;&gt;here&lt;/a&gt;, and I can always be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Hyper-V" /><category term="Intune" /><summary type="html">Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly. What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/05/new-clientVMDemo-1.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/05/new-clientVMDemo-1.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Create a bootable Windows 10 Autopilot device with PowerShell!</title><link href="https://powers-hell.com/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/" rel="alternate" type="text/html" title="Create a bootable Windows 10 Autopilot device with PowerShell!" /><published>2020-05-04T03:58:14+00:00</published><updated>2020-05-04T03:58:14+00:00</updated><id>https://powers-hell.com/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2020/05/04/create-a-bootable-windows-10-autopilot-device-with-powershell/">&lt;p&gt;The most common complaint that I’ve received from people over the last few years around Intune / Autopilot / Modern Management is that people find it frustrating how much effort is involved in getting a device prepared to handover to a client for Autopilot enrollment.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;I totally agree - the sales pitch we are all given is that your staff can go out to a big-box store, buy a laptop and in minutes be greeted with a “welcome to mega-corp” login screen.&lt;/p&gt;
-
-&lt;p&gt;What is never told to us is that before we do any of this, we need to:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;make sure a CLEAN copy of windows 10 is installed on the device - which it never is.&lt;/li&gt;
-  &lt;li&gt;Capture the hardware hash of the device and upload it to Intune.&lt;/li&gt;
-  &lt;li&gt;Finally, if the device is already past the OOBE, re-image the device and hand it over to the staff member..&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Hardly the autonomous, streamlined sales pitch we’ve been sold - is it?&lt;/p&gt;
-
-&lt;p&gt;Well, I’m here to say I want to make it a little less painful with my first published PowerShell module - &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.USB.Creator/1.0.0.420&quot;&gt;Intune.USB.Creator&lt;/a&gt;!&lt;/p&gt;
-
-&lt;p&gt;This is a solution developed over the last few years and road-tested with multiple clients and environments - something that is reliable enough that I’m happy enough to share it as a complete solution - something I rarely do due to being an obsessive perfectionist…&lt;/p&gt;
-
-&lt;p&gt;Let’s get into how we use it!&lt;/p&gt;
-
-&lt;h2 id=&quot;pre-requirements&quot;&gt;Pre-Requirements&lt;/h2&gt;
-
-&lt;p&gt;First things first, we need to make sure the device you are going to use to build the Autopilot device has a few pre-requisites:&lt;/p&gt;
-
-&lt;p&gt;The module was written primarily for &lt;a href=&quot;https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7&quot;&gt;PowerShell 7&lt;/a&gt; - if you don’t have it yet, there’s a bunch of ways to get it on your machine. Below is probably the easiest of the lot..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Invoke-Expression &quot;&amp;amp; { $(Invoke-RestMethod -Method Get -Uri &quot;https://aka.ms/install-powershell.ps1&quot;) } -UseMSI&quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Some of the helper functions rely on other modules - so let’s install those (using PowerShell 7 of course..)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module WindowsAutoPilotIntune -Scope CurrentUser -Force
-Install-Module Microsoft.Graph.Intune -Scope CurrentUser -Force
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The module uses Windows 10 installation media to create the bootable media. This can be procured from many locations - if you do not have access to this, someone you work with will - just make sure you have a copy of the latest *.iso on your device.&lt;/p&gt;
-
-&lt;p&gt;Finally, let’s install the Intune.USB.Creator module..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module Intune.USB.Creator -Scope CurrentUser -Force
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;how-to-use&quot;&gt;How to use&lt;/h2&gt;
-
-&lt;p&gt;Once all the pre-requirements are installed, plug a USB into our device and let’s create an Autopilot provisioning device.&lt;/p&gt;
-
-&lt;p&gt;Open up PowerShell 7 as an administrator and we will type in the following command:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Publish-ImageToUSB -winPEPath &quot;https://githublfs.blob.core.windows.net/storage/WinPE.zip&quot; -windowsIsoPath &quot;C:\path\to\win10.iso&quot; -getAutopilotCfg
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Hitting enter will kick off the device provisioning code..&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://i1.wp.com/i.imgur.com/u4HOn0y.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;Using the module&quot;&gt;&lt;img src=&quot;https://i1.wp.com/i.imgur.com/u4HOn0y.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;Using the module&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;A few things to note on each parameter:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;WinPEPath&lt;/strong&gt; (Required) - I’ve put a copy of WinPE up on my own storage account - feel free to use it, but if the cost of storage ends up too much, I will take this down. So grab a copy now and store it locally. Consider this fair warning.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;WindowsIsoPath&lt;/strong&gt; (Not required) - as mentioned in the pre-requirements section, you need to source your own copy of Windows 10. This shouldn’t be difficult. Try and get a copy of the “multi-edition” so you can build different variants if required. If you don’t provide a path to a copy of Windows 10, the device will still be provisioned, but there will be nothing added to the solution except for WinPE.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;GetAutopilotCfg&lt;/strong&gt; (Not required) - this is a simple switch to allow you to log in to an Azure tenant and capture the Autopilot configuration files. If you omit this, you will end up with a provisioning device that installs windows 10 and does nothing else.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Once our USB has been created, all that is required to do is plug it into our target device and boot from it.&lt;/p&gt;
-
-&lt;p&gt;WinPE will load and trigger the built in provisioning script which will load the operating system onto the device and inject the Autopilot configuration file.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://i2.wp.com/i.imgur.com/v9Ls50M.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;WinPE&quot;&gt;&lt;img src=&quot;https://i2.wp.com/i.imgur.com/v9Ls50M.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;WinPE&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Once the device has been provisioned - remove the USB and reboot. We should now be greeted with the standard Out of Box Experience, ending with the ability to log in to the tenant we captured the Autopilot configuration from!&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://i0.wp.com/i.imgur.com/KcMT5OP.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;OOBE&quot;&gt;&lt;img src=&quot;https://i0.wp.com/i.imgur.com/KcMT5OP.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;OOBE&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Pretty cool, if I do say so myself.&lt;/p&gt;
-
-&lt;p&gt;Using this solution should provide you with a bootable USB that will get you from “out of box” to “ready to enrol” in less than 5 minutes.&lt;/p&gt;
-
-&lt;p&gt;As usual, source code for everything demonstrated here is available on &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.USB.Creator&quot;&gt;GitHub&lt;/a&gt;, the module itself is available on the &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.USB.Creator&quot;&gt;PowerShell Gallery&lt;/a&gt; and I am always up for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Autopilot" /><category term="Intune" /><category term="PowerShell" /><summary type="html">The most common complaint that I've received from people over the last few years around Intune / Autopilot / Modern Management is that people find it frustrating how much effort is involved in getting a device prepared to handover to a client for Autopilot enrollment.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/05/usb-provision.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/05/usb-provision.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Hyper-V" /><category term="Intune" /><summary type="html">Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly. What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/05/new-clientVMDemo-1.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/05/new-clientVMDemo-1.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>

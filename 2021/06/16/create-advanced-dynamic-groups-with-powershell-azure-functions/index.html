@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang=" en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Create advanced dynamic groups with PowerShell &amp; Azure Functions | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.0" />
+<meta property="og:title" content="Create advanced dynamic groups with PowerShell &amp; Azure Functions" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues: The time it takes to analyze the dynamic group rules is nowhere near fast enough. The available properties available for dynamic group rules are limited to the data available in AAD - not Intune." />
+<meta property="og:description" content="I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues: The time it takes to analyze the dynamic group rules is nowhere near fast enough. The available properties available for dynamic group rules are limited to the data available in AAD - not Intune." />
+<link rel="canonical" href="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/" />
+<meta property="og:url" content="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="https://powers-hell.com/assets/images/2021/06/pwsh_005.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-16T06:56:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://powers-hell.com/assets/images/2021/06/pwsh_005.gif" />
+<meta property="twitter:title" content="Create advanced dynamic groups with PowerShell &amp; Azure Functions" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues: The time it takes to analyze the dynamic group rules is nowhere near fast enough. The available properties available for dynamic group rules are limited to the data available in AAD - not Intune.","image":"https://powers-hell.com/assets/images/2021/06/pwsh_005.gif","url":"https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/","headline":"Create advanced dynamic groups with PowerShell &amp; Azure Functions","@type":"BlogPosting","dateModified":"2021-06-16T06:56:00+00:00","datePublished":"2021-06-16T06:56:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SGKQTF5F0T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SGKQTF5F0T');
+</script>
+</head><body><div class="page-container">
+    <div class="">
+        <nav x-data="{ open: false }" class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 link-hover">
+                            <h2 class="drac-heading drac-heading-xl"><a href="/">Powers Hell</a></h2>
+                        </div>
+                        <div class="hidden md:block flex-shrink-0">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <div id="tagalign" class="drac-text drac-text-cyan drac-text-right drac-line-height">
+                                    great/power/is/great/fun >
+                                    <div class="cursor"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block flex-shrink-0">
+                        <div class="block md:hidden">
+    <div class="ml-3 items-center relative">
+        <a href="/"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/about"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/archives"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Archives</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/categories"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Categories</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="https://merch.powers-hell.com"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+    </div>
+</div>
+<div class="hidden md:block">
+    <a href="/"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+<a href="/about"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+<a href="https://merch.powers-hell.com"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
+
+
+
+                    </div>
+                    <div class="mr-2 flex md:hidden">
+                        <!-- Mobile menu button -->
+                        <button type="button"
+                            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm items-center justify-center p-2"
+                            aria-controls="mobile-menu" aria-expanded="false" @click="open = !open" ara-expanded="false"
+                            x-bind-aria-expanded="open.toString()">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'hidden':open, 'block': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'block':open, 'hidden': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="drac-bg-black md:hidden" x-show.transition="open">
+                <div class="px-2 py-3 space-y-1 sm:px-3 items-center">
+                    <div id="tagalign" class="ml-3 drac-text drac-text-cyan drac-line-height">
+                        great/power/is/great/fun >
+                        <div class="cursor"></div>
+                    </div>
+                    <div class="block md:hidden">
+    <div class="ml-3 items-center relative">
+        <a href="/"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/about"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/archives"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Archives</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/categories"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Categories</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="https://merch.powers-hell.com"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+    </div>
+</div>
+<div class="hidden md:block">
+    <a href="/"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+<a href="/about"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+<a href="https://merch.powers-hell.com"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
+
+
+
+                </div>
+            </div>
+        </nav>
+      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10"><div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <h1
+        class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">
+        
+        Create advanced dynamic groups with PowerShell & Azure Functions
+        
+    </h1>
+    
+</div></header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96 4xl:-mt-112">
+  <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+    <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+      <article class="markdown-body drac-text drac-line-height line-numbers">
+
+        <p class="post-date drac-text drac-text-xs"><font class="drac-text-black-secondary">Published:</font><font class="drac-text-cyan"> 16 Jun 2021</font>
+          <br/>
+          <font class="drac-text-black-secondary">File under:</font>
+<font class="drac-text drac-text-xs">
+    <a href="/category/azure/">Azure</a>, <a href="/category/azure-functions/">Azure Functions</a>, <a href="/category/intune/">Intune</a>,  <a href="/category/powershell/">PowerShell</a></font>
+</p>
+        <p>I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues:</p>
+
+<ul>
+  <li>The time it takes to analyze the dynamic group rules is nowhere near fast enough.</li>
+  <li>The available properties available for dynamic group rules are limited to the data available in AAD - not Intune.</li>
+</ul>
+
+<!--more-->
+
+<p>While the first issue has been remediated with the introduction of <a href="https://docs.microsoft.com/en-us/mem/intune/fundamentals/filters">filters</a>, the fact that I can’t create a rule on ANY property I want still bugs me.</p>
+
+<p>I recently sat down with my good friend <a href="https://twitter.com/OnPremCloudGuy">Steven Hosking</a> and discussed ways to create dynamic groups using Power Automate, proving that with a little bit of effort (and deep-diving into Graph), you can build dynamic groups using custom logic. Check out the video below.</p>
+
+<div class="video-container">
+    <iframe src="https://www.youtube.com/embed/OLIA5_YW0Pg" title="S02E36 - Building Custom Dynamic Groups with Power Automate - (I.T)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;" allowfullscreen=""></iframe>
+</div>
+
+<p>Now that we know how <em>relatively simple</em> it is to build out custom dynamic groups with Power Automate, Let’s look into how we can achieve the same result with nothing but PowerShell &amp; Azure Functions.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>Like the video above, we can make sure that compliant devices are members of a specific security group. If they are no longer compliant, we want to make sure they are removed.</p>
+
+<p>The solution we will build has two core elements:</p>
+
+<ul>
+  <li>An AAD application configured with <strong>application-scoped</strong> API permissions.</li>
+  <li>An Azure function app to handle the group membership logic.</li>
+</ul>
+
+<h2 id="aad-application">AAD application</h2>
+
+<ul>
+  <li><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app">Create an AAD application</a> with the following API permissions:</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>API Permission Name</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Device.Read.All</td>
+      <td>Application</td>
+    </tr>
+    <tr>
+      <td>DeviceManagementManagedDevices.Read.All</td>
+      <td>Application</td>
+    </tr>
+    <tr>
+      <td>Group.Read.All</td>
+      <td>Application</td>
+    </tr>
+    <tr>
+      <td>GroupMember.ReadWrite.All</td>
+      <td>Application</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>Grant admin consent for the above permissions.</li>
+  <li>Generate a <strong>client secret</strong> and store it, along with the <strong>application ID</strong> for future use.</li>
+</ul>
+
+<h2 id="function-application">Function application</h2>
+
+<p>Create a <strong>consumption</strong> function app (either in the <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal">Azure portal</a>, or <a href="https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-powershell">VSCode</a>).</p>
+
+<p><a href="/assets/images/2021/06/functionapp.png" title="Basic function app creation"><img src="/assets/images/2021/06/functionapp.png" alt="Basic function app creation" /></a></p>
+
+<p>From here on out, I’ll be sharing screens from VSCode, but you can achieve the same results directly from the portal as well.</p>
+
+<p><a href="/assets/images/2021/06/pwsh_001.gif" title="Function app creation in VSCode"><img src="/assets/images/2021/06/pwsh_001.gif" alt="Function app creation in VSCode" /></a></p>
+
+<blockquote>
+  <p><strong>Tip:</strong> Because this function app doesn’t rely on any external modules, we can speed up its <strong>cold-start</strong> performance by setting <code class="language-plaintext highlighter-rouge">managedDependency enabled</code> value to <strong>false</strong> in the host.json file.
+<a href="/assets/images/2021/06/pwsh_002.png" title="disable managed dependency for faster cold start times"><img src="/assets/images/2021/06/pwsh_002.png" alt="disable managed dependency for faster cold start times" /></a></p>
+</blockquote>
+
+<p>Once you have your function app created, we will need to set up the following application variables:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable Name</th>
+      <th>Variable Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TENANT_ID</td>
+      <td><strong>Your tenant ID \ AAD domain name</strong></td>
+    </tr>
+    <tr>
+      <td>APPLICATION_ID</td>
+      <td><strong>Your AAD application ID</strong></td>
+    </tr>
+    <tr>
+      <td>CLIENT_SECRET</td>
+      <td><strong>Your AAD application client secret</strong></td>
+    </tr>
+    <tr>
+      <td>GROUP_ID</td>
+      <td><strong>The object id of the security group you want to manage</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For those who want to build this locally, you can put the above variables in your <strong>local.settings.json</strong> file within your function app project.</p>
+
+<p><a href="/assets/images/2021/06/pwsh_004.png" title="local.settings.json"><img src="/assets/images/2021/06/pwsh_004.png" alt="local.settings.json" /></a></p>
+
+<p>Now comes the fun part. Writing the function app logic. The script can be broken down into three main parts:</p>
+
+<ul>
+  <li>Authentication</li>
+  <li>Getting compliance data with Graph</li>
+  <li>Adding / Deleting group memberships with Graph</li>
+</ul>
+
+<p>Let’s look at each section now.</p>
+
+<h3 id="authentication">Authentication</h3>
+
+<p>Nothing super fancy here - I’ve discussed the ways to authenticate to Graph many times before. We will leverage the app variables we set up earlier to authenticate to our AAD application and store the token for the next few steps of the solution.</p>
+
+<pre><code class="language-PowerShell">function Get-AuthHeader {
+    param (
+        [Parameter(mandatory = $true)]
+        [string]$TenantId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientSecret,
+        [Parameter(mandatory = $true)]
+        [string]$ResourceUrl
+    )
+    $body = @{
+        resource      = $ResourceUrl
+        client_id     = $ClientId
+        client_secret = $ClientSecret
+        grant_type    = "client_credentials"
+        scope         = "openid"
+    }
+    try {
+        $response = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/$TenantId/oauth2/token" -Body $body -ErrorAction Stop
+        $headers = @{ "Authorization" = "Bearer $($response.access_token)" }
+        return $headers
+    }
+    catch {
+        Write-Error $_.Exception
+    }
+}
+$params = @{
+    TenantId     = $env:TENANT_ID
+    ClientId     = $env:CLIENT_ID
+    ClientSecret = $env:CLIENT_SECRET
+    ResourceUrl  = "https://graph.microsoft.com"
+}
+$authHeader = Get-AuthHeader @params
+</code></pre>
+
+<h3 id="compliance-validation">Compliance validation</h3>
+
+<p>Now that we have authenticated into Graph let’s grab all the devices and check their compliance state.</p>
+
+<pre><code class="language-PowerShell">$graphUri = 'https://graph.microsoft.com/Beta/deviceManagement/managedDevices'
+$params = @{
+    Method      = 'Get'
+    Headers     = $authHeader
+    Uri         = $graphUri
+    ContentType = 'Application/Json'
+}
+$query = Invoke-RestMethod @params
+</code></pre>
+
+<p>The results of the query are now stored in the <code class="language-plaintext highlighter-rouge">$query</code> variable. If we dive into the returned object data, selecting only the properties we want to see, we should start seeing some usable data.</p>
+
+<pre><code class="language-PowerShell">$query.Value | Select-Object deviceName, complianceState
+</code></pre>
+
+<p><a href="/assets/images/2021/06/pwsh_003.gif" title="results of our first Graph query"><img src="/assets/images/2021/06/pwsh_003.gif" alt="results of our first Graph query" /></a></p>
+
+<p>Now we know how to capture the compliance state of our devices, we can move onto managing their group memberships!</p>
+
+<h3 id="managing-group-memberships">Managing group memberships</h3>
+
+<p>Because security groups in Azure are an <em>AAD thing</em> we need to trade the Intune device object we got in the previous code snippet for the AAD device object. Luckily, the Intune object above contains the <strong>azureADDeviceId</strong> property, so it’s easy to get what we need. Let’s see how we would get the AAD object of just one of the devices in the returned objects.</p>
+
+<pre><code class="language-PowerShell">$firstDevice = $query.Value[0]
+$graphUri = "https://graph.microsoft.com/beta/devices?`$filter=deviceId eq '$($firstDevice.azureADDeviceId)'"
+$params = @{
+    Method      = 'Get'
+    Headers     = $authHeader
+    Uri         = $graphUri
+    ContentType = 'Application/Json'
+}
+$AADDevice = Invoke-RestMethod @params
+$AADDevice.Value
+</code></pre>
+
+<p>Now let’s get the current group members of the security group we want to manage.</p>
+
+<pre><code class="language-PowerShell">$graphUri = "https://graph.microsoft.com/beta/groups/$env:GROUP_ID/members"
+$params = @{
+    Method      = 'Get'
+    Headers     = $authHeader
+    Uri         = $graphUri
+    ContentType = 'Application/Json'
+}
+$groupMembers = Invoke-RestMethod @params
+</code></pre>
+
+<p>Let’s check if the device is already a member - if it’s not and the <strong>complianceState</strong> value is true, let’s add it.</p>
+
+<pre><code class="language-PowerShell">if ($firstDevice.complianceState -eq "Compliant") {
+    if ($groupMembers.value -notcontains $AADDevice.value[0].deviceId) {
+        #region Device is compliant and not in the group
+        $graphUri = "https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/`$ref"
+        $params = @{
+            Method      = 'Post'
+            Headers     = $authHeader
+            Uri         = $graphUri
+            ContentType = 'Application/Json'
+            body        = @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$($AADDevice.value[0].id)" } | ConvertTo-Json
+        }
+        Invoke-RestMethod @params
+        #endregion
+    }
+}
+</code></pre>
+
+<p>Conversely, if the device is NOT compliant and exists in the group, let’s handle that as well.</p>
+
+<pre><code class="language-PowerShell">if ($firstDevice.complianceState -ne "Compliant") {
+    if ($groupMembers.value -contains $AADDevice.value[0].deviceId) {
+        #region device not compliant and exists in group
+        $graphUri = "https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/$($AADDevice.value[0].id)/`$ref"
+        $params = @{
+            Method      = 'DELETE'
+            Headers     = $authHeader
+            Uri         = $graphUri
+            ContentType = 'Application/Json'
+        }
+        Invoke-RestMethod @params
+        #endregion
+    }
+}
+</code></pre>
+
+<p>So now we have the basic logic for our function app, with a bit of refactoring (to remove duplicate code) some code to help us build a result output, we should end up with a solution that will add all of my compliant devices to a security group!</p>
+
+<pre><code class="language-PowerShell">using namespace System.Net
+
+# Input bindings are passed in via param block.
+param($Request, $TriggerMetadata)
+$result = [System.Collections.ArrayList]::new()
+$expectedComplianceValue = "compliant"
+#region functions
+function Get-AuthHeader {
+    param (
+        [Parameter(mandatory = $true)]
+        [string]$TenantId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientId,
+        [Parameter(mandatory = $true)]
+        [string]$ClientSecret,
+        [Parameter(mandatory = $true)]
+        [string]$ResourceUrl
+    )
+    $body = @{
+        resource      = $ResourceUrl
+        client_id     = $ClientId
+        client_secret = $ClientSecret
+        grant_type    = "client_credentials"
+        scope         = "openid"
+    }
+    try {
+        $response = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/$TenantId/oauth2/token" -Body $body -ErrorAction Stop
+        $headers = @{ "Authorization" = "Bearer $($response.access_token)" }
+        return $headers
+    }
+    catch {
+        Write-Error $_.Exception
+    }
+}
+function Invoke-GraphCall {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $false)]
+        [ValidateSet('Get', 'Post', 'Delete')]
+        [string]$Method = 'Get',
+
+        [parameter(Mandatory = $false)]
+        [hashtable]$Headers = $script:authHeader,
+
+        [parameter(Mandatory = $true)]
+        [string]$Uri,
+
+        [parameter(Mandatory = $false)]
+        [string]$ContentType = 'Application/Json',
+
+        [parameter(Mandatory = $false)]
+        [hashtable]$Body
+    )
+    try {
+        $params = @{
+            Method      = $Method
+            Headers     = $Headers
+            Uri         = $Uri
+            ContentType = $ContentType
+        }
+        if ($Body) {
+            $params.Body = $Body | ConvertTo-Json -Depth 20
+        }
+        $query = Invoke-RestMethod @params
+        return $query
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+function Format-Result {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [string]$DeviceID,
+
+        [parameter(Mandatory = $true)]
+        [bool]$IsCompliant,
+
+        [parameter(Mandatory = $true)]
+        [bool]$IsMember,
+
+        [parameter(Mandatory = $true)]
+        [ValidateSet('Added', 'Removed', 'NoActionTaken')]
+        [string]$Action
+    )
+    $result = [PSCustomObject]@{
+        DeviceID    = $DeviceID
+        IsCompliant = $IsCompliant
+        IsMember    = $IsMember
+        Action      = $Action
+    }
+    return $result
+}
+#endregion
+#region authentication
+$params = @{
+    TenantId     = $env:TENANT_ID
+    ClientId     = $env:CLIENT_ID
+    ClientSecret = $env:CLIENT_SECRET
+    ResourceUrl  = "https://graph.microsoft.com"
+}
+$script:authHeader = Get-AuthHeader @params
+#endregion
+#region get devices &amp; group members
+$graphUri = 'https://graph.microsoft.com/Beta/deviceManagement/managedDevices'
+$query = Invoke-GraphCall -Uri $graphUri
+
+$graphUri = "https://graph.microsoft.com/beta/groups/$env:GROUP_ID/members"
+$groupMembers = Invoke-GraphCall -Uri $graphUri
+#endregion
+#region check each device.
+foreach ($device in $query.value) {
+    #region get aad object from intune object
+    $graphUri = "https://graph.microsoft.com/beta/devices?`$filter=deviceId eq '$($device.azureADDeviceId)'"
+    $AADDevice = (Invoke-GraphCall -Uri $graphUri).value
+    #endregion
+    if ($device.complianceState -eq $expectedComplianceValue) {
+        if ($groupMembers.value.deviceId -notcontains $AADDevice.deviceId) {
+            #region Device is compliant and not in the group
+            $graphUri = "https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/`$ref"
+            $body = @{"@odata.id" = "https://graph.microsoft.com/v1.0/directoryObjects/$($AADDevice.id)" }
+            Invoke-GraphCall -Uri $graphUri -Method Post -Body $body
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $true -IsMember $true -Action Added)) | Out-Null
+            #endregion
+        }
+        else {
+            #region device is compliant and already a member
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $true -IsMember $true -Action NoActionTaken)) | Out-Null
+            #endregion
+        }
+    }
+    else {
+        if ($groupMembers.value.deviceId -contains $AADDevice.deviceId) {
+            #region device not compliant and exists in group
+            $graphUri = "https://graph.microsoft.com/v1.0/groups/$env:GROUP_ID/members/$($AADDevice.id)/`$ref"
+            Invoke-GraphCall -Uri $graphUri -Method Delete
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $false -IsMember $false -Action Removed)) | Out-Null
+            #endregion
+        }
+        else {
+            #region device not compliant and is not a member
+            $result.Add($(Format-Result -DeviceID $device.id -IsCompliant $false -IsMember $false -Action NoActionTaken))
+            #endregion
+        }
+    }
+}
+#endregion
+# Associate values to output bindings by calling 'Push-OutputBinding'.
+Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+        StatusCode = [HttpStatusCode]::OK
+        Body       = $result | ConvertTo-Json -Depth 20
+    })
+</code></pre>
+
+<p>Now, if we spin up a local instance of our function app (or run it from Azure for those testing in production🤠) we can trigger the function app from the URI and see the results…</p>
+
+<p><a href="/assets/images/2021/06/pwsh_005.gif" title="It lives!"><img src="/assets/images/2021/06/pwsh_005.gif" alt="It lives!" /></a></p>
+
+<p>Awesome! Now, there is plenty that would need to be done to the above solution before I used it in production - specifically putting in some logic to handle large amounts of devices via batched Graph calls and I’d be switching out the HTTP Trigger binding for a CRON job to automate the task, but I hope this will give you ideas for ways to build your dynamic group automation.</p>
+
+<p>— Ben</p>
+
+      </article>
+    </div>
+  </div>
+</main>
+  </div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+    <svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path
+            d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z" />
+    </svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank"
+                            class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div></body>
+
+</html>
