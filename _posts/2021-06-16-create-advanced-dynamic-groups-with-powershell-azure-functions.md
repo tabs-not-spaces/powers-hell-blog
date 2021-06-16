@@ -380,10 +380,14 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
     })
 ```
 
-Now, if we spin up a local instance of our function app (or run it from Azure for those testing in production🤠) we can trigger the function app from the URI and see the results...
+If we now spin up a local instance of our function app (or run it from Azure for those testing in production🤠) we can trigger the function app from the URI and see the results...
 
 [![It lives!](/assets/images/2021/06/pwsh_005.gif)](/assets/images/2021/06/pwsh_005.gif "It lives!")
 
-Awesome! Now, there is plenty that would need to be done to the above solution before I used it in production - specifically putting in some logic to handle large amounts of devices via batched Graph calls and I'd be switching out the HTTP Trigger binding for a CRON job to automate the task, but I hope this will give you ideas for ways to build your dynamic group automation.
+Awesome! Now, there is more that needs to be done before this could be safely used in production - specifically putting in some logic to handle large amounts of devices via batched Graph calls and I'd be switching out the HTTP Trigger binding for a CRON job to automate the task, but I hope this will give you ideas for ways to build your dynamic group automation.
+
+Don't let the above example think you are limited to just properties via Graph either, keeping the HTTP trigger on the function app, I could imagine scenarios where proactive remediation scripts run on client devices to check for the presence of an application and force the function app to trigger..
+
+As always, [the full code from this article is available on Github](https://github.com/tabs-not-spaces/CodeDump/tree/master/Dynamic-Group-Automation)
 
 — Ben
