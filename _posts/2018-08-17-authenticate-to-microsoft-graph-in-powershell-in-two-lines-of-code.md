@@ -1,5 +1,5 @@
 ---
-id: 122
+id: 005
 title: Authenticate to Microsoft Graph in PowerShell in two lines of code!
 date: 2018-08-17T07:04:29+10:00
 author: Ben

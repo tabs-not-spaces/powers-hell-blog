@@ -1,5 +1,5 @@
 ---
-id: 160
+id: 010
 title: 'Build Azure Functions using PowerShell Core 6 & VS Code!'
 date: 2019-05-09T05:06:33+10:00
 author: Ben

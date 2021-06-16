@@ -1,5 +1,5 @@
 ---
-id: 472
+id: 023
 title: 'Set your Azure VPN connections to "Connect Automatically" with PowerShell'
 date: 2020-11-28T16:25:27+10:00
 author: Ben
@@ -27,7 +27,7 @@ My first suggestion was to simply use the built-in VPN client that comes with Wi
 
 The next suggestion was to leverage the <a href="https://www.microsoft.com/en-us/p/azure-vpn-client/9np355qt2sqb" data-type="URL" data-id="https://www.microsoft.com/en-us/p/azure-vpn-client/9np355qt2sqb">Azure VPN Client</a> from the Microsoft store. This VPN client is designed to compliment the native VPN client and adds support for MFA as well as allowing connections from the native VPN interface.
 
-The only problem? There is no way to force the "connect automatically" setting in the native VPN client, thus the client's major requirement was not met. 
+The only problem? There is no way to force the "connect automatically" setting in the native VPN client, thus the client's major requirement was not met.
 
 Now, the end user can technically go in once the connection is deployed and set it themselves, but there has to be a more reliable way of doing this on behalf of the user - if it can be done via Intune for the native client, surely there has to be a way to enforce the setting? The answer, as always, is a resounding "of course!".
 
@@ -35,13 +35,13 @@ Before we begin, the first thing we need to do is convert the config files I was
 
 Once you've downloaded the Azure P2S config files, the next step is to manually import the config into the Azure VPN client (technically there is a way to do this using CLI parameters, however it's frustratingly broken at the moment - I'll talk about that another time!).
 
-[![VPN Connection Import](/assets/images/2020/11/VPNConnectionImport-1.gif)](/assets/images/2020/11/VPNConnectionImport-1.gif "VPN Connection Import")  
+[![VPN Connection Import](/assets/images/2020/11/VPNConnectionImport-1.gif)](/assets/images/2020/11/VPNConnectionImport-1.gif "VPN Connection Import")
 
 What this manual step does is creates the \*.PBK file that the VPN client uses to "dial the connection". Once we have that \*.PBK file generated, we can capture the contents, and then deploy it out to other devices via Intune (or Configuration Manager) using a very simple PowerShell script.
 
 The *.PBK file is stored within the Azure VPN client folder structure in your local app data folder shown below - It's always the same path which makes all of this very easy to automate!
 
-**%localappdata%\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState\rasphone.pbk** 
+**%localappdata%\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState\rasphone.pbk**
 
 Open the *.pbk file in your favourite editor (that's VSCode for everyone right?) and let's move onto the code.
 
@@ -53,7 +53,7 @@ $currentUser = (Get-CimInstance -ClassName WIn32_Process -Filter 'Name="explorer
 $objUser = New-Object System.Security.Principal.NTAccount($currentUser.user)
 $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
 $requiredFolder = "C:\Users\$($currentUser.user)\AppData\Local\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState"
-$rasManKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config" 
+$rasManKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config"
 #endregion
 #region PBK Configuration
 $PBKConfig - @"
@@ -74,49 +74,49 @@ if (!(Test-Path $RequiredFolder -ErrorAction SilentlyContinue)) {
   New-Item $RequiredFolder -ItemType Directory | Out-Null
   $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
   Start-Transcript -Path $LogLocation -Force -Append
-  
+
   Write-Log "Required folder $RequiredFolder was created on the machine since it wasn't found."
   New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-  
+
   Write-Log "File rasphone.pbk has been created in $RequiredFolder."
   Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-  
+
   Write-Log "File rasphone.pbk has been populated with configuration details."
   Stop-Transcript | Out-Null
 }
 else {
   $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
   Start-Transcript -Path $LogLocation -Force -Append
-  
+
   Write-Log "Folder $RequiredFolder already exists, that means that Azure VPN Client is already installed."
   if (!(Test-Path "$RequiredFolder\rasphone.pbk" -ErrorAction SilentlyContinue)) {
-    
+
     Write-Log "File rasphone.pbk doesn't exist in $RequiredFolder."
     New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-    
+
     Write-Log "File rasphone.pbk has been created in $RequiredFolder."
     Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-    
+
     Write-Log "File rasphone.pbk has been populated with configuration details."
     Stop-Transcript | Out-Null
   }
   else {
     Write-Log "File rasphone.pbk already exists in $RequiredFolder."
-    Rename-Item -Path "$RequiredFolder\rasphone.pbk" -NewName "$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')"    
-    
+    Rename-Item -Path "$RequiredFolder\rasphone.pbk" -NewName "$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')"
+
     Write-Log "File rasphone.pbk has been renamed to rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss'). This file contains old configuration if it will be required in the future (in case it is, just rename it back to rasphone.pbk)."
     New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-    
+
     Write-Log "New rasphone.pbk file has been created in $RequiredFolder."
     Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-    
+
     Write-Log "File rasphone.pbk has been populated with configuration details."
     Stop-Transcript | Out-Null
   }
 }
 #endregion</code></pre>
 
-Not much to be said about the above code - all we are doing is pushing out the contents of the \*.PBK file to the correct location on the target machines. There is only one important thing to note - I've specifically replaced the name and guid from the \*.PBK file with variable names to allow me to set them in the configuration at the top of the script. You don't need to do that yourself, but it makes the solution a little more "reusable". 
+Not much to be said about the above code - all we are doing is pushing out the contents of the \*.PBK file to the correct location on the target machines. There is only one important thing to note - I've specifically replaced the name and guid from the \*.PBK file with variable names to allow me to set them in the configuration at the top of the script. You don't need to do that yourself, but it makes the solution a little more "reusable".
 
 You can see where they normally appear in the screenshot below (lines 1 & 10).
 

@@ -1,5 +1,5 @@
 ---
-id: 129
+id: 006
 title: 'Set multiple registry values to all users HKCU profiles using PowerShell & Active Setup'
 date: 2018-08-31T06:05:52+10:00
 excerpt: This is a quick one - an improvement on an almost perfect script that doesn't quite work how it should.

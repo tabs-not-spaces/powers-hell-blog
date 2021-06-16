@@ -1,5 +1,5 @@
 ---
-id: 432
+id: 021
 title: 'Preparing custom image templates with Azure Image Builder & PowerShell'
 date: 2020-09-20T20:44:14+10:00
 excerpt: |

@@ -1,5 +1,5 @@
 ---
-id: 58
+id: 001
 title: How to force Intune configuration scripts to re-run
 date: 2018-04-16T02:30:57+10:00
 excerpt: With a little PowerShell magic, everything is easy!!!

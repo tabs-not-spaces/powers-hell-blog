@@ -1,5 +1,5 @@
 ---
-id: 99
+id: 003
 title: 'Working with GraphAPI & PowerBI the easy way!'
 date: 2018-05-15T06:03:30+10:00
 excerpt: I'm sure lots of us out there in the IT world have spent some time with PowerBI with varying degrees of headache-inducing successes.

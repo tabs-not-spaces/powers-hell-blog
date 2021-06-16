@@ -1,5 +1,5 @@
 ---
-id: 361
+id: 019
 title: 'Managing Intune with Graph, PowerShell 7 & MSAL'
 date: 2020-06-28T08:39:24+10:00
 author: Ben

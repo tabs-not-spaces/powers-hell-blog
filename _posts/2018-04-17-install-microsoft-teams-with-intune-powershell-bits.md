@@ -1,5 +1,5 @@
 ---
-id: 88
+id: 002
 title: 'Install Microsoft Teams with Intune, PowerShell &#038; Bits!'
 date: 2018-04-17T02:44:12+10:00
 excerpt: I know most people out there cringe at the thought of spending time packaging applications for deployment, but unfortunately I seem to be a sucker for punishment and really do revel in the challenges faced with application packaging!

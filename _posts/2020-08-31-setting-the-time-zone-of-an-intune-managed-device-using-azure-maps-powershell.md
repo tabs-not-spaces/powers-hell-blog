@@ -1,5 +1,5 @@
 ---
-id: 387
+id: 020
 title: 'Dynamically set the time zone of a device in Intune using Azure Maps & PowerShell'
 date: 2020-08-31T07:20:59+10:00
 author: Ben

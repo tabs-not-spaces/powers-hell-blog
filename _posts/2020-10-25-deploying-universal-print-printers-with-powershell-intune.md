@@ -1,5 +1,5 @@
 ---
-id: 450
+id: 022
 title: 'Deploying Universal Print Printers With PowerShell & Intune'
 date: 2020-10-25T15:21:15+10:00
 excerpt: Over the last few weeks I've been playing with **Universal Print** - the cloud print solution developed by Microsoft and I honestly can't praise it enough.

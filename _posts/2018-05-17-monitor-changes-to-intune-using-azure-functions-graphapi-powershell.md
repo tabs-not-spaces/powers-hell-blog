@@ -1,5 +1,5 @@
 ---
-id: 112
+id: 004
 title: 'Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell'
 date: 2018-05-17T11:14:46+10:00
 excerpt: 'In my last post, I showed you how to move a very common task – authenticating into the GraphAPI, up into an Azure Function App'

@@ -1,5 +1,5 @@
 ---
-id: 514
+id: 024
 title: Working with Intune Settings Catalog using PowerShell and Graph
 date: 2021-03-08T22:46:00+10:00
 author: Ben
