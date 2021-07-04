@@ -17,10 +17,9 @@
     content: "\2022"; 
     color: var(--cyan);
     font-weight: bold;
-    display: inline-flex;
+    display: inline-block;
     width: 1em;
     margin-left: -1em;
-    margin-right: .5em;
   }
   .markdown-body ol {
     counter-reset: list;
@@ -30,12 +29,13 @@
     counter-increment: list;
   }
   .markdown-body ol li::before {
-    content: counter(list) ".";
+    content: counter(list)".";
     color: var(--cyan);
     font-weight: bold;
-    display: inline-block;
+    display: inline-flex;
     width: 1em;
     margin-left: -1em;
+    margin-right: .5em;
   }
   .markdown-body h2 {
     font-size: var(--font-2xl);
