@@ -7,7 +7,7 @@
         "prod": "encore prod",
         "build": "bundle exec jekyll build",
         "watch:webpack": "encore dev --watch",
-        "watch:jekyll": "bundle exec jekyll serve --host=0.0.0.0",
+        "watch:jekyll": "bundle exec jekyll serve --host=0.0.0.0 -l -o",
         "lint": "eslint --cache .",
         "format": "npm run lint -- --fix",
         "postinstall": "bundle install --path=vendor/bundle --jobs=4 --retry=3"

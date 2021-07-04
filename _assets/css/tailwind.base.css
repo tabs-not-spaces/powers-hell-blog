@@ -10,14 +10,26 @@
   .markdown-body {
     font-family: Fira Code, monospace !important;
   }
-  .markdown-body ol {
-    list-style: decimal !important;
-  }
   .markdown-body ul {
     list-style: none !important;
   }
   .markdown-body ul li::before {
     content: "\2022"; 
+    color: var(--cyan);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }
+  .markdown-body ol {
+    counter-reset: list;
+    list-style: none !important;
+  }
+  .markdown-body ol li {
+    counter-increment: list;
+  }
+  .markdown-body ol li::before {
+    content: counter(list) ".";
     color: var(--cyan);
     font-weight: bold;
     display: inline-block;
