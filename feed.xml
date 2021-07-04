@@ -1,4 +1,151 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-06-16T08:08:24+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Create advanced dynamic groups with PowerShell &amp;amp; Azure Functions</title><link href="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/" rel="alternate" type="text/html" title="Create advanced dynamic groups with PowerShell &amp;amp; Azure Functions" /><published>2021-06-16T06:56:00+00:00</published><updated>2021-06-16T06:56:00+00:00</updated><id>https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions</id><content type="html" xml:base="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/">&lt;p&gt;I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-07-04T05:10:30+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Create &amp;amp; assign filters with PowerShell &amp;amp; Graph</title><link href="https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph/" rel="alternate" type="text/html" title="Create &amp;amp; assign filters with PowerShell &amp;amp; Graph" /><published>2021-07-04T02:17:00+00:00</published><updated>2021-07-04T02:17:00+00:00</updated><id>https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph</id><content type="html" xml:base="https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph/">&lt;p&gt;As I’ve said before, working with dynamic groups in Intune &lt;a href=&quot;/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/&quot;&gt;isn’t my favourite thing&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Luckily, Microsoft has been listening and have provided us with a better way to dynamically apply policies to thing with &lt;a href=&quot;https://docs.microsoft.com/en-us/mem/intune/fundamentals/filters&quot;&gt;filters!&lt;/a&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;I recently sat down with &lt;a href=&quot;https://twitter.com/scottduf&quot;&gt;Scott Duffey&lt;/a&gt; (who brought us this amazing new feature) to dive into how filters work and how they can improve our endpoint management workflows.&lt;/p&gt;
+
+&lt;div class=&quot;video-container&quot;&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/_UuMfbvY8hw&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As is always the case, after finishing our chat, I immediately wanted to figure out how to work with Filters in a more programmatic way. Turns out, it was super easy!&lt;/p&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;At a high level, what makes filters so much better for use in Intune comes down to two primary factors.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The filter evaluation is done when the device enrolls, checks in with the Intune service or basically any time a policy is evaluated - which means the speed of evaluation is &lt;em&gt;significantly&lt;/em&gt; faster than that of dynamic groups.&lt;/li&gt;
+  &lt;li&gt;Filters are decoupled from groups, which means they are now &lt;strong&gt;reusable&lt;/strong&gt;. This means we can now create &lt;strong&gt;one&lt;/strong&gt; filter and use it for &lt;strong&gt;many&lt;/strong&gt; policies!&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So let’s get started and create our first filter.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-a-filter&quot;&gt;Create a filter&lt;/h2&gt;
+
+&lt;h5 id=&quot;authenticate&quot;&gt;Authenticate&lt;/h5&gt;
+
+&lt;p&gt;As we are using PowerShell &amp;amp; Graph, we will need to authenticate.&lt;/p&gt;
+
+&lt;p&gt;Using the MSAL.PS module makes this easy.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authParams = @{
+    ClientId    = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    TenantId    = 'powers-hell.com'
+    DeviceCode  = $true
+}
+$authToken = Get-MSAL @authParams
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&quot;build-and-post&quot;&gt;Build and post&lt;/h5&gt;
+
+&lt;p&gt;Now we need to build out a new filter object to post to Graph. This is just a simple json object that we will publish to the &lt;strong&gt;assignedFilters&lt;/strong&gt; endpoint.&lt;/p&gt;
+
+&lt;p&gt;For this example we want a filter that finds all corporate owned virtual machines.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$filter = @{
+    displayName = 'Example Filter'
+    description = 'This filter will select all virtual machines'
+    platform    = 'Windows10AndLater'
+    rule        = '(device.deviceOwnership -eq &quot;Corporate&quot;) and (device.model -startsWith &quot;Virtual Machine&quot;)'
+} | ConvertTo-Json -Depth 10
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As you can see from above, the actual request body is quite simple. The actual filter rule uses the same syntax and formatting as dynamic rules, so the learning curve is quite low.&lt;/p&gt;
+
+&lt;p&gt;Now lets post our filter to graph.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$baseGraphUri = 'https://graph.microsoft.com/beta/deviceManagement/assignmentFilters'
+$graphParams = @{
+    Method          = 'Post'
+    Uri             = $baseGraphUri
+    Authentication  = 'OAuth'
+    Token           = $authToken.AccessToken | ConvertTo-SecureString -AsPlainText -Force
+    ContentType     = 'Application/Json'
+    Body            = $filter
+}
+Invoke-RestMethod @graphParams
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If successful, we should see the results of the post sent back to us. Make note of the returned id, and let’s move on!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/image1.gif&quot; title=&quot;Successful filter post&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/image1.gif&quot; alt=&quot;Successful filter post&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;assign-a-filter&quot;&gt;Assign a filter&lt;/h2&gt;
+
+&lt;p&gt;Now that we’ve got our filter created, let’s assign it to a policy. In this example, I’ve got an application I want to deploy (as required) to all of my virtual machines. To make sure I capture all possible virtual machines, I’ll assign the application to &lt;strong&gt;all devices&lt;/strong&gt; and then filter down to the virtual machines using the filter object we’ve already created.&lt;/p&gt;
+
+&lt;p&gt;The first most obvious thing we need to do is know what the id of the policy is that we want. The easiest way to get that is to simply go to the policy in the endpoint portal.&lt;/p&gt;
+
+&lt;p&gt;Once you’ve got both the policy id and the filter id (from the creation steps above) , all that we need to do is build another post request to graph.&lt;/p&gt;
+
+&lt;p&gt;First, let’s build the body of the post.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$filterId = '2727f0f4-d030-4792-8aba-b6ef5efe602d' #your filter id
+$assignments = @{
+    mobileAppAssignments = @(
+        @{
+            '@odata.type' = '#microsoft.graph.mobileAppAssignment'
+            target        = @{
+                '@odata.type'                              = '#microsoft.graph.allDevicesAssignmentTarget'
+                deviceAndAppManagementAssignmentFilterId   = $filterId
+                deviceAndAppManagementAssignmentFilterType = 'include'
+            }
+            intent        = 'Required'
+        }
+    )
+} | ConvertTo-Json -Depth 10
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a &lt;em&gt;little&lt;/em&gt; more complicated that the previous request we built, but only because we are dealing with nested objects. Simply speaking, all we are doing is creting a new &lt;strong&gt;required&lt;/strong&gt; assignment pointing at the &lt;strong&gt;microsoft.graph.allDevicesAssignmentTarget&lt;/strong&gt; object, and &lt;strong&gt;including&lt;/strong&gt; our filter as part of the assignment.&lt;/p&gt;
+
+&lt;p&gt;If you were to replicate this experience, but use your own security groups, you’d simply change the target &lt;strong&gt;odata.type&lt;/strong&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;microsoft.graph.groupAssignmentTarget&lt;/code&gt; and add a &lt;strong&gt;groupId&lt;/strong&gt; property underneath it, as shown below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$filterId = '2727f0f4-d030-4792-8aba-b6ef5efe602d' #your filter id
+$groupId = 'da630732-10ac-47ae-94f9-2e5b9042109c' #your group id
+$assignments = @{
+    mobileAppAssignments = @(
+        @{
+            '@odata.type' = '#microsoft.graph.mobileAppAssignment'
+            intent        = 'Required'
+            target        = @{
+                '@odata.type'                              = '#microsoft.graph.groupAssignmentTarget',
+                groupId                                    = $groupId,
+                deviceAndAppManagementAssignmentFilterId   = $filterId
+                deviceAndAppManagementAssignmentFilterType = 'include'
+            }
+        }
+    )
+} | ConvertTo-Json -Depth 10
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Similarly, if you wanted to &lt;strong&gt;exclude&lt;/strong&gt; the objects captured in the filter group, change the &lt;strong&gt;deviceAndAppManagementAssignmentFilterType&lt;/strong&gt; property to &lt;strong&gt;exclude&lt;/strong&gt; - amazing, isn’t it!&lt;/p&gt;
+
+&lt;p&gt;Now that we have our request body formed, let’s post it to our policy.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$policyId = '149bf3d2-56cf-4cda-a3ea-79b6adb1c638' #your application policy id
+$baseGraphUri = 'https://graph.microsoft.com/beta/deviceAppManagement/mobileApps/{0}/assign' -f $policyId
+$graphParams = @{
+    Method         = 'Post'
+    Uri            = $baseGraphUri
+    Authentication = 'OAuth'
+    Token          = $authToken.AccessToken | ConvertTo-SecureString -AsPlainText -Force
+    ContentType    = 'Application/Json'
+    Body           = $assignments
+}
+Invoke-RestMethod @graphParams
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Post requests to the assign endpoint don’t return anything back to us, but as long as we don’t get any errors, we should be good to go.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/image2.gif&quot; title=&quot;Successful assignment&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/image2.gif&quot; alt=&quot;Successful assignment&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;How simple is that!&lt;/p&gt;
+
+&lt;p&gt;Now, thanks to filters, you can start scoping policies and applications to larger groups, and use filters to tighten up the scope in a simple reusable fashion.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerShell" /><category term="Automation" /><category term="Graph" /><category term="Intune" /><summary type="html">As I’ve said before, working with dynamic groups in Intune isn’t my favourite thing. Luckily, Microsoft has been listening and have provided us with a better way to dynamically apply policies to thing with filters!</summary></entry><entry><title type="html">Create advanced dynamic groups with PowerShell &amp;amp; Azure Functions</title><link href="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/" rel="alternate" type="text/html" title="Create advanced dynamic groups with PowerShell &amp;amp; Azure Functions" /><published>2021-06-16T06:56:00+00:00</published><updated>2021-06-16T06:56:00+00:00</updated><id>https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions</id><content type="html" xml:base="https://powers-hell.com/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/">&lt;p&gt;I’ve never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;The time it takes to analyze the dynamic group rules is nowhere near fast enough.&lt;/li&gt;
@@ -1796,90 +1943,4 @@ function Install-Fonts {
 
 &lt;p&gt;As always, code for this post is available on &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Install-Fonts&quot;&gt;GitHub&lt;/a&gt; and I am always available for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Intune" /><category term="PowerShell" /><category term="PowerShell" /><summary type="html">So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices.. Previously you may have solved this request using Group Policy - but if you are managing your devices with Intune, where do you even start? With PowerShell &amp;amp; Win32 app deployments of course!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/06/createwin32.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/06/createwin32.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Rapidly build Autopilot VMs with Hyper-V and PowerShell!</title><link href="https://powers-hell.com/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell/" rel="alternate" type="text/html" title="Rapidly build Autopilot VMs with Hyper-V and PowerShell!" /><published>2020-05-18T06:27:00+00:00</published><updated>2020-05-18T06:27:00+00:00</updated><id>https://powers-hell.com/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell</id><content type="html" xml:base="https://powers-hell.com/2020/05/18/rapidly-build-autopilot-vms-with-hyper-v-and-powershell/">&lt;p&gt;Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly.&lt;/p&gt;
-
-&lt;p&gt;What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;But what if you don’t have infinite money, time or an understanding client? That’s where Hyper-V and my latest module &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.HV.Tools&quot;&gt;Intune.HV.Tools&lt;/a&gt; come in handy!&lt;/p&gt;
-
-&lt;p&gt;Over the last few days, me and my fellow nerd army (&lt;a href=&quot;https://twitter.com/OnPremCloudGuy&quot;&gt;Steve&lt;/a&gt;, &lt;a href=&quot;https://twitter.com/AdamGrossTX&quot;&gt;Adam&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/BruceSaaaa&quot;&gt;Bruce&lt;/a&gt;) have polished our VM provisioning script to something that we are proud enough to publish to the PowerShell Gallery.&lt;/p&gt;
-
-&lt;p&gt;Enough intro - let’s dive right in.&lt;/p&gt;
-
-&lt;p&gt;Open your favourite terminal as admin - PowerShell 5.1 or 7 will work. Haven’t installed 7 yet? &lt;a href=&quot;https://github.com/PowerShell/powershell/releases&quot;&gt;give it a go&lt;/a&gt;, it’s easy to install and awesome.&lt;/p&gt;
-
-&lt;p&gt;Let’s begin by installing the module..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module Intune.HV.Tools -Scope CurrentUser -Force
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Once the module is installed, we need to set up our device using the functions contained within..&lt;/p&gt;
-
-&lt;p&gt;Now let’s initialize everything..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Initialize-HVTools -Path &quot;C:\lab&quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All we are doing here is specifying where we want our VMs to be stored and preparing the configuration file - which we can look at by running the “Get-HVToolsConfig” command..&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/initialize.gif&quot; title=&quot;Initialize&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/initialize.gif&quot; alt=&quot;Initialize&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Now that we have our configuration file initialized, let’s add stuff to it!&lt;/p&gt;
-
-&lt;p&gt;The next thing we need to add is details of our windows installation media - in the example below we are using the latest “2004” build of windows 10..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-ImageToConfig -ImageName &quot;2004&quot; -IsoPath C:\Path\To\Images\en_windows_10_business_editions_version_2004_x64_dvd_d06ef8c5.iso
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can add as many images to the solution as we want - all we need to do is make sure each one has a unique name - as shown below, I’ve added builds 1909 and 2004 to my lab..&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-imagetoconfig.gif&quot; title=&quot;Add image to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-imagetoconfig.gif&quot; alt=&quot;Add image to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Once we have our image library added to the config, let’s add some of our tenants (one at a time of course..)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-TenantToConfig -TenantName &quot;Powers-Hell&quot; -ImageName &quot;2004&quot; -AdminUpn &quot;AdminEmail@Powers-Hell.com&quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;What’s cool about the &lt;strong&gt;Add-TenantToConfig&lt;/strong&gt; cmdlet is that the &lt;strong&gt;ImageName&lt;/strong&gt; parameter autocompletes from the available images that we added in the step before. Only have one image? press Tab and it’ll autocomplete. You added a few images? Tab through and find the one you want to use!&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-tenantoconfig.gif&quot; title=&quot;Add tenant to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-tenantoconfig.gif&quot; alt=&quot;Add tenant to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Alright, we’ve got our images and our tenants configured, lastly we need to add our Hyper-V VLAN details - most of us probably just have the “Default Switch” that was set up when we install Hyper-V, but *some* of us have complex setups, so let’s solve that.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-NetworkToConfig -VSwitchName 'SuperUniqueSwitchName'
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The cmdlet actually auto-completes against any virtual switches you might have set up, so as always, just tab through and find the switch you want to assign to your machines..&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/05/add-networktoconfig.gif&quot; title=&quot;Add network to config&quot;&gt;&lt;img src=&quot;/assets/images/2020/05/add-networktoconfig.gif&quot; alt=&quot;Add network to config&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;If you have a virtual network that requires a &lt;strong&gt;VLanID&lt;/strong&gt; you can also apply that by using the &lt;strong&gt;-VlandID&lt;/strong&gt; parameter..&lt;/p&gt;
-
-&lt;p&gt;Alright, once our configuration is set up, it’s time to build our VMs. For this example I’m going to build 3 VMs with a single CPU and 2gb of memory to enroll to the “Powers-Hell” tenant..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;New-ClientVM -TenantName 'Powers-Hell' -NumberOfVMs 3 -CPUsPerVM 1 -VMMemory 2gb
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The first time you build a VM from an image it needs to create a &lt;strong&gt;reference image&lt;/strong&gt; which can take some time - this will only need to be done once per image.&lt;/p&gt;
-
-&lt;p&gt;We will also check for any available Autopilot configuration profiles. If we want to skip that and just spin up test machines we can use the &lt;strong&gt;-SkipAutoPilot&lt;/strong&gt; switch..&lt;/p&gt;
-
-&lt;p&gt;Once we’ve captured the Autopilot configuration profile we will use the local copy moving forward..&lt;/p&gt;
-
-&lt;p&gt;Let’s watch what happens once we already have the reference image created..&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://i0.wp.com/i.imgur.com/ix05KH2.gif?w=1170&amp;#038;ssl=1&quot; title=&quot;Run the code&quot;&gt;&lt;img src=&quot;https://i0.wp.com/i.imgur.com/ix05KH2.gif?w=1170&amp;#038;ssl=1&quot; alt=&quot;Run the code&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Awesome - we now have 3 machines we can use to verify our Autopilot configuration, all other Intune policies, configurations and applications work.&lt;/p&gt;
-
-&lt;p&gt;The usual caveat emptor rules apply - this works for me - I’ve tested it pretty heavily, &lt;strong&gt;but it may not work for you.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;If it doesn’t work for you, please raise an issue on the &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.HV.Tools&quot;&gt;GitHub&lt;/a&gt; and I’ll try fix it for you.&lt;/p&gt;
-
-&lt;p&gt;There are plenty of things I plan to add to this - so please check back regularly!&lt;/p&gt;
-
-&lt;p&gt;As always, &lt;a href=&quot;https://github.com/tabs-not-spaces/Intune.HV.Tools&quot;&gt;Source code for this post can be found here&lt;/a&gt;, the official module can be found &lt;a href=&quot;https://www.powershellgallery.com/packages/Intune.HV.Tools&quot;&gt;here&lt;/a&gt;, and I can always be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Hyper-V" /><category term="Intune" /><summary type="html">Picture this scenario - you are at the pointy end of a major modern management project and it’s time to test every policy, configuration and application at scale and quickly. What do you do? With infinite money, infinite time and a willing client, you take over their VC meeting room and stack dozens of devices on a desk and blast slayer while you verify your builds ( this literally has happened to me)..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/05/new-clientVMDemo-1.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/05/new-clientVMDemo-1.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Intune" /><category term="PowerShell" /><category term="PowerShell" /><summary type="html">So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices.. Previously you may have solved this request using Group Policy - but if you are managing your devices with Intune, where do you even start? With PowerShell &amp;amp; Win32 app deployments of course!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/06/createwin32.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/06/createwin32.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
