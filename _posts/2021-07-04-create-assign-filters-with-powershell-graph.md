@@ -51,7 +51,7 @@ $authParams = @{
     TenantId    = 'powers-hell.com'
     DeviceCode  = $true
 }
-$authToken = Get-MSAL @authParams
+$authToken = Get-MsalToken @authParams
 ```
 
 ##### Build and post
