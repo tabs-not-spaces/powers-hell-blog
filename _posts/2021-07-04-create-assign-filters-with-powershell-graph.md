@@ -51,7 +51,7 @@ $authParams = @{
     TenantId    = 'powers-hell.com'
     DeviceCode  = $true
 }
-$authToken = Get-MSAL @authParams
+$authToken = Get-MsalToken @authParams
 ```
 
 ##### Build and post
@@ -105,12 +105,12 @@ $assignments = @{
     mobileAppAssignments = @(
         @{
             '@odata.type' = '#microsoft.graph.mobileAppAssignment'
+            intent        = 'Required'
             target        = @{
                 '@odata.type'                              = '#microsoft.graph.allDevicesAssignmentTarget'
                 deviceAndAppManagementAssignmentFilterId   = $filterId
                 deviceAndAppManagementAssignmentFilterType = 'include'
             }
-            intent        = 'Required'
         }
     )
 } | ConvertTo-Json -Depth 10
