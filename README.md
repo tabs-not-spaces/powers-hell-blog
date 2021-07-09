@@ -1,5 +1,6 @@
 # Jekyll Starter
 
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/tabs-not-spaces/powers-hell-blog)
 [![Build & Deploy](https://github.com/tabs-not-spaces/powers-hell-blog/actions/workflows/sitebuild.yml/badge.svg)](https://github.com/tabs-not-spaces/powers-hell-blog/actions/workflows/sitebuild.yml)
 
 > Starting point for Jekyll sites using [Tailwind CSS](https://tailwindcss.com/)
