@@ -79,6 +79,7 @@ GEM
     terminal-table (2.0.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     unicode-display_width (1.7.0)
+    webrick (1.7.0)
 
 PLATFORMS
   x86_64-linux
@@ -94,6 +95,7 @@ DEPENDENCIES
   jekyll-sitemap
   jekyll-tagging-related_posts
   minima
+  webrick
 
 BUNDLED WITH
    2.2.17

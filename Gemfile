@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem "jekyll", "~> 4.1"
+gem "webrick"
 gem "minima"
 
 group :jekyll_plugins do
