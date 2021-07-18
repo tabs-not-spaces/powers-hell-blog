@@ -1,4 +1,209 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-07-18T05:11:53+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Create &amp;amp; assign filters with PowerShell &amp;amp; Graph</title><link href="https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph/" rel="alternate" type="text/html" title="Create &amp;amp; assign filters with PowerShell &amp;amp; Graph" /><published>2021-07-04T02:17:00+00:00</published><updated>2021-07-04T02:17:00+00:00</updated><id>https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph</id><content type="html" xml:base="https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph/">&lt;p&gt;As I’ve said before, working with dynamic groups in Intune &lt;a href=&quot;/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/&quot;&gt;isn’t my favourite thing&lt;/a&gt;.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-07-18T08:06:44+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Authenticating to Microsoft Graph with PowerShell - (2021)</title><link href="https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/" rel="alternate" type="text/html" title="Authenticating to Microsoft Graph with PowerShell - (2021)" /><published>2021-07-18T05:37:00+00:00</published><updated>2021-07-18T05:37:00+00:00</updated><id>https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)</id><content type="html" xml:base="https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/">&lt;p&gt;Talking about ways to authenticate to Graph is one of my least favourite subjects. After a while it gets a bit monotonous, but as with all technologies, things change..&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;So I’ve decided to try something out - once a year, I’m going to write a revised guide to the BEST ways to authenticate using PowerShell (in my opinion) and make mention of any new notable advances within the space (if there are any!).&lt;/p&gt;
+
+&lt;p&gt;Alright, with the intro out of the way, let’s dive in.&lt;/p&gt;
+
+&lt;h2 id=&quot;quick-primer&quot;&gt;Quick Primer&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/graph/overview&quot;&gt;Microsoft Graph&lt;/a&gt;, for those living under a rock, is the underlying API that unifys Microsoft 365, Windows 10 &amp;amp; Enterprise Mobility + Security, so that all we need to learn is a &lt;strong&gt;single REST API&lt;/strong&gt; to give us programmatic access to read and interact with the data within those product ecosystems.&lt;/p&gt;
+
+&lt;p&gt;To work with Graph, the first and foremost thing we need to do is authenticate into the service. Using PowerShell makes this SIMPLE.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-do-i-authenticate&quot;&gt;How do I authenticate?&lt;/h2&gt;
+
+&lt;p&gt;Authentication is surprisingly easy, once you understand the underlying concepts.&lt;/p&gt;
+
+&lt;p&gt;At a high level, all we are doing is providing some form of proof that we are allowed access to the Graph data in our Azure tenant. We do this using an authentication technology called &lt;a href=&quot;https://oauth.net/2/&quot;&gt;OAuth 2.0&lt;/a&gt;. There are two primary methods of authentication:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Interactive, or delegated authentication. This allows us to authenticate to Graph utilizing our Azure AD account / password. This generally assumes an interactive experience, meaning you are probably running a script locally, or using a tool on your computer.&lt;/li&gt;
+  &lt;li&gt;Programmatic, or application authentication. This allows us to authenticate to Graph utilizing the credentials of an application registered in AAD. This allows us to securely authenticate to Graph without requiring user interaction, is not tied to a specific user account and access is controlled via the app registrations portal of AAD.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Regardless of what method you choose to authenticate to Graph, the process is essentially the same and can actually be done very quickly / simply by just correctly forming and sending a HTTP request to the OAuth endpoint. &lt;a href=&quot;/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/&quot;&gt;I’ve discussed this previously&lt;/a&gt;, and not much has changed since that article. Below shows how to authenticate both Interactively &amp;amp; Programmatically using nothing but PowerShell.&lt;/p&gt;
+
+&lt;h3 id=&quot;interactive-authentication&quot;&gt;Interactive authentication&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$tenantId = 'powers-hell.com'
+$requestBody = @{
+    resource   = 'https://graph.microsoft.com'
+    client_id  = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    grant_type = &quot;password&quot;
+    username   = 'ben@powers-hell.com'
+    scope      = &quot;openid&quot;
+    password   = 'MySuperSecetPassword'
+}
+$auth = Invoke-RestMethod -Method post -Uri &quot;https://login.microsoftonline.com/$tenantId/oauth2/token&quot; -Body $body
+$auth
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;programmatic-authentication&quot;&gt;Programmatic authentication&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$tenantId = 'powers-hell.com'
+$reqestBody = @{
+    resource      = 'https://graph.microsoft.com'
+    client_id     = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    client_secret = $client_secret
+    grant_type    = &quot;client_credentials&quot;
+    scope         = &quot;openid&quot;
+}
+$auth = Invoke-RestMethod -Method post -Uri &quot;https://login.microsoftonline.com/$tenantId/oauth2/token&quot; -Body $body
+$auth
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you should be able to tell from both of those examples, they are almost identical, the only difference is the &lt;strong&gt;grant_type&lt;/strong&gt; property, which simple tells the OAuth endpoint what to do with the credential payload we are sending along.&lt;/p&gt;
+
+&lt;p&gt;Both of these examples are very simple, but will work for most scenarios - with the key caveat being that you will not be able to handle MFA if your AAD tenant is configured to require it (for interactive authentication only.)&lt;/p&gt;
+
+&lt;p&gt;The good news is we can leverage existing authentication libraries provided by Microsoft to overcome these problems, as well as improving error handling and allowing for future changes to the authentication process.&lt;/p&gt;
+
+&lt;h2 id=&quot;msal-adal-what-are-these-acronyms-and-what-do-i-do-with-them&quot;&gt;MSAL? ADAL? What are these acronyms and what do I do with them?&lt;/h2&gt;
+
+&lt;p&gt;While we can manually build our authentication requests and send them to the OAuth endpoint, we should probably leverage the libraries created by Microsoft to make this experiences more reliable and easier.&lt;/p&gt;
+
+&lt;p&gt;To that end, Microsoft has built two authentication libraries over the years, the Active Directory Authentication Library (ADAL) and the Microsoft Authentication Library (MSAL).&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;drac-text-yellow-pink drac-text-bold drac-text-lg&quot;&gt;
+!! DO NOT USE ADAL FOR AUTHENTICATION !!
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;If the only thing you take away from the article is the following line, then I feel I have done my job. Microsoft has announced &lt;a href=&quot;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363&quot;&gt;&lt;strong&gt;end of support timelines&lt;/strong&gt; for ADAL&lt;/a&gt;, and no further feature development will take place on the library.&lt;/p&gt;
+
+&lt;p&gt;Now that we have that out of the way, what does that mean? It means all we need to talk about is MSAL!&lt;/p&gt;
+
+&lt;h2 id=&quot;authenticating-with-msalps&quot;&gt;Authenticating with MSAL.PS&lt;/h2&gt;
+
+&lt;p&gt;By and far the EASIEST way to implement Graph authentication in your PowerShell solution is to leverage the excellent Module &lt;a href=&quot;https://www.powershellgallery.com/packages/MSAL.PS/&quot;&gt;&lt;strong&gt;MSAL.PS&lt;/strong&gt;&lt;/a&gt;. &lt;a href=&quot;/2020/06/28/managing-intune-with-graph-powershell-7-msal/&quot;&gt;I’ve already spoken about how to use this module&lt;/a&gt;, but to keep everything central, let’s go through it now.&lt;/p&gt;
+
+&lt;p&gt;First, let’s install the module&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module MSAL.PS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let’s authenticate.&lt;/p&gt;
+
+&lt;h3 id=&quot;interactive-authentication-1&quot;&gt;Interactive authentication&lt;/h3&gt;
+
+&lt;p&gt;Assuming your AAD application has been setup correctly to work with MSAL (at minimum just make sure there’s a reply URL set to &lt;strong&gt;http://localhost&lt;/strong&gt;) then we can use this code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authParams = @{
+    ClientId    = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    TenantId    = 'power-hell.com'
+    Interactive = $true
+}
+$auth = Get-MsalToken @authParams
+$auth
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If it hasn’t - or you down own the AAD application and just need to use it interactively (specifically in PowerShell 7), then utilizing the DeviceCode auth flow will be required.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authParams = @{
+    ClientId    = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    TenantId    = 'powers-hell.com'
+    DeviceCode  = $true
+}
+$auth = Get-MsalToken @authParams
+$auth
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;programmatic-authentication-1&quot;&gt;Programmatic authentication&lt;/h3&gt;
+
+&lt;p&gt;This one is simple!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authparams = @{
+    ClientId     = 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547'
+    TenantId     = 'powers-hell.com'
+    ClientSecret = ('MySuperSecretClientSecret' | ConvertTo-SecureString -AsPlainText -Force)
+}
+$auth = Get-MsalToken @authParams
+$auth
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As is hopefully evident, the only tricky thing to remember here is you need to convert your client secret to a secure string type before sending it to the command.&lt;/p&gt;
+
+&lt;h2 id=&quot;ok-ive-got-my-auth-token-now-what&quot;&gt;Ok I’ve got my auth token. Now what?&lt;/h2&gt;
+
+&lt;p&gt;As you can see, there are many ways to authenticate to Graph. But if you don’t use it, why did we even bother?&lt;/p&gt;
+
+&lt;p&gt;The most important thing to understand is that within the returned authentication object in &lt;strong&gt;any&lt;/strong&gt; of the above examples will be the &lt;strong&gt;access token&lt;/strong&gt;. With that, we need to build an &lt;em&gt;Authorization&lt;/em&gt; object to send along with all of our call to Graph. Luckily, this is super easy!&lt;/p&gt;
+
+&lt;p&gt;Below is a few examples of how to generate the authorization object to pull back a list of users from Graph.&lt;/p&gt;
+
+&lt;h3 id=&quot;without-libraries-aka-the-manual-way&quot;&gt;Without libraries (AKA the Manual way)&lt;/h3&gt;
+
+&lt;h5 id=&quot;powershell-5--7&quot;&gt;PowerShell 5 &amp;amp; 7&lt;/h5&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authorizationHeader = @{
+    Authorization = &quot;Bearer $($auth.access_token)&quot;
+}
+$requestBody = @{
+    Method      = 'Get'
+    Uri         = 'https://graph.microsoft.com/v1.0/users'
+    Headers     = $authorizationHeader
+    ContentType = 'Application/Json'
+}
+$response = Invoke-RestMethod @requestBody
+$response
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&quot;powershell-7-only-aka-the-new-method&quot;&gt;PowerShell 7 ONLY (AKA the new method)&lt;/h5&gt;
+
+&lt;p&gt;This method is relatively new &amp;amp; only works in PowerShell 7. Instead of creating the authorization header manually, we can get the Invoke-RestMethod to build it for us!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$requestBody = @{
+    Method          = 'Get'
+    Uri             = 'https://graph.microsoft.com/v1.0/users'
+    Authentication  = 'OAuth'
+    Token           = ($auth.access_token | ConvertTo-SecureString -AsPlainText -Force)
+    ContentType     = 'Application/Json'
+}
+$response = Invoke-RestMethod @requestBody
+$response
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see, this is a bit cleaner - all we need to do is define that the token was derived from an OAuth request, and then convert the access token to a secure string.&lt;/p&gt;
+
+&lt;h3 id=&quot;with-msal&quot;&gt;With MSAL&lt;/h3&gt;
+
+&lt;h5 id=&quot;powershell-5--7-1&quot;&gt;PowerShell 5 &amp;amp; 7&lt;/h5&gt;
+
+&lt;p&gt;The MSAL.PS module exposes some of the methods within the libraries to help us build the authorization header - if you find typing things difficult..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authorizationHeader = @{
+    Authorization = $auth.CreateAuthorizationHeader()
+}
+$requestBody = @{
+    Method      = 'Get'
+    Uri         = 'https://graph.microsoft.com/v1.0/users'
+    Headers     = $authorizationHeader
+    ContentType = 'Application/Json'
+}
+$response = Invoke-RestMethod @requestBody
+$response
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&quot;powershell-7-only-aka-the-new-method-1&quot;&gt;PowerShell 7 ONLY (AKA the new method)&lt;/h5&gt;
+
+&lt;p&gt;And finally, for completeness, we can use the new Invoke-RestMethod parameters with MSAL to really show off. The only thing to note of difference here is that the &lt;em&gt;access token&lt;/em&gt; property returned from the MSAL call is named &lt;strong&gt;AccessToken&lt;/strong&gt; compared to the native HTTP request which is &lt;strong&gt;Access_Token&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$requestBody = @{
+    Method          = 'Get'
+    Uri             = 'https://graph.microsoft.com/v1.0/users'
+    Authentication  = 'OAuth'
+    Token           = ($auth.AccessToken | ConvertTo-SecureString -AsPlainText -Force)
+    ContentType     = 'Application/Json'
+}
+$response = Invoke-RestMethod @requestBody
+$response
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And there it is - Authentication to Graph with PowerShell in 2021. If you learned anything from this article, please feel free to share it and let me know via &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Hopefully that’s the last time I need to speak about authentication for another year!&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerShell" /><category term="Graph" /><category term="ADAL IS DEAD" /><category term="Authentication" /><summary type="html">Talking about ways to authenticate to Graph is one of my least favourite subjects. After a while it gets a bit monotonous, but as with all technologies, things change..</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/07/msal-authentication-2021.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/07/msal-authentication-2021.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Create &amp;amp; assign filters with PowerShell &amp;amp; Graph</title><link href="https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph/" rel="alternate" type="text/html" title="Create &amp;amp; assign filters with PowerShell &amp;amp; Graph" /><published>2021-07-04T02:17:00+00:00</published><updated>2021-07-04T02:17:00+00:00</updated><id>https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph</id><content type="html" xml:base="https://powers-hell.com/2021/07/04/create-assign-filters-with-powershell-graph/">&lt;p&gt;As I’ve said before, working with dynamic groups in Intune &lt;a href=&quot;/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/&quot;&gt;isn’t my favourite thing&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Luckily, Microsoft has been listening and have provided us with a better way to dynamically apply policies to thing with &lt;a href=&quot;https://docs.microsoft.com/en-us/mem/intune/fundamentals/filters&quot;&gt;filters!&lt;/a&gt;&lt;/p&gt;
 
@@ -1848,99 +2053,4 @@ $results | Select-Object id, displayName
 
 &lt;p&gt;As always, code from this blog is available &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Get-Win32AppsUsingMSAL&quot;&gt;on my GitHub&lt;/a&gt; and I can be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</summary></entry><entry><title type="html">Installing fonts with PowerShell &amp;amp; Intune</title><link href="https://powers-hell.com/2020/06/09/installing-fonts-with-powershell-intune/" rel="alternate" type="text/html" title="Installing fonts with PowerShell &amp;amp; Intune" /><published>2020-06-08T15:22:21+00:00</published><updated>2020-06-08T15:22:21+00:00</updated><id>https://powers-hell.com/2020/06/09/installing-fonts-with-powershell-intune</id><content type="html" xml:base="https://powers-hell.com/2020/06/09/installing-fonts-with-powershell-intune/">&lt;p&gt;So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices..&lt;/p&gt;
-
-&lt;p&gt;Previously you may have solved this request using Group Policy - but if you are managing your devices with Intune, where do you even start?&lt;/p&gt;
-
-&lt;p&gt;With PowerShell &amp;amp; Win32 app deployments of course!&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h2 id=&quot;create&quot;&gt;Create&lt;/h2&gt;
-
-&lt;p&gt;First let’s scaffold out our new application project we are going to make - in the example code below we are just going to put everything in the root of our system drive.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;New-Item &quot;$env:SystemDrive\FontsToDeploy\Fonts&quot; -ItemType Directory -Force
-New-Item &quot;$env:SystemDrive\FontsToDeploy\Fonts\install.ps1&quot; -ItemType File -Force
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now, let’s grab the fonts that the marketing department has asked us to install and place them inside the &lt;strong&gt;Fonts&lt;/strong&gt; folder.&lt;/p&gt;
-
-&lt;p&gt;Open up &lt;strong&gt;install.ps1&lt;/strong&gt; (the file created in the example code above) in your favourite editor (that’s VS-Code, right?) and we will begin the fun stuff.&lt;/p&gt;
-
-&lt;p&gt;We will begin by inserting a very simple function into our install script that will do all of the heavy lifting of this installation.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region functions
-function Install-Fonts {
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]$FontFile
-    )
-    try {
-        $font = $fontFile | split-path -Leaf
-        If (!(Test-Path &quot;c:\windows\fonts\$($font)&quot;)) {
-            switch (($font -split &quot;\.&quot;)[-1]) {
-                &quot;TTF&quot; {
-                    $fn = &quot;$(($font -split &quot;\.&quot;)[0]) (TrueType)&quot;
-                    break
-                }
-                &quot;OTF&quot; {
-                    $fn = &quot;$(($font -split &quot;\.&quot;)[0]) (OpenType)&quot;
-                    break
-                }
-            }
-            Copy-Item -Path $fontFile -Destination &quot;C:\Windows\Fonts\$font&quot; -Force
-            New-ItemProperty -Name $fn -Path &quot;HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts&quot; -PropertyType string -Value $font
-        }
-    }
-    catch {
-        write-warning $_.exception.message
-    }
-}
-#endregion
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you can see, not much is required - the function is just checking if the font file is a *.TTF or *.OTF file, copying the file to the font folder and setting a registry entry in HKLM to expose the new font on the system to all users of the device.&lt;/p&gt;
-
-&lt;p&gt;Now that we have our function added, all we need to do is step through our fonts folder and send each font through the function to be installed on the system.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;foreach ($f in $(Get-ChildItem $PSScriptRoot\fonts)) {
-    Install-Fonts -FontFile $f.fullName
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We should probably also add some error handling to the solution - this will be provided in the final solution in GitHub.&lt;/p&gt;
-
-&lt;h2 id=&quot;package&quot;&gt;Package&lt;/h2&gt;
-
-&lt;p&gt;Once our install.ps1 file is created, we need to convert the project to a single file that we can upload to Intune.&lt;/p&gt;
-
-&lt;p&gt;I’ve spoken about this at length elsewhere, but surprisingly haven’t mentioned it here, so I’ll touch on the process, but I will keep it brief..&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Download a copy of the &lt;strong&gt;&lt;a href=&quot;https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool&quot;&gt;Win32 Content Prep Tool&lt;/a&gt;&lt;/strong&gt;. Store it somewhere central (I tend to keep tools like this in a folder in the root of my system drive, or in the root of the project I am working on.)&lt;/li&gt;
-  &lt;li&gt;Open PowerShell and set your path to the root of the Application Project we made earlier.&lt;/li&gt;
-  &lt;li&gt;Call the Win32 Content Prep Tool from PowerShell.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;&amp;amp; C:\PathToTools\IntuneWinAppUtil.exe -c C:\Fonts -s Install.ps1 -o C:\Fonts
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/createwin32.gif&quot; title=&quot;Create Win32 App Package&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/createwin32.gif&quot; alt=&quot;Create Win32 App Package&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;deploy&quot;&gt;Deploy&lt;/h2&gt;
-
-&lt;p&gt;Now that we have our *.intunewin package, we can move over to endpoint.microsoft.com and add a new “Windows App (Win32)” application.&lt;/p&gt;
-
-&lt;p&gt;I won’t detail the steps here as it’s been heavily &lt;a href=&quot;https://docs.microsoft.com/en-us/mem/intune/apps/apps-win32-app-management&quot;&gt;documented by Microsoft&lt;/a&gt; and &lt;a href=&quot;https://www.asquaredozen.com/2019/08/21/troubleshooting-win32-app-installs-in-intune/&quot;&gt;the&lt;/a&gt; &lt;a href=&quot;https://www.inthecloud247.com/deploy-win32-apps-with-microsoft-intune/&quot;&gt;greater&lt;/a&gt; &lt;a href=&quot;https://www.anoopcnair.com/intune-win32-app-deployment/&quot;&gt;community&lt;/a&gt; &lt;a href=&quot;https://www.youtube.com/watch?v=x-RMjhzGXxA&amp;amp;t=50s&quot;&gt;already&lt;/a&gt;, just make sure that you:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Deploy the solution using the &lt;strong&gt;system context&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;Set the detection method to look for one or more of the resultant font files that will end up in C:\windows\fonts&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Hopefully this shows how much can be done with PowerShell &amp;amp; Intune - obviously font installation is a relatively simple task, but using this concept, you can use win32 apps to deliver scripts and related payloads to your devices quickly and securely.&lt;/p&gt;
-
-&lt;p&gt;As always, code for this post is available on &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Install-Fonts&quot;&gt;GitHub&lt;/a&gt; and I am always available for a chat on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Intune" /><category term="PowerShell" /><category term="PowerShell" /><summary type="html">So this seems like a fairly simple and innocuous task - the marketing department comes to you and ask for a handful of new fonts to be deployed to all devices.. Previously you may have solved this request using Group Policy - but if you are managing your devices with Intune, where do you even start? With PowerShell &amp;amp; Win32 app deployments of course!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/06/createwin32.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/06/createwin32.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</summary></entry></feed>

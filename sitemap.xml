@@ -109,6 +109,10 @@
 <lastmod>2021-07-04T02:17:00+00:00</lastmod>
 </url>
 <url>
+<loc>https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/</loc>
+<lastmod>2021-07-18T05:37:00+00:00</lastmod>
+</url>
+<url>
 <loc>https://powers-hell.com/about/</loc>
 </url>
 <url>
@@ -164,6 +168,12 @@
 </url>
 <url>
 <loc>https://powers-hell.com/category/azure-functions/</loc>
+</url>
+<url>
+<loc>https://powers-hell.com/category/adal-is-dead/</loc>
+</url>
+<url>
+<loc>https://powers-hell.com/category/authentication/</loc>
 </url>
 <url>
 <loc>https://powers-hell.com/year/2018/</loc>
