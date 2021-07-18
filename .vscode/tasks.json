@@ -5,14 +5,12 @@
     "tasks": [
         {
             "label": "New Post",
+            "detail": "jekyll compose \"Your Exciting Title Here\"",
             "type": "shell",
             "command": [
                 "jekyll compose \"${input:Title}\""
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -21,26 +19,7 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "Migrate Images",
-            "type": "shell",
-            "windows": {
-                "command": "./tasks/migrate-images.ps1 -workspaceFolder ${workspaceFolder}"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
+            
             "problemMatcher": []
         },
         {
@@ -51,6 +30,27 @@
             ],
             "label": "npm: start",
             "detail": "npm run localenv && concurrently -k --restart-tries 3 --restart-after 3000 -p [{name}] -n webpack,jekyll -c yellow,cyan npm:watch:webpack npm:watch:jekyll"
+        },
+        {
+            "label": "Jekyll: Build Dev",
+            "detail": ". ./.env.local && bundle install && npm install && npm run dev && npm start",
+            "type": "shell",
+            "linux":{
+                "command": ". ./.env.local && bundle install && npm install && npm run dev && npm start"
+            },
+            "group":{
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher":"$eslint-stylish"
         }
     ],
     "inputs": [
