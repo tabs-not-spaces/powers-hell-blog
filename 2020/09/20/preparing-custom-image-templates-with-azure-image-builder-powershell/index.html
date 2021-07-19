@@ -182,10 +182,6 @@
     <a href="/category/automation/">Automation</a>, <a href="/category/azure/">Azure</a>, <a href="/category/powershell/">PowerShell</a>,  <a href="/category/wvd/">WVD</a></font>
 </p>
         
-        <span>
-          <a href="" title="Hero Image" class="lightbox-image"><img src="" alt="Preparing custom image templates with Azure Image Builder & PowerShell"></a>
-        </span>
-        
         <p><a href="https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview">Azure Image Builder</a> (AIB) is Microsoft’s solution to configure and customize virtual machine images. The concept of it is pretty great: Pick a reference image from the public market place, apply some customization built around <a href="https://www.packer.io/">HashiCorp’s Packer</a>, hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.</p>
 
 <!--more-->
@@ -424,7 +420,15 @@ $job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name 
     </ul>
 </div>
 
-</main>
+<div
+    class="pagination main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center utterances">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-divider drac-border-pink" />
+    </div>
+        <script src="https://utteranc.es/client.js" repo="tabs-not-spaces/powers-hell-blog" issue-term="title"
+            theme="github-dark" crossorigin="anonymous" async>
+            </script>
+</div></main>
   </div><script src="/assets/js/app.js"></script>
 <script src="/assets/js/prism.js"></script>
 <script type="text/javascript" src="/assets/js/lightbox.js"></script>
