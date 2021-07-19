@@ -6,7 +6,7 @@ date: 2021-07-04 12:17 +1000
 id: 026
 author: Ben
 views: 0
-image: 
+image: /assets/images/2021/07/image2.gif
 categories:
 - PowerShell
 - Automation
