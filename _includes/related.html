@@ -1,9 +1,9 @@
 {% if site.related_posts.size >= 1 %}
 <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
     <div class="drac-box drac-mb-sm">
-        <hr class="drac-divider drac-border-cyan" />
+        <hr class="drac-hr-bg-{{ page.titlecolor | default: site.titlecolor }}" />
     </div>
-    <h3 class="drac">Related Posts</h3>
+    <h2 class="drac-text-{{ page.titlecolor | default: site.titlecolor }}">Related Posts</h2>
     <ul class="related">
         {% for related_post in site.related_posts limit: 5 %}
         <li><a href="{{ related_post.url }}"><span class="drac-text-cyan">&raquo;</span> {{ related_post.title }}</a></li>

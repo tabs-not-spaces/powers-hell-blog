@@ -8,10 +8,15 @@ author: Ben
 views: 0
 image: /assets/images/2021/07/image2.gif
 categories:
-- PowerShell
-- Automation
-- Graph
-- Intune
+    - PowerShell
+    - Automation
+    - Graph
+    - Intune
+tags:
+    - PowerShell
+    - Automation
+    - Graph
+    - Intune
 ---
 
 As I've said before, working with dynamic groups in Intune [isn't my favourite thing]({% post_url 2021-06-16-create-advanced-dynamic-groups-with-powershell-azure-functions %}).

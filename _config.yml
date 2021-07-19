@@ -27,18 +27,22 @@ theme: minima
 jekyll_compose:
   default_front_matter:
     drafts:
-      id: 
+      id: 000
       author: Ben
       views: 0
       image:
       categories:
         - PowerShell
+      tags:
+        - PowerShell
     posts:
-      id: 
+      id: 000
       author: Ben
       views: 0
       image:
       categories:
+        - PowerShell
+      tags:
         - PowerShell
 
 jekyll-archives:

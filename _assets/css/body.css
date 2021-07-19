@@ -1,41 +1,228 @@
-
 :root {
-  --blackBlack: #14141b;
+    --blackBlack: #14141b;
 }
+
 .page-container {
-  position: relative;
-  min-height: 100vh;
+    position: relative;
+    min-height: 100vh;
 }
+
 .drac-bg-blackBlack {
-  background-color: var(--blackBlack);
+    background-color: var(--blackBlack);
 }
+
+.drac-hr-bg-black {
+    background: var(--black);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-blackSecondary {
+    background: var(--blackSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-blackTernary {
+    background: var(--blackTernary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-blackLight {
+    background: var(--blackLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-white {
+    background: var(--white);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-whiteSecondary {
+    background: var(--whiteSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-whiteLight {
+    background: var(--whiteLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-cyan {
+    background: var(--cyan);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-cyanSecondary {
+    background: var(--cyanSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-cyanLight {
+    background: var(--cyanLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-green {
+    background: var(--green);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-greenSecondary {
+    background: var(--greenSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-greenLight {
+    background: var(--greenLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-orange {
+    background: var(--orange);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-orangeSecondary {
+    background: var(--orangeSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-orangeLight {
+    background: var(--orangeLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-pink {
+    background: var(--pink);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-pinkSecondary {
+    background: var(--pinkSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-pinkLight {
+    background: var(--pinkLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-purple {
+    background: var(--purple);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-purpleSecondary {
+    background: var(--purpleSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-purpleLight {
+    background: var(--purpleLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-red {
+    background: var(--red);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-redSecondary {
+    background: var(--redSecondary);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-redLight {
+    background: var(--redLight);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-yellow {
+    background: var(--yellow);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-purple-cyan {
+    background: var(--purple-cyan);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-yellow-pink {
+    background: var(--yellow-pink);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-cyan-green {
+    background: var(--cyan-green);
+    height: 1px;
+    border: 0;
+}
+
+.drac-hr-bg-pink-purple {
+    background: var(--pink-purple);
+    height: 1px;
+    border: 0;
+}
+
 body {
-  background-color: var(--black);
-  font-family: Fira Code, monospace !important;
+    background-color: var(--black);
+    font-family: Fira Code, monospace !important;
 }
+
 pre {
-  white-space: pre-line;
+    white-space: pre-line;
 }
+
 .nav {
-  top:0;
-  z-index:10;
+    top: 0;
+    z-index: 10;
 }
+
 .wave {
-  position: relative;
-  z-index: 1;
+    position: relative;
+    z-index: 1;
 }
+
 .main-overlay {
-  position: relative;
-  z-index: 2;
+    position: relative;
+    z-index: 2;
 }
 
 .wave path {
-  fill: var(--blackBlack);
+    fill: var(--blackBlack);
 }
 
 .pwsh-start {
-  stop-color: var(--purple);
+    stop-color: var(--purple);
 }
+
 .pwsh-stop {
-  stop-color: var(--pink);
+    stop-color: var(--pink);
 }

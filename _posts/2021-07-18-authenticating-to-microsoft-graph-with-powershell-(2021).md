@@ -8,10 +8,15 @@ author: Ben
 views: 0
 image: /assets/images/2021/07/msal-authentication-2021.gif
 categories:
-- PowerShell
-- Graph
-- ADAL IS DEAD
-- Authentication
+    - PowerShell
+    - Graph
+    - ADAL IS DEAD
+    - Authentication
+tags:
+    - PowerShell
+    - Graph
+    - ADAL IS DEAD
+    - Authentication
 ---
 
 Talking about ways to authenticate to Graph is one of my least favourite subjects. After a while it gets a bit monotonous, but as with all technologies, things change.. 

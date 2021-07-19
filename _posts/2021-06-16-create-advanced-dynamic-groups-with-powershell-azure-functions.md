@@ -11,6 +11,11 @@ categories:
     - Azure
     - Intune
     - Azure Functions
+tags:
+    - PowerShell
+    - Azure
+    - Intune
+    - Azure Functions
 ---
 
 I've never been entirely happy with dynamic groups in Intune. The primary reason for this boils down to two primary issues:
