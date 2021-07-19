@@ -21,7 +21,7 @@ tags:
 
 As I've said before, working with dynamic groups in Intune [isn't my favourite thing]({% post_url 2021-06-16-create-advanced-dynamic-groups-with-powershell-azure-functions %}).
 
-Luckily, Microsoft has been listening and have provided us with a better way to dynamically apply policies to thing with [filters!](https://docs.microsoft.com/en-us/mem/intune/fundamentals/filters)
+Luckily, Microsoft has been listening and have provided us with a better way to dynamically apply policies to devices with [filters!](https://docs.microsoft.com/en-us/mem/intune/fundamentals/filters)
 
 <!--more-->
 
