@@ -16,7 +16,12 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"rebornix.Ruby"
+		"rebornix.Ruby",
+		"ecmel.vscode-html-css",
+		"pranaygp.vscode-css-peek",
+		"zignd.html-css-class-completion",
+		"bradlc.vscode-tailwindcss",
+		"lonefy.vscode-js-css-html-formatter"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
