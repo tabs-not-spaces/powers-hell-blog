@@ -3,7 +3,7 @@
     <div class="drac-box drac-mb-sm">
         <hr class="drac-hr-bg-{{ page.titlecolor | default: site.titlecolor }}" />
     </div>
-    <h2 class="drac-text-{{ page.titlecolor | default: site.titlecolor }}">Related Posts</h2>
+    <h2 class="drac-heading drac-heading-xl drac-text-{{ page.titlecolor | default: site.titlecolor }}">Related Posts</h2>
     <ul class="related">
         {% for related_post in site.related_posts limit: 5 %}
         <li><a href="{{ related_post.url }}"><span class="drac-text-cyan">&raquo;</span> {{ related_post.title }}</a></li>
