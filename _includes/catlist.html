@@ -6,6 +6,6 @@
     {%- endcapture -%} 
     {%- assign cat_array = cat_array | push: cat_name -%} 
 {% endfor %}
-<font class="drac-text drac-text-xs drac-text-{{ page.titlecolor | default: site.titlecolor }}">
+<font class="drac-text drac-text-xs">
     {{ cat_array | array_to_sentence_string: '' -}}
 </font>

@@ -5,6 +5,9 @@
 .related a {
     color: var(--white);
 }
+.related font {
+    color: var(--dynamic-page-color);
+}
 .related a:hover {
     color: var(--dynamic-page-color);
 }
