@@ -1,11 +1,11 @@
-{%- assign sorted_cats = page.categories | sort -%}
-{%- assign cat_array = '' | split:',' -%}
-{% for category in sorted_cats %}
+{%- assign sorted_cats = page.categories | sort -%} 
+{%- assign cat_array = '' | split:',' -%} 
+{% for category in sorted_cats %} 
     {%- capture cat_name -%}
-        <a href="/category/{{ category | slugify }}/">{{- category | replace: "-", " " -}}</a>
-    {%- endcapture -%}
-    {%- assign cat_array = cat_array | push: cat_name -%}
+    <a href="/category/{{ category | slugify }}/" class="related">{{- category | replace: "-", " " -}}</a> 
+    {%- endcapture -%} 
+    {%- assign cat_array = cat_array | push: cat_name -%} 
 {% endfor %}
-<font class="drac-text drac-text-xs">
+<font class="drac-text drac-text-xs drac-text-{{ page.titlecolor | default: site.titlecolor }}">
     {{ cat_array | array_to_sentence_string: '' -}}
 </font>

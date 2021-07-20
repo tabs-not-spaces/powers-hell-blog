@@ -7,4 +7,9 @@
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
     <script data-ad-client="ca-pub-3537558222002149" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     {% include analytics.html %}
+    <style type="text/css">
+        :root {
+            --dynamic-page-color: {{page.titlecolor | default: site.titlecolor}};
+        }
+    </style>
 </head>

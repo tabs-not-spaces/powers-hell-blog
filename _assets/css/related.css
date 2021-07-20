@@ -6,5 +6,5 @@
     color: var(--white);
 }
 .related a:hover {
-    color: var(--cyan);
+    color: var(--dynamic-page-color);
 }
