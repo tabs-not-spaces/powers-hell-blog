@@ -23,7 +23,7 @@
   }
   .markdown-body ul li::before {
     content: "\2022"; 
-    color: var(--cyan);
+    color: var(--dynamic-page-color);
     font-weight: bold;
     display: inline-block;
     width: 1em;
@@ -38,7 +38,7 @@
   }
   .markdown-body ol li::before {
     content: counter(list)".";
-    color: var(--cyan);
+    color: var(--dynamic-page-color);
     font-weight: bold;
     display: inline-flex;
     width: 1em;
