@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Create & assign filters with PowerShell & Graph
-titlecolor: yellow-pink
+titlecolor: yellow
 date: 2021-07-04 12:17 +1000
 id: 026
 author: Ben
