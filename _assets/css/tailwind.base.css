@@ -11,7 +11,9 @@
     color: var(--dynamic-page-color);
   }
   .markdown-body a:hover {
-    color: var(--purple);
+    color: var(--black);
+    background-color: var(--dynamic-page-color);
+    padding: 1px;
   }
   .markdown-body {
     font-family: Fira Code, monospace !important;
