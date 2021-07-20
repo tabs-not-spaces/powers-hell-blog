@@ -7,6 +7,12 @@
     margin-top: -28rem;
 
   }
+  .markdown-body a {
+    color: var(--dynamic-page-color);
+  }
+  .markdown-body a:hover {
+    color: var(--purple);
+  }
   .markdown-body {
     font-family: Fira Code, monospace !important;
   }
