@@ -1,28 +1,23 @@
 {% if paginator.total_pages > 1 %}
-<div class="pagination main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center"
-  id="pagination">
-  <div class="shadow-lg">
-    {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | relative_url }}">&laquo; Prev</a>
-    {% else %}
-    <a class="nothing">&laquo; Prev</a>
-    {% endif %}
-
-    {% for page in (1..paginator.total_pages) %}
-    {% if page == paginator.page %}
-    <a class="active drac-text-cyan">{{ page }}</em>
+<div class="pagination main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center" id="pagination">
+    <div class="shadow-lg">
+        {% if paginator.previous_page %}
+        <a href="{{ paginator.previous_page_path | relative_url }}">&laquo; Prev</a> {% else %}
+        <a class="nothing">&laquo; Prev</a> {% endif %} {% for page in (1..paginator.total_pages) %} {% if page == paginator.page %}
+        <a class="active drac-text-cyan">{{ page }}</em>
       {% elsif page == 1 %}
-      <a href="/">{{ page }}</a>
-      {% else %}
-      <a href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{ page }}</a>
-      {% endif %}
-      {% endfor %}
-
-      {% if paginator.next_page %}
-      <a href="{{ paginator.next_page_path | relative_url }}">Next &raquo;</a>
-      {% else %}
-      <a class="nothing drac-text-black-secondary">Next &raquo;</a>
-      {% endif %}
-  </div>
+      <a href="/">{{ page }}</a> {% else %}
+        <a href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{ page }}</a> {% endif %} {% endfor %} {% if paginator.next_page %}
+        <a href="{{ paginator.next_page_path | relative_url }}">Next &raquo;</a> {% else %}
+        <a class="nothing drac-text-black-secondary">Next &raquo;</a> {% endif %}
+    </div>
 </div>
 {% endif %}
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3537558222002149" crossorigin="anonymous"></script>
+    <!-- horizontal-ad-unit -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3537558222002149" data-ad-slot="4617860412" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
