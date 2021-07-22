@@ -60,6 +60,7 @@ jekyll-archives:
 
 include:
   - node_modules
+  - ads.txt
 
 exclude:
   - "package*.json"
