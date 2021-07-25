@@ -1,4 +1,218 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-07-22T01:53:53+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Authenticating to Microsoft Graph with PowerShell - (2021)</title><link href="https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/" rel="alternate" type="text/html" title="Authenticating to Microsoft Graph with PowerShell - (2021)" /><published>2021-07-18T05:37:00+00:00</published><updated>2021-07-18T05:37:00+00:00</updated><id>https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)</id><content type="html" xml:base="https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/">&lt;p&gt;Talking about ways to authenticate to Graph is one of my least favourite subjects. After a while it gets a bit monotonous, but as with all technologies, things change..&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-07-25T12:21:40+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Build a Jekyll development environment with VS Code &amp;amp; Remote Containers</title><link href="https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/" rel="alternate" type="text/html" title="Build a Jekyll development environment with VS Code &amp;amp; Remote Containers" /><published>2021-07-25T08:12:00+00:00</published><updated>2021-07-25T08:12:00+00:00</updated><id>https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers</id><content type="html" xml:base="https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/">&lt;p&gt;So you want to build a site, host it on Github (for free) and don’t know where to start? Here’s how I did it!&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Since moving this site away from WordPress and rebuilding the site from the ground up using &lt;a href=&quot;https://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt;, &lt;a href=&quot;https://tailwindcss.com/&quot;&gt;Tailwind CSS&lt;/a&gt; &amp;amp; &lt;a href=&quot;https://draculatheme.com/ui&quot;&gt;Dracula UI&lt;/a&gt;, I’ve had lots of questions about &lt;strong&gt;how&lt;/strong&gt; others could do the same. Now, this isn’t obviously what I normally talk about (PowerShell / Intune), I think the concepts I usually talk about - automation, making tools work better for you, having fun learning new skills are transferrable to this. Plus… It’s &lt;strong&gt;my&lt;/strong&gt; site!&lt;/p&gt;
+
+&lt;p&gt;So what I’m going to cover is how to leverage a &lt;strong&gt;very basic&lt;/strong&gt; github template and convert it into a solution that with a click of your mouse will provision a Docker container that has everything you need to develop a Jekyll static web app.&lt;/p&gt;
+
+&lt;p&gt;What I will &lt;strong&gt;NOT&lt;/strong&gt; be talking about is how to &lt;em&gt;build&lt;/em&gt; a jekyll website, or how to write HTML / CSS / Javascript. This is an introductory guide to using the &lt;a href=&quot;https://code.visualstudio.com/blogs/2021/06/10/remote-repositories&quot;&gt;remote repository&lt;/a&gt; extension of VS Code to help you get started with Jekyll - not a website development lesson.&lt;/p&gt;
+
+&lt;p&gt;With that out of the way, let’s get into the fun!&lt;/p&gt;
+
+&lt;h2 id=&quot;pre-requirements&quot;&gt;Pre-requirements&lt;/h2&gt;
+
+&lt;p&gt;Before you start, please make sure you have the following installed on your device.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/windows/wsl/install-win10&quot;&gt;Windows Subsystem for Linux (WSL2)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.docker.com/products/docker-desktop&quot;&gt;Docker Desktop&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://code.visualstudio.com/download&quot;&gt;Visual Studio Code&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Visual Studio Code Extensions:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack&quot;&gt;Remote Development&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=GitHub.remotehub&quot;&gt;Remote Repositories&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Once the above has been installed we can begin.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-a-repository-from-a-jekyll-starter-template&quot;&gt;Create a repository from a Jekyll starter template.&lt;/h2&gt;
+
+&lt;p&gt;As mentioned, this is just how I’ve set up my site, it’s not the &lt;strong&gt;only&lt;/strong&gt; way to do it, but it sure is easy.&lt;/p&gt;
+
+&lt;p&gt;Let’s begin by generating a project repository from the &lt;a href=&quot;https://github.com/mloberg/jekyll-starter/generate&quot;&gt;jekyll-starter&lt;/a&gt; repo.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/generatefromtemplate.gif&quot; title=&quot;Generate repo from template&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/generatefromtemplate.gif&quot; alt=&quot;Generate repo from template&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;That was easy, wasn’t it?!&lt;/p&gt;
+
+&lt;h2 id=&quot;prepare-the-repository-for-remote-container-support&quot;&gt;Prepare the repository for remote container support.&lt;/h2&gt;
+
+&lt;p&gt;Now we want to make it so we can open this new repository as a &lt;em&gt;remote container&lt;/em&gt; in VS Code. The easiest way to do that is to put a link in the readme of the project. Scroll down to the readme.md and hit the edit button. We are going to add the following code to the top of the file.&lt;/p&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;![Open in Visual Studio Code&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;https://img.shields.io/badge/Open%20in-Visal%20Studio%20Code-blue?style=for-the-badge&amp;amp;logo=visualstudiocode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;](https://open.vscode.dev/your-github-username/your-repository-name)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Copy the above code and edit the URL to reflect your GitHub account name and the name of the repository you created from the previous step. As an example, the URL I would put in for my example would be &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://open.vscode.dev/tabs-not-spaces/Heaps-Cool-Website&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Commit the changes you’ve made and you should now have a handy button that we will use in the next step.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/create-open-button.gif&quot; title=&quot;Create &amp;quot;Open in VSCode&amp;quot; button&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/create-open-button.gif&quot; alt=&quot;Create &amp;quot;Open in VSCode&amp;quot; button&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;clone-repo-in-container-volume&quot;&gt;Clone repo in container volume&lt;/h2&gt;
+
+&lt;p&gt;Now that we have our new handy dandy button added to our readme - let’s click it.&lt;/p&gt;
+
+&lt;p&gt;We should be greeted with a jump-off page with two options:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Open with Remote Repositories&lt;/li&gt;
+  &lt;li&gt;Clone repo in container volume&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;By the name of this section, you should know what’s about to happen - click on the &lt;strong&gt;Clone repo in container volume&lt;/strong&gt; button and accept any prompts that appear.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/open-remote-container.gif&quot; title=&quot;Open repo in container volume&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/open-remote-container.gif&quot; alt=&quot;Open repo in container volume&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Because we have not configured our &lt;strong&gt;dev container&lt;/strong&gt; in the repository, we are now going to be asked what exactly our development environment will look like..&lt;/p&gt;
+
+&lt;h2 id=&quot;add-development-container-configuration-files&quot;&gt;Add development container configuration files&lt;/h2&gt;
+
+&lt;p&gt;As shown in the image above, we should now have a docker instance loaded that is asking us how we want to set up our environment. Luckily, Microsoft has created a bunch of great reference development container templates we can utilize as a jump off point.&lt;/p&gt;
+
+&lt;p&gt;Click on &lt;strong&gt;Show All Definitions…&lt;/strong&gt; and search for &lt;strong&gt;Ruby&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;From here we are going to select the latest release of &lt;strong&gt;Ruby (3.0)&lt;/strong&gt; and we are going to make sure to include &lt;strong&gt;Node.js&lt;/strong&gt; to our container.&lt;/p&gt;
+
+&lt;p&gt;Our Docker container will now build based off our configuration and you should be left with an instance of VS Code remotely connected to a Docker container housing your site &amp;amp; all required software to develop the site!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/dev-container-config-files.gif&quot; title=&quot;Add development container configuration files&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/dev-container-config-files.gif&quot; alt=&quot;Add development container configuration files&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;customize-development-environment&quot;&gt;Customize development environment&lt;/h2&gt;
+
+&lt;p&gt;At this stage everything we have done has been &lt;strong&gt;out of the box&lt;/strong&gt; configuration. We now need to make a few changes to customize it to work the way we want.&lt;/p&gt;
+
+&lt;p&gt;First, we need to add some Jekyll plugins to the project to make sure we can build the site.&lt;/p&gt;
+
+&lt;p&gt;Open up the &lt;strong&gt;gemfile&lt;/strong&gt; file and let’s add the &lt;strong&gt;webrick&lt;/strong&gt; plugin to our config. The file should look like this..&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;https://rubygems.org&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;jekyll&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~&amp;gt; 4.1&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;webrick&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;group&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:jekyll_plugins&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#   gem &quot;jekyll-feed&quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;jekyll-seo-tag&quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;jekyll-sitemap&quot;&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#   gem &quot;jekyll-archives&quot;&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#   gem &quot;jekyll-redirect-from&quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;jekyll-compose&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, open the &lt;strong&gt;webpack.config.js&lt;/strong&gt; file and remove the &lt;strong&gt;test.config&lt;/strong&gt; line. It should end up looking like this..&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;@symfony/webpack-encore&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isRuntimeEnvironmentConfigured&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;configureRuntimeEnvironment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;NODE_ENV&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;dev&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;NODE_ENV&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isProduction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;production&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;dev&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setOutputPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;assets/&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setPublicPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/assets&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;addStyleEntry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;css/app&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./_assets/css/app.css&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;addEntry&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;js/app&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./_assets/js/app.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;enablePostCssLoader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;disableSingleRuntimeChunk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;enableSourceMaps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isProduction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Encore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getWebpackConfig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, let’s customize some of the basic metadata of our new site. Open the &lt;strong&gt;_config.yml&lt;/strong&gt; file and set up all of the properties to reflect the project. Here’s mine as an example..&lt;/p&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;title: My Heaps Cool Website
+description: This is &quot;HEAPS COOL&quot;
+permalink: /:slugified_categories/:title/
+
+date_format: &quot;%b %-d, %Y&quot;
+
+exclude:
+&lt;span class=&quot;p&quot;&gt;  -&lt;/span&gt; &quot;package&lt;span class=&quot;err&quot;&gt;*&lt;/span&gt;.json&quot;
+&lt;span class=&quot;p&quot;&gt;  -&lt;/span&gt; &quot;&lt;span class=&quot;err&quot;&gt;*&lt;/span&gt;.config.js&quot;
+&lt;span class=&quot;p&quot;&gt;  -&lt;/span&gt; netlify.toml
+&lt;span class=&quot;p&quot;&gt;  -&lt;/span&gt; README.md
+&lt;span class=&quot;p&quot;&gt;  -&lt;/span&gt; LICENSE
+&lt;span class=&quot;p&quot;&gt;  -&lt;/span&gt; Makefile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, let’s build a simple VS Code task to help us start our site for live development.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Open up the command palette (Ctrl+Shift+P) and search for &lt;strong&gt;Configure Task&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Scroll to the bottom and select &lt;strong&gt;Create tasks.json file from template&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Select &lt;strong&gt;others&lt;/strong&gt; to build an empty tasks template file.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now let’s add the below code to the .vscode/tasks.json file that has been created in our repository.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Jekyll: Build Dev&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;detail&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bundle install &amp;amp;&amp;amp; npm install &amp;amp;&amp;amp; npm run dev &amp;amp;&amp;amp; npm start&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;shell&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;linux&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;command&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bundle install &amp;amp;&amp;amp; npm install &amp;amp;&amp;amp; npm run dev &amp;amp;&amp;amp; npm start&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;group&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;kind&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;isDefault&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;presentation&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;echo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;reveal&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;always&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;focus&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;panel&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;shared&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;showReuseMessage&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;clear&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;problemMatcher&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;$eslint-stylish&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;$jekyll-error-watch&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;$jekyll-warning-watch&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/vscode-tasks.gif&quot; title=&quot;VS Code Tasks&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/vscode-tasks.gif&quot; alt=&quot;VS Code Tasks&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now that we have everything configured, the next step is to start the development environment and see if the site displays.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Open the command palette (Ctrl+Shift+P) and search for &lt;strong&gt;Run Task&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Select the default option, which is the task we just built.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The site will now build and generate a local web server that will host the site from within the development container. Once it is completed building, you will recieve an option to open the development server from within your browser or from within VS Code!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/build-and-change.gif&quot; title=&quot;Build and run&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/build-and-change.gif&quot; alt=&quot;Build and run&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now comes the fun part of building your site, designing the theme and of course, writing content!&lt;/p&gt;
+
+&lt;h2 id=&quot;deploy-site-with-github-actions&quot;&gt;Deploy site with GitHub Actions&lt;/h2&gt;
+
+&lt;p&gt;Now that you have the basic framework for a Jekyll development environment (and maybe written a post or two), you’ll want to configure some automation to publish the site to GitHub.&lt;/p&gt;
+
+&lt;p&gt;Thankfully, the template we built our project with comes with a GitHub Action Workflow that does most of what we need to prepare the site for GitHub.&lt;/p&gt;
+
+&lt;p&gt;So let’s commit and push the changes we’ve made to the project back to the repository and watch the workflow do some magic.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/gh-action.gif&quot; title=&quot;Commit and publish&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/gh-action.gif&quot; alt=&quot;Commit and publish&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Once the action has completed, a new branch is created named &lt;strong&gt;gh-pages&lt;/strong&gt;. This is where the processed static files are stored.&lt;/p&gt;
+
+&lt;p&gt;The last step of this process is to link that repository to GitHub pages.&lt;/p&gt;
+
+&lt;p&gt;Head over to Settings &amp;gt; Pages and set the source to the &lt;strong&gt;gh-pages&lt;/strong&gt; branch.&lt;/p&gt;
+
+&lt;p&gt;Now if you go to the URL shown on the screen, you should see your shiny new Jekyll site!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/07/link-gh-page-to-gh-site.gif&quot; title=&quot;Link site to GitHub Pages&quot;&gt;&lt;img src=&quot;/assets/images/2021/07/link-gh-page-to-gh-site.gif&quot; alt=&quot;Link site to GitHub Pages&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Thanks for getting this far - I know this isn’t my normal subject matter, but I’ve been having lots of fun learning and playing with Remote Repositories &amp;amp; Docker and hopefully this helps someone who is just getting started.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Jekyll" /><category term="Static Web App" /><category term="VS Code" /><category term="Remote Container" /><category term="Docker" /><category term="Jekyll" /><category term="Static Web App" /><category term="VS Code" /><category term="Remote Container" /><category term="Docker" /><summary type="html">So you want to build a site, host it on Github (for free) and don’t know where to start? Here’s how I did it!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/07/build-and-change.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/07/build-and-change.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Authenticating to Microsoft Graph with PowerShell - (2021)</title><link href="https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/" rel="alternate" type="text/html" title="Authenticating to Microsoft Graph with PowerShell - (2021)" /><published>2021-07-18T05:37:00+00:00</published><updated>2021-07-18T05:37:00+00:00</updated><id>https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)</id><content type="html" xml:base="https://powers-hell.com/2021/07/18/authenticating-to-microsoft-graph-with-powershell-(2021)/">&lt;p&gt;Talking about ways to authenticate to Graph is one of my least favourite subjects. After a while it gets a bit monotonous, but as with all technologies, things change..&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -1920,137 +2134,4 @@ Set-TimeZone -Id $result
 
 &lt;p&gt;I’ve polished up the code from this article and provided both solutions as ready to deploy scripts, go check them out on my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Set-Timezone&quot;&gt;GitHub&lt;/a&gt; - just make sure to update the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$apiKey&lt;/code&gt; for either scenario you choose to utilize.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/08/gpsdata.jpg" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/08/gpsdata.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Managing Intune with Graph, PowerShell 7 &amp;amp; MSAL</title><link href="https://powers-hell.com/2020/06/28/managing-intune-with-graph-powershell-7-msal/" rel="alternate" type="text/html" title="Managing Intune with Graph, PowerShell 7 &amp;amp; MSAL" /><published>2020-06-27T22:39:24+00:00</published><updated>2020-06-27T22:39:24+00:00</updated><id>https://powers-hell.com/2020/06/28/managing-intune-with-graph-powershell-7-msal</id><content type="html" xml:base="https://powers-hell.com/2020/06/28/managing-intune-with-graph-powershell-7-msal/">&lt;p&gt;So it seems we need to talk about Graph and authentication again..&lt;/p&gt;
-
-&lt;p&gt;Recently, Microsoft announced an official &lt;a href=&quot;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363&quot;&gt;“end of support timeline” for Azure Active Directory Authentication Library (ADAL)&lt;/a&gt; which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;There are many differences between the two libraries, but the workflows are very similar - a request is sent using the libraries for access to specific areas of Azure and an authentication token is sent back giving you the keys into your Azure tenant.&lt;/p&gt;
-
-&lt;p&gt;While the announcement from Microsoft gives us a few years to move on, right now if you have moved your workloads over to PowerShell 7 (which you 100% should be), you may have noticed that working with ADAL is tricky.&lt;/p&gt;
-
-&lt;p&gt;Lets have a look at that now - using &lt;a href=&quot;https://twitter.com/davefalkus&quot;&gt;Dave’s&lt;/a&gt; &lt;a href=&quot;https://github.com/microsoftgraph/powershell-intune-samples/blob/master/LOB_Application/Win32_Application_Add.ps1&quot;&gt;sample code&lt;/a&gt;, let’s try and authenticate using the “well-known” Intune application in PowerShell 7.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/adalauthPS7.gif&quot; title=&quot;failing authentication in pwsh7&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/adalauthPS7.gif&quot; alt=&quot;failing authentication in pwsh7&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;And for reference, the same code in PowerShell 5.1.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/adalauthPS5.gif&quot; title=&quot;passing auth in pwsh5.1&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/adalauthPS5.gif&quot; alt=&quot;passing auth in pwsh5.1&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The primary issue here is that PowerShell 7 just doesn’t natively support the old authentication libraries - you can work around it if you have your existing authentication scripts in a module that you import using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-UseWindowsPowerShell&lt;/code&gt; compatibility flag, but that’s not an ideal scenario.&lt;/p&gt;
-
-&lt;p&gt;So how do we authenticate successfully in PowerShell 7 then? With MSAL of course!&lt;/p&gt;
-
-&lt;p&gt;For simplicities sake, I will not deep dive into manually creating MSAL requests, as luckily there is already a great module available to us on the PowerShell Gallery - &lt;a href=&quot;https://www.powershellgallery.com/packages/MSAL.PS&quot;&gt;MSAL.PS&lt;/a&gt; (Written by &lt;a href=&quot;https://github.com/jasoth&quot;&gt;Jason Thompson&lt;/a&gt;). So Let’s go ahead and install that on our computer.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Install-Module MSAL.PS -Scope CurrentUser
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;One of the benefits of MSAL is that it has been designed from the ground up to be completely cross-platform compatible, which means we get a few new ways to authenticate to devices that are “input constrained”. This is called “device code flow”.&lt;/p&gt;
-
-&lt;p&gt;Using the well-known Intune app id, lets try out Device Code Flow.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Get-MsalToken -ClientId 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' -TenantId 'powers-hell.com' -DeviceCode
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/msalDeviceCode.gif&quot; title=&quot;device code flow&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/msalDeviceCode.gif&quot; alt=&quot;device code flow&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This is pretty cool - adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-DeviceCode&lt;/code&gt; to our command generates a code that we can use on another device to authenticate “on behalf of” the initial requesting device.&lt;/p&gt;
-
-&lt;p&gt;But what if we want to keep it “old school” ? Can we just interactively authenticate?&lt;/p&gt;
-
-&lt;p&gt;The answer to that is “Yes. But not with the well-known Intune app id..”&lt;/p&gt;
-
-&lt;p&gt;Let’s try it now..&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Get-MsalToken -ClientId 'd1ddf0e4-d672-4dae-b554-9d5bdfd93547' -TenantId 'powers-hell.com' -DeviceCode
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/msalInteractiveFail.gif&quot; title=&quot;failing interactive auth&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/msalInteractiveFail.gif&quot; alt=&quot;failing interactive auth&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;How annoying! But what does this error mean?&lt;/p&gt;
-
-&lt;p&gt;Simply put, the reply URLs in the AAD application we went to try and authenticate are missing the specific reply URL that MSAL needs registered, which is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;So, what this means, is that until the maintainer of the “PowerShell Intune” application updates the app to include the correct scope, the only way we can use it with MSAL is by following the device code flow.&lt;/p&gt;
-
-&lt;p&gt;Until that time, we can create our own AAD application with the same permissions contained within the well-known app and use that instead.&lt;/p&gt;
-
-&lt;p&gt;For those interested in this, the permissions required are below.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;&lt;strong&gt;Intune Client Scope:&lt;/strong&gt;&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DeviceManagementApps.ReadWrite.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DeviceManagementConfiguration.ReadWrite.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DeviceManagementManagedDevices.PrivilegedOperations.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DeviceManagementManagedDevices.ReadWrite.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DeviceManagementRBAC.ReadWrite.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DeviceManagementServiceConfig.ReadWrite.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Directory.Read.All Group.Read.All&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Group.ReadWrite.All&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;I’ve already gone ahead and created this in my tenant and will be using it for all of my existing workflows and tools.&lt;/p&gt;
-
-&lt;p&gt;So now we have a new AAD application registered with the correct permission scopes AND the correct reply URL, let’s see the authentication flow in a simple Graph call.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;[cmdletbinding()]
-param (
-    [Parameter(Mandatory = $true)]
-    [guid]$clientId,
-
-    [Parameter(Mandatory = $true)]
-    [string]$tenantId
-)
-#region Get the auth token and build the auth header
-$auth = Get-MsalToken -ClientId $clientId -TenantId $tenantId -Interactive
-$authHeader = @{Authorization = $auth.CreateAuthorizationHeader()}
-#endregion
-
-#region Build the request and return the ID and Name of all win32 apps
-$baseGraphUri = &quot;https://graph.microsoft.com/beta/deviceappmanagement/mobileapps&quot;
-$results = (Invoke-RestMethod -Method Get -Uri &quot;$baseGraphUri`?`$filter=isOf('microsoft.graph.win32LobApp')&quot; -Headers $authHeader -ContentType 'Application/Json').value
-$results | Select-Object id, displayName
-#endregion
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The code above is a very simple example that grabs the authentication interactively and then queries Intune for any Win32 applications that have been packaged. Let’s see it in action..&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/06/get-win32apps.gif&amp;quot;&quot; title=&quot;Get Win32 Apps&quot;&gt;&lt;img src=&quot;/assets/images/2020/06/get-win32apps.gif&amp;quot;&quot; alt=&quot;Get Win32 Apps&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Hopefully this has helped you understand the importance of migrating over to MSAL and gives you and idea how to begin migrating your workflows over to this new authentication library!&lt;/p&gt;
-
-&lt;p&gt;For more light reading on MSAL and how to plan migrations away from ADAL, check the links below:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/update-your-applications-to-use-microsoft-authentication-library/ba-p/1257363&quot;&gt;Update your applications to use Microsoft authentication library&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-overview&quot;&gt;MSAL Overview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-migration&quot;&gt;MSAL Migration&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As always, code from this blog is available &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Get-Win32AppsUsingMSAL&quot;&gt;on my GitHub&lt;/a&gt; and I can be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">So it seems we need to talk about Graph and authentication again.. Recently, Microsoft announced an official “end of support timeline” for Azure Active Directory Authentication Library (ADAL) which means, any scripts or automation workflows that you use will need to be migrated over to the newer Microsoft Authentication Libraries (MSAL).</summary></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/08/gpsdata.jpg" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/08/gpsdata.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
