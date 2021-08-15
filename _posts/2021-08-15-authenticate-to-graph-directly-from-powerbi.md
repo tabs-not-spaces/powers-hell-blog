@@ -72,7 +72,7 @@ What we have above is actually quite simple:
 Now that we have our reusable function to authenticate, give the query a name (I've called mine "Get-AuthenticationHeader"), and let's create **another** blank query and fill the advanced editor with the following code..
 
 ```R
-(GraphURL as text) =>
+(_graphURL as text) =>
 let
     AuthHeader = #"Get-AuthenticationHeader"(#"Tenant Id", #"Client Id", #"Client Secret", Resource, "client_credentials", "openid"),
     Options = [
@@ -81,7 +81,7 @@ let
             #"Content-Type" = "Application/Json"
         ]
     ],
-    WebRequestContent = Web.Contents(GraphURL,Options),
+    WebRequestContent = Web.Contents(_graphURL,Options),
     JsonContent = Json.Document(WebRequestContent),
     ParsedResults = JsonContent[value],
     Converted = Table.FromList(ParsedResults, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
@@ -102,7 +102,7 @@ OK - we now have two helper functions, let's actually start pulling some data in
 
 [![Invoke-GraphRequest](/assets/images/2021/08/PowerBI-FunctionInvoke.gif)](/assets/images/2021/08/PowerBI-FunctionInvoke.gif "Invoke-GraphRequest")
 
-FANCY!!!!!!!!!
+FANCY!!
 
 Looking at the *code behind* that this invoked function creates show's us how simple things are now that we have abstracted out the process into two unique functions..
 
