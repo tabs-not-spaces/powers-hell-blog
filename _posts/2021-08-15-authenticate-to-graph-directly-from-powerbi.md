@@ -104,7 +104,7 @@ OK - we now have two helper functions, let's actually start pulling some data in
 
 FANCY!!
 
-Looking at the *code behind* that this invoked function creates show's us how simple things are now that we have abstracted out the process into two unique functions..
+Looking at the *code behind* that this invoked function generates shows us how simple things are now that we have abstracted out the process into two unique functions..
 
 ```R
 let
