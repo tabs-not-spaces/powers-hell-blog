@@ -990,6 +990,151 @@
     <div class="grid grid-cols-1 gap-4 items-start lg:grid-cols-5 lg:gap-8">
       <!-- Left column -->
       <div class="grid grid-cols-1 gap-4 lg:col-span-4"><div class="main-overlay drac-bg-black rounded-lg shadow-2xl overflow-hidden">
+          <div class="p-6"><a href="/2021/08/15/authenticate-to-graph-directly-from-powerbi/">
+              <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan">
+                Authenticate to Graph directly from PowerBI!
+              </h2>
+            </a>
+            <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">15 Aug</font>
+            </div>
+            <div class="markdown-body drac-text drac-line-height drac-text-white">
+              <p>Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It’s been a LONG time since I’ve dipped my toes into the headache that is PowerBI, but once I see a challenge, it’s difficult for me to leave it alone…</p>
+
+<p><a href="/2018/05/15/working-with-graphapi-powerbi-the-easy-way/">I’ve actually written about this before</a> - back in 2018 I ran into the exact same problem - how do you authenticate to Graph to pull back data using a custom AAD application when PowerBI doesn’t allow you to specifically define your authentication parameters?</p>
+
+<p>At the time, I wrote about building a “middleware” solution that involved an Azure function application that handled the authentication as well as the Graph queries and simply returned the results back to the report. That solution still works just fine, but if we want people that aren’t nerds like me to actually use the reports, we ideally want a solution that has the authentication piece baked directly into the file.</p>
+
+<p>Well, it turns out all the pieces I need to have that work have been staring me in the face for years. Yes there is still no native way to define your authentication method, but with a little bit of work, you 110% can authenticate to Graph using any AAD application that you want.</p>
+
+<p>The secret of it all turns out to be quite simple. <a href="/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/">As I wrote about in my article about authenticating to Graph</a>, if you know how the authentication requests are built, you can actually build the requests <strong>WITHOUT</strong> the libraries. Understanding that, we then need to simply build a way to have end users input their authentication parameters into a function that builds the authentication request for you.</p>
+
+<p>Luckily in PowerBI we can do this very easily (Sorry to all PowerBI nerds out there who already know this). All we need to do is prepare a few parameters and write a custom function query that will act as our tooling.</p>
+
+<p>Let’s start by creating a new empty report. We want to dive right into the guts of PowerBI, so select <strong>Transform data</strong> to enter the <strong>Power Query Editor</strong>.</p>
+
+<p>Now let’s create the necessary parameters we want the end user to populate. Right click on the queries pane and select <strong>New Parameter</strong>. We will then build out the following parameters. Feel free to put them into groups - It just looks so much neater.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter Name</th>
+      <th>Type</th>
+      <th>Current Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tenant Id</td>
+      <td>Text</td>
+      <td>Your Tenant Id / Url</td>
+    </tr>
+    <tr>
+      <td>Client Id</td>
+      <td>Text</td>
+      <td>Your AAD application Id</td>
+    </tr>
+    <tr>
+      <td>Client Secret</td>
+      <td>Text</td>
+      <td>Your AAD appplication client secret</td>
+    </tr>
+    <tr>
+      <td>Resource</td>
+      <td>Text</td>
+      <td>https://graph.microsoft.com</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><a href="/assets/images/2021/08/PowerBI-Parameters.gif" title="Building Parameters"><img src="/assets/images/2021/08/PowerBI-Parameters.gif" alt="Building Parameters" /></a></p>
+
+<p>Alright, now that we have our parameters, let’s build our first function. Select <strong>New Source &gt; Blank Query</strong> and then select <strong>Advanced Editor</strong> to bring up the editor. The code we will place into this new blank query is below.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="err">_</span><span class="n">tenantId</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="err">_</span><span class="n">clientId</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="err">_</span><span class="n">clientSecret</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="err">_</span><span class="n">resource</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="err">_</span><span class="n">grantType</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="err">_</span><span class="n">scope</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">
+</span><span class="n">let</span><span class="w">
+    </span><span class="n">Url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://login.microsoftonline.com/"</span><span class="o">&amp;</span><span class="err">_</span><span class="n">tenantId</span><span class="o">&amp;</span><span class="s2">"/oauth2/token"</span><span class="p">,</span><span class="w">
+    </span><span class="n">Body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"resource="</span><span class="o">&amp;</span><span class="err">_</span><span class="n">resource</span><span class="o">&amp;</span><span class="s2">"&amp;client_id="</span><span class="o">&amp;</span><span class="err">_</span><span class="n">clientId</span><span class="o">&amp;</span><span class="s2">"&amp;grant_type="</span><span class="o">&amp;</span><span class="err">_</span><span class="n">grantType</span><span class="o">&amp;</span><span class="s2">"&amp;scope="</span><span class="o">&amp;</span><span class="err">_</span><span class="n">scope</span><span class="o">&amp;</span><span class="s2">"&amp;client_secret="</span><span class="o">&amp;</span><span class="err">_</span><span class="n">clientSecret</span><span class="p">,</span><span class="w">
+    </span><span class="n">Options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="n">Content</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Text.ToBinary</span><span class="p">(</span><span class="n">Body</span><span class="p">)</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="n">Response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Web.Contents</span><span class="p">(</span><span class="n">Url</span><span class="p">,</span><span class="n">Options</span><span class="p">),</span><span class="w">
+    </span><span class="n">ParsedJson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Json.Document</span><span class="p">(</span><span class="n">Response</span><span class="p">),</span><span class="w">
+    </span><span class="n">ConvertedToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Bearer "</span><span class="o">&amp;</span><span class="n">ParsedJson</span><span class="p">[</span><span class="n">access_token</span><span class="p">]</span><span class="w">
+</span><span class="k">in</span><span class="w">
+    </span><span class="n">ConvertedToken</span><span class="w">
+</span></code></pre></div></div>
+
+<p>What we have above is actually quite simple:</p>
+<ul>
+  <li>The first line defines the parameters and their types that will be accepted into our function.</li>
+  <li>The rest of the code in the <strong>let</strong> segment simply builds out the request URL, request body &amp; posts the request.</li>
+  <li>Finally, we pull out the <strong>access token</strong> from the response and prepend “Bearer” to it, so we can use it for any future queries.</li>
+</ul>
+
+<p>Now that we have our reusable function to authenticate, give the query a name (I’ve called mine “Get-AuthenticationHeader”), and let’s create <strong>another</strong> blank query and fill the advanced editor with the following code..</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">GraphURL</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">
+</span><span class="n">let</span><span class="w">
+    </span><span class="n">AuthHeader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="c1">#"Get-AuthenticationHeader"(#"Tenant Id", #"Client Id", #"Client Secret", Resource, "client_credentials", "openid"),</span><span class="w">
+    </span><span class="n">Options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="n">Headers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="n">Authorization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AuthHeader</span><span class="p">,</span><span class="w">
+            </span><span class="c1">#"Content-Type" = "Application/Json"</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="n">WebRequestContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Web.Contents</span><span class="p">(</span><span class="n">GraphURL</span><span class="p">,</span><span class="n">Options</span><span class="p">),</span><span class="w">
+    </span><span class="n">JsonContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Json.Document</span><span class="p">(</span><span class="n">WebRequestContent</span><span class="p">),</span><span class="w">
+    </span><span class="n">ParsedResults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JsonContent</span><span class="p">[</span><span class="n">value</span><span class="p">],</span><span class="w">
+    </span><span class="n">Converted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Table.FromList</span><span class="p">(</span><span class="n">ParsedResults</span><span class="p">,</span><span class="w"> </span><span class="n">Splitter.SplitByNothing</span><span class="p">(),</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w"> </span><span class="n">ExtraValues.Error</span><span class="p">),</span><span class="w">
+    </span><span class="n">Expanded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Table.ExpandRecordColumn</span><span class="p">(</span><span class="n">Converted</span><span class="p">,</span><span class="s2">"Column1"</span><span class="p">,</span><span class="w">
+                    </span><span class="n">Record.FieldNames</span><span class="p">(</span><span class="n">Converted</span><span class="p">[</span><span class="n">Column1</span><span class="p">]{</span><span class="m">0</span><span class="p">}),</span><span class="w">
+                    </span><span class="n">Record.FieldNames</span><span class="p">(</span><span class="n">Converted</span><span class="p">[</span><span class="n">Column1</span><span class="p">]{</span><span class="m">0</span><span class="p">}))</span><span class="w">
+</span><span class="k">in</span><span class="w">
+    </span><span class="n">Expanded</span><span class="w">
+</span></code></pre></div></div>
+
+<p>As with our authentication function, give this one a name (I’ve called mine “Invoke-GraphRequest”).</p>
+
+<p>What’s cool about the above function is it calls the first function for us, so that we only need to interface with the second function and provide a single parameter, which is the URL of the Graph endpoint we want to pull back into PowerBI.</p>
+
+<p>There’s a bit more going on after we pull back the data, specifically we convert the resultant data from a list of records to a table of data using the property names as the column names… Exciting stuff, right?</p>
+
+<p>OK - we now have two helper functions, let’s actually start pulling some data in. Let’s click on the <strong>Invoke-GraphRequest</strong> function and we should see a nice interface asking us to enter a parameter to insert into the function. I want to look at all the apps in my tenant, so I’m going to query <code class="language-plaintext highlighter-rouge">https://graph.microsoft.com/beta/deviceAppManagement/mobileApps</code> so I’ll put that address into the function and press <strong>invoke</strong>.</p>
+
+<p><a href="/assets/images/2021/08/PowerBI-FunctionInvoke.gif" title="Invoke-GraphRequest"><img src="/assets/images/2021/08/PowerBI-FunctionInvoke.gif" alt="Invoke-GraphRequest" /></a></p>
+
+<p>FANCY!!!!!!!!!</p>
+
+<p>Looking at the <em>code behind</em> that this invoked function creates show’s us how simple things are now that we have abstracted out the process into two unique functions..</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">let</span><span class="w">
+    </span><span class="n">Source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="c1">#"Invoke-GraphRequest"("https://graph.microsoft.com/beta/deviceAppManagement/mobileApps")</span><span class="w">
+</span><span class="k">in</span><span class="w">
+    </span><span class="n">Source</span><span class="w">
+</span></code></pre></div></div>
+
+<p>As you can see, we have a single request which is just invoking the second function we created with the single Graph URL as a parameter input.</p>
+
+<p>Now you have a simple framework to collect as many endpoint datasets as you want - just find what the endpoint URL is and build a query.</p>
+
+<p>There is a litte more that should be done before this is used in production - specifically, the second function should support paging so that it can collect all data available incase it is broken out into pages of data, but that should not be too hard to accomplish. Once I’ve written that I’ll come back and edit this post. If anyone else feels like figuring it out, feel free to leave the code in a comment below.</p>
+
+<p>But now the cool thing is, if we save this PowerBI report as a template and send it to someone, they will open it &amp; it will ask them to fill out the parameters, and as if by magic, will populate out the reports we generated!</p>
+
+<p><a href="/assets/images/2021/08/PowerBI-Template.gif" title="Open Template And Build Report"><img src="/assets/images/2021/08/PowerBI-Template.gif" alt="Open Template And Build Report" /></a></p>
+
+<p>I personally can’t wait to close PowerBI and never open it again for another 5 years!</p>
+
+<p>Love this? Hate it? Have a better solution? Let me know on <a href="https://twitter.com/powers_hell">twitter</a> or leave a comment below.</p>
+
+<p>For those who don’t want to build a template from scratch - don’t worry. <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/PowerBI-GraphAuthentication">I’ve put the template built from this post on GitHub.</a></p>
+
+<p>— Ben</p>
+
+
+            </div>
+          </div>
+        </div><div class="main-overlay drac-bg-black rounded-lg shadow-2xl overflow-hidden">
           <div class="p-6"><a href="/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/">
               <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan">
                 Build a Jekyll development environment with VS Code &amp; Remote Containers
@@ -1052,22 +1197,6 @@
 
             </div>
           </div>
-        </div><div class="main-overlay drac-bg-black rounded-lg shadow-2xl overflow-hidden">
-          <div class="p-6"><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/">
-              <h2 class="drac-heading drac-heading-xl drac-text-purple-cyan">
-                Working with Intune Settings Catalog using PowerShell and Graph
-              </h2>
-            </a>
-            <div class="drac-text-black-secondary">Published on: <font class="drac-text-cyan">8 Mar</font>
-            </div>
-            <div class="markdown-body drac-text drac-line-height drac-text-white">
-              <p>Microsoft has recently introduced even more ways to create device configuration profiles..</p>
-
-<p>The new profile type, named <strong>Settings Catalog</strong>, allows us to explicitly define and configure a policy that has <strong>only</strong> the settings that they want for that profile, nothing more. Additionally, the existing configuration profiles and ADMX templates have been migrated to the <strong>templates</strong> profile type.</p>
-
-
-            </div>
-          </div>
         </div>
 <div class="pagination main-overlay max-w-5xl mx-auto py-4 sm:px-6 lg:px-8 drac-text-white drac-text-center" id="pagination">
     <div class="shadow-lg">
@@ -1104,6 +1233,10 @@
     <li class="drac-text drac-text-xs">
         <a href="year/2021"> 2021</a>
     </li>
+    
+        
+    
+
     
         
     
@@ -1324,6 +1457,11 @@
         
         <li class="drac-text drac-text-xs">
             <a href="/category/remote-container/">Remote Container</a>
+        </li>
+        
+        
+        <li class="drac-text drac-text-xs">
+            <a href="/category/reporting/">Reporting</a>
         </li>
         
         

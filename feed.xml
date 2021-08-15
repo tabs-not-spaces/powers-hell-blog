@@ -1,4 +1,135 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-07-25T12:21:40+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Build a Jekyll development environment with VS Code &amp;amp; Remote Containers</title><link href="https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/" rel="alternate" type="text/html" title="Build a Jekyll development environment with VS Code &amp;amp; Remote Containers" /><published>2021-07-25T08:12:00+00:00</published><updated>2021-07-25T08:12:00+00:00</updated><id>https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers</id><content type="html" xml:base="https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/">&lt;p&gt;So you want to build a site, host it on Github (for free) and don’t know where to start? Here’s how I did it!&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-08-15T10:47:15+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Authenticate to Graph directly from PowerBI!</title><link href="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/" rel="alternate" type="text/html" title="Authenticate to Graph directly from PowerBI!" /><published>2021-08-15T08:38:00+00:00</published><updated>2021-08-15T08:38:00+00:00</updated><id>https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi</id><content type="html" xml:base="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/">&lt;p&gt;Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It’s been a LONG time since I’ve dipped my toes into the headache that is PowerBI, but once I see a challenge, it’s difficult for me to leave it alone…&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/2018/05/15/working-with-graphapi-powerbi-the-easy-way/&quot;&gt;I’ve actually written about this before&lt;/a&gt; - back in 2018 I ran into the exact same problem - how do you authenticate to Graph to pull back data using a custom AAD application when PowerBI doesn’t allow you to specifically define your authentication parameters?&lt;/p&gt;
+
+&lt;p&gt;At the time, I wrote about building a “middleware” solution that involved an Azure function application that handled the authentication as well as the Graph queries and simply returned the results back to the report. That solution still works just fine, but if we want people that aren’t nerds like me to actually use the reports, we ideally want a solution that has the authentication piece baked directly into the file.&lt;/p&gt;
+
+&lt;p&gt;Well, it turns out all the pieces I need to have that work have been staring me in the face for years. Yes there is still no native way to define your authentication method, but with a little bit of work, you 110% can authenticate to Graph using any AAD application that you want.&lt;/p&gt;
+
+&lt;p&gt;The secret of it all turns out to be quite simple. &lt;a href=&quot;/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/&quot;&gt;As I wrote about in my article about authenticating to Graph&lt;/a&gt;, if you know how the authentication requests are built, you can actually build the requests &lt;strong&gt;WITHOUT&lt;/strong&gt; the libraries. Understanding that, we then need to simply build a way to have end users input their authentication parameters into a function that builds the authentication request for you.&lt;/p&gt;
+
+&lt;p&gt;Luckily in PowerBI we can do this very easily (Sorry to all PowerBI nerds out there who already know this). All we need to do is prepare a few parameters and write a custom function query that will act as our tooling.&lt;/p&gt;
+
+&lt;p&gt;Let’s start by creating a new empty report. We want to dive right into the guts of PowerBI, so select &lt;strong&gt;Transform data&lt;/strong&gt; to enter the &lt;strong&gt;Power Query Editor&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now let’s create the necessary parameters we want the end user to populate. Right click on the queries pane and select &lt;strong&gt;New Parameter&lt;/strong&gt;. We will then build out the following parameters. Feel free to put them into groups - It just looks so much neater.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Parameter Name&lt;/th&gt;
+      &lt;th&gt;Type&lt;/th&gt;
+      &lt;th&gt;Current Value&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Tenant Id&lt;/td&gt;
+      &lt;td&gt;Text&lt;/td&gt;
+      &lt;td&gt;Your Tenant Id / Url&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Client Id&lt;/td&gt;
+      &lt;td&gt;Text&lt;/td&gt;
+      &lt;td&gt;Your AAD application Id&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Client Secret&lt;/td&gt;
+      &lt;td&gt;Text&lt;/td&gt;
+      &lt;td&gt;Your AAD appplication client secret&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Resource&lt;/td&gt;
+      &lt;td&gt;Text&lt;/td&gt;
+      &lt;td&gt;https://graph.microsoft.com&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/08/PowerBI-Parameters.gif&quot; title=&quot;Building Parameters&quot;&gt;&lt;img src=&quot;/assets/images/2021/08/PowerBI-Parameters.gif&quot; alt=&quot;Building Parameters&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Alright, now that we have our parameters, let’s build our first function. Select &lt;strong&gt;New Source &amp;gt; Blank Query&lt;/strong&gt; and then select &lt;strong&gt;Advanced Editor&lt;/strong&gt; to bring up the editor. The code we will place into this new blank query is below.&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tenantId&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clientId&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clientSecret&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grantType&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;let&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Url&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;https://login.microsoftonline.com/&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tenantId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/oauth2/token&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Body&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;resource=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;amp;client_id=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clientId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;amp;grant_type=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grantType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;amp;scope=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;amp;client_secret=&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clientSecret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Content&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Text.ToBinary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Web.Contents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ParsedJson&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Json.Document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ConvertedToken&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Bearer &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ParsedJson&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;access_token&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ConvertedToken&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;What we have above is actually quite simple:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The first line defines the parameters and their types that will be accepted into our function.&lt;/li&gt;
+  &lt;li&gt;The rest of the code in the &lt;strong&gt;let&lt;/strong&gt; segment simply builds out the request URL, request body &amp;amp; posts the request.&lt;/li&gt;
+  &lt;li&gt;Finally, we pull out the &lt;strong&gt;access token&lt;/strong&gt; from the response and prepend “Bearer” to it, so we can use it for any future queries.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now that we have our reusable function to authenticate, give the query a name (I’ve called mine “Get-AuthenticationHeader”), and let’s create &lt;strong&gt;another&lt;/strong&gt; blank query and fill the advanced editor with the following code..&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GraphURL&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;let&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AuthHeader&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#&quot;Get-AuthenticationHeader&quot;(#&quot;Tenant Id&quot;, #&quot;Client Id&quot;, #&quot;Client Secret&quot;, Resource, &quot;client_credentials&quot;, &quot;openid&quot;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Headers&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Authorization&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AuthHeader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#&quot;Content-Type&quot; = &quot;Application/Json&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WebRequestContent&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Web.Contents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GraphURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JsonContent&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Json.Document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WebRequestContent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ParsedResults&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;JsonContent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Converted&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Table.FromList&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ParsedResults&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Splitter.SplitByNothing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ExtraValues.Error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Expanded&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Table.ExpandRecordColumn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Converted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Column1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Record.FieldNames&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Converted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Column1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]{&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Record.FieldNames&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Converted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Column1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]{&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}))&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Expanded&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As with our authentication function, give this one a name (I’ve called mine “Invoke-GraphRequest”).&lt;/p&gt;
+
+&lt;p&gt;What’s cool about the above function is it calls the first function for us, so that we only need to interface with the second function and provide a single parameter, which is the URL of the Graph endpoint we want to pull back into PowerBI.&lt;/p&gt;
+
+&lt;p&gt;There’s a bit more going on after we pull back the data, specifically we convert the resultant data from a list of records to a table of data using the property names as the column names… Exciting stuff, right?&lt;/p&gt;
+
+&lt;p&gt;OK - we now have two helper functions, let’s actually start pulling some data in. Let’s click on the &lt;strong&gt;Invoke-GraphRequest&lt;/strong&gt; function and we should see a nice interface asking us to enter a parameter to insert into the function. I want to look at all the apps in my tenant, so I’m going to query &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://graph.microsoft.com/beta/deviceAppManagement/mobileApps&lt;/code&gt; so I’ll put that address into the function and press &lt;strong&gt;invoke&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/08/PowerBI-FunctionInvoke.gif&quot; title=&quot;Invoke-GraphRequest&quot;&gt;&lt;img src=&quot;/assets/images/2021/08/PowerBI-FunctionInvoke.gif&quot; alt=&quot;Invoke-GraphRequest&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;FANCY!!!!!!!!!&lt;/p&gt;
+
+&lt;p&gt;Looking at the &lt;em&gt;code behind&lt;/em&gt; that this invoked function creates show’s us how simple things are now that we have abstracted out the process into two unique functions..&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;let&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Source&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#&quot;Invoke-GraphRequest&quot;(&quot;https://graph.microsoft.com/beta/deviceAppManagement/mobileApps&quot;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Source&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see, we have a single request which is just invoking the second function we created with the single Graph URL as a parameter input.&lt;/p&gt;
+
+&lt;p&gt;Now you have a simple framework to collect as many endpoint datasets as you want - just find what the endpoint URL is and build a query.&lt;/p&gt;
+
+&lt;p&gt;There is a litte more that should be done before this is used in production - specifically, the second function should support paging so that it can collect all data available incase it is broken out into pages of data, but that should not be too hard to accomplish. Once I’ve written that I’ll come back and edit this post. If anyone else feels like figuring it out, feel free to leave the code in a comment below.&lt;/p&gt;
+
+&lt;p&gt;But now the cool thing is, if we save this PowerBI report as a template and send it to someone, they will open it &amp;amp; it will ask them to fill out the parameters, and as if by magic, will populate out the reports we generated!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/08/PowerBI-Template.gif&quot; title=&quot;Open Template And Build Report&quot;&gt;&lt;img src=&quot;/assets/images/2021/08/PowerBI-Template.gif&quot; alt=&quot;Open Template And Build Report&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I personally can’t wait to close PowerBI and never open it again for another 5 years!&lt;/p&gt;
+
+&lt;p&gt;Love this? Hate it? Have a better solution? Let me know on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt; or leave a comment below.&lt;/p&gt;
+
+&lt;p&gt;For those who don’t want to build a template from scratch - don’t worry. &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/PowerBI-GraphAuthentication&quot;&gt;I’ve put the template built from this post on GitHub.&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerBI" /><category term="Graph" /><category term="Intune" /><category term="Reporting" /><category term="Automation" /><category term="PowerBI" /><category term="Graph" /><category term="Intune" /><category term="Reporting" /><category term="Automation" /><summary type="html">Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It’s been a LONG time since I’ve dipped my toes into the headache that is PowerBI, but once I see a challenge, it’s difficult for me to leave it alone… I’ve actually written about this before - back in 2018 I ran into the exact same problem - how do you authenticate to Graph to pull back data using a custom AAD application when PowerBI doesn’t allow you to specifically define your authentication parameters? At the time, I wrote about building a “middleware” solution that involved an Azure function application that handled the authentication as well as the Graph queries and simply returned the results back to the report. That solution still works just fine, but if we want people that aren’t nerds like me to actually use the reports, we ideally want a solution that has the authentication piece baked directly into the file. Well, it turns out all the pieces I need to have that work have been staring me in the face for years. Yes there is still no native way to define your authentication method, but with a little bit of work, you 110% can authenticate to Graph using any AAD application that you want. The secret of it all turns out to be quite simple. As I wrote about in my article about authenticating to Graph, if you know how the authentication requests are built, you can actually build the requests WITHOUT the libraries. Understanding that, we then need to simply build a way to have end users input their authentication parameters into a function that builds the authentication request for you. Luckily in PowerBI we can do this very easily (Sorry to all PowerBI nerds out there who already know this). All we need to do is prepare a few parameters and write a custom function query that will act as our tooling. Let’s start by creating a new empty report. We want to dive right into the guts of PowerBI, so select Transform data to enter the Power Query Editor. Now let’s create the necessary parameters we want the end user to populate. Right click on the queries pane and select New Parameter. We will then build out the following parameters. Feel free to put them into groups - It just looks so much neater. Parameter Name Type Current Value Tenant Id Text Your Tenant Id / Url Client Id Text Your AAD application Id Client Secret Text Your AAD appplication client secret Resource Text https://graph.microsoft.com Alright, now that we have our parameters, let’s build our first function. Select New Source &amp;gt; Blank Query and then select Advanced Editor to bring up the editor. The code we will place into this new blank query is below. (_tenantId as text, _clientId as text, _clientSecret as text, _resource as text, _grantType as text, _scope as text) as text =&amp;gt; let Url = &quot;https://login.microsoftonline.com/&quot;&amp;amp;_tenantId&amp;amp;&quot;/oauth2/token&quot;, Body = &quot;resource=&quot;&amp;amp;_resource&amp;amp;&quot;&amp;amp;client_id=&quot;&amp;amp;_clientId&amp;amp;&quot;&amp;amp;grant_type=&quot;&amp;amp;_grantType&amp;amp;&quot;&amp;amp;scope=&quot;&amp;amp;_scope&amp;amp;&quot;&amp;amp;client_secret=&quot;&amp;amp;_clientSecret, Options = [ Content = Text.ToBinary(Body) ], Response = Web.Contents(Url,Options), ParsedJson = Json.Document(Response), ConvertedToken = &quot;Bearer &quot;&amp;amp;ParsedJson[access_token] in ConvertedToken What we have above is actually quite simple: The first line defines the parameters and their types that will be accepted into our function. The rest of the code in the let segment simply builds out the request URL, request body &amp;amp; posts the request. Finally, we pull out the access token from the response and prepend “Bearer” to it, so we can use it for any future queries. Now that we have our reusable function to authenticate, give the query a name (I’ve called mine “Get-AuthenticationHeader”), and let’s create another blank query and fill the advanced editor with the following code.. (GraphURL as text) =&amp;gt; let AuthHeader = #&quot;Get-AuthenticationHeader&quot;(#&quot;Tenant Id&quot;, #&quot;Client Id&quot;, #&quot;Client Secret&quot;, Resource, &quot;client_credentials&quot;, &quot;openid&quot;), Options = [ Headers = [ Authorization = AuthHeader, #&quot;Content-Type&quot; = &quot;Application/Json&quot; ] ], WebRequestContent = Web.Contents(GraphURL,Options), JsonContent = Json.Document(WebRequestContent), ParsedResults = JsonContent[value], Converted = Table.FromList(ParsedResults, Splitter.SplitByNothing(), null, null, ExtraValues.Error), Expanded = Table.ExpandRecordColumn(Converted,&quot;Column1&quot;, Record.FieldNames(Converted[Column1]{0}), Record.FieldNames(Converted[Column1]{0})) in Expanded As with our authentication function, give this one a name (I’ve called mine “Invoke-GraphRequest”). What’s cool about the above function is it calls the first function for us, so that we only need to interface with the second function and provide a single parameter, which is the URL of the Graph endpoint we want to pull back into PowerBI. There’s a bit more going on after we pull back the data, specifically we convert the resultant data from a list of records to a table of data using the property names as the column names… Exciting stuff, right? OK - we now have two helper functions, let’s actually start pulling some data in. Let’s click on the Invoke-GraphRequest function and we should see a nice interface asking us to enter a parameter to insert into the function. I want to look at all the apps in my tenant, so I’m going to query https://graph.microsoft.com/beta/deviceAppManagement/mobileApps so I’ll put that address into the function and press invoke. FANCY!!!!!!!!! Looking at the code behind that this invoked function creates show’s us how simple things are now that we have abstracted out the process into two unique functions.. let Source = #&quot;Invoke-GraphRequest&quot;(&quot;https://graph.microsoft.com/beta/deviceAppManagement/mobileApps&quot;) in Source As you can see, we have a single request which is just invoking the second function we created with the single Graph URL as a parameter input. Now you have a simple framework to collect as many endpoint datasets as you want - just find what the endpoint URL is and build a query. There is a litte more that should be done before this is used in production - specifically, the second function should support paging so that it can collect all data available incase it is broken out into pages of data, but that should not be too hard to accomplish. Once I’ve written that I’ll come back and edit this post. If anyone else feels like figuring it out, feel free to leave the code in a comment below. But now the cool thing is, if we save this PowerBI report as a template and send it to someone, they will open it &amp;amp; it will ask them to fill out the parameters, and as if by magic, will populate out the reports we generated! I personally can’t wait to close PowerBI and never open it again for another 5 years! Love this? Hate it? Have a better solution? Let me know on twitter or leave a comment below. For those who don’t want to build a template from scratch - don’t worry. I’ve put the template built from this post on GitHub. — Ben</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/08/PowerBI-FunctionInvoke.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/08/PowerBI-FunctionInvoke.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Build a Jekyll development environment with VS Code &amp;amp; Remote Containers</title><link href="https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/" rel="alternate" type="text/html" title="Build a Jekyll development environment with VS Code &amp;amp; Remote Containers" /><published>2021-07-25T08:12:00+00:00</published><updated>2021-07-25T08:12:00+00:00</updated><id>https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers</id><content type="html" xml:base="https://powers-hell.com/2021/07/25/build-a-jekyll-development-environment-with-vs-code-remote-containers/">&lt;p&gt;So you want to build a site, host it on Github (for free) and don’t know where to start? Here’s how I did it!&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -1995,143 +2126,4 @@ $job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name 
 
 &lt;p&gt;As always, sample code used in this guide are available on &lt;a href=&quot;https://github.com/tabs-not-spaces/Az.ImageBuilder.Tools/tree/master/Samples&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><category term="Azure Image Builder" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><summary type="html">AIB is Microsoft's solution to configure and customize virtual machine images. The concept of it is pretty great.. pick a reference image from the public market place apply some customization built around HashiCorp's Packer hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.</summary></entry><entry><title type="html">Dynamically set the time zone of a device in Intune using Azure Maps &amp;amp; PowerShell</title><link href="https://powers-hell.com/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell/" rel="alternate" type="text/html" title="Dynamically set the time zone of a device in Intune using Azure Maps &amp;amp; PowerShell" /><published>2020-08-30T21:20:59+00:00</published><updated>2020-08-30T21:20:59+00:00</updated><id>https://powers-hell.com/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell</id><content type="html" xml:base="https://powers-hell.com/2020/08/31/setting-the-time-zone-of-an-intune-managed-device-using-azure-maps-powershell/">&lt;p&gt;Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;I get it though. At one point, as &lt;a href=&quot;https://twitter.com/mniehaus&quot;&gt;Michael Neihaus&lt;/a&gt; &lt;a href=&quot;https://oofhours.com/2019/12/20/configuring-time-zones-part-2/&quot;&gt;has written about previously&lt;/a&gt;, even if we could configure the time zone during the Out of Box Experience, everything was hinged on the timings of certificates and policies reaching the device within an agreed time frame.
-If the time zone changed on a device during that process it had the possibility to break the entire enrollment process. This has since been (for the most part) resolved if you are using Windows 10 2004 (20h1) as your operating system.&lt;/p&gt;
-
-&lt;p&gt;I’m hopeful that eventually, we will be able to configure the time zone as part of the OOBE, but until that time comes, I’d like to share some ways that I currently solve this problem using Azure Maps &amp;amp; PowerShell.&lt;/p&gt;
-
-&lt;p&gt;Most solutions I’ve found involve creating custom OMA-URI policies to set the value of the time zone which works in some scenarios, but isn’t elegant enough to handle the real world problem of managing devices and users located all over the world. So let’s change that.&lt;/p&gt;
-
-&lt;h2 id=&quot;setting-time-zone-from-device-gps-data&quot;&gt;Setting time zone from device GPS data&lt;/h2&gt;
-
-&lt;p&gt;This one is fun but does require that &lt;strong&gt;location services&lt;/strong&gt; are turned on which, by default are disabled. This can be enforced by device configuration policies, but there are obvious security implications and you may need to discuss this with your organization before enabling.&lt;/p&gt;
-
-&lt;p&gt;The solution below converts the GPS latitude and longitude data to the required windows time zone data by using an API available through Azure Maps.&lt;/p&gt;
-
-&lt;p&gt;Pricing is super affordable and the “included free quantity” means that for small to medium-sized businesses, there is a chance you’d end up not paying a cent. For reference, here are the available &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/azure-maps/choose-pricing-tier&quot;&gt;plans&lt;/a&gt; and &lt;a href=&quot;https://azure.microsoft.com/en-us/pricing/details/azure-maps/&quot;&gt;pricing&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;configuring-azure-maps&quot;&gt;Configuring Azure Maps&lt;/h3&gt;
-
-&lt;p&gt;This is super easy, but it’s still worth documenting!&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Open up your Azure portal and create a new resource.&lt;/li&gt;
-  &lt;li&gt;Search the marketplace for “Azure Maps” and create an account.&lt;/li&gt;
-  &lt;li&gt;Fill out the relevant fields and choose your pricing tier (as mentioned above, S0 will be &lt;strong&gt;more&lt;/strong&gt; than enough for this demo.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-4.png&quot; title=&quot;Create Azure Maps Account&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-4.png&quot; alt=&quot;Create Azure Maps Account&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Once the account is created, go to the resource and head to the &lt;strong&gt;Authentication&lt;/strong&gt; page. Make note of one of the &lt;strong&gt;Shared Keys&lt;/strong&gt;. We will use these to authenticate to the service.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;writing-the-code&quot;&gt;Writing the code&lt;/h3&gt;
-
-&lt;p&gt;Now let’s grab our GPS data and send it to the Azure Maps API!&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Add-Type -AssemblyName System.Device
-$gw = New-Object System.Device.Location.GeoCoordinateWatcher
-$gw.Start()
-while (($gw.Status -ne 'Ready') -and ($gw.Permission -ne 'Denied')) {
-    Start-Sleep -Milliseconds 100 #Wait for discovery.
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The above code is fairly simple - we are adding the &lt;strong&gt;System.Device&lt;/strong&gt; assembly to our session and creating and starting a new &lt;strong&gt;GeoCoordinateWatcher&lt;/strong&gt; object to capture the GPS data of our device.&lt;/p&gt;
-
-&lt;p&gt;If we look at the results that are stored in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$gw&lt;/code&gt; variable we should see the property name &lt;strong&gt;Permission&lt;/strong&gt;. If we step into that, we should see the location data required for the next step.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-5.png&quot; title=&quot;$gw variable&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-5.png&quot; alt=&quot;$gw variable&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Now that we have our Latitude and Longitude data stored in a variable, next we need to form the request to the Azure Maps API.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$apiKey = &quot;00000000000000000000000000&quot; #replace with your subscription Key
-$baseUri = &quot;https://atlas.microsoft.com/timezone&quot;
-$restParams = @{
-    Method      = &quot;Get&quot;
-    Uri         = &quot;$baseUri/byCoordinates/json?subscription-key=$apiKey&amp;amp;api-version=1.0&amp;amp;query=$($gw.Position.Location.Latitude),$($gw.Position.Location.Longitude)&quot;
-    ContentType = 'Application/Json'
-}
-$locData = Invoke-RestMethod @restParams
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Looking at the contents of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData&lt;/code&gt; we should now see some cool data.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-6.png&quot; title=&quot;location data&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-6.png&quot; alt=&quot;location data&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Stepping into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData.TimeZones&lt;/code&gt; property should give us even more info.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-7.png&quot; title=&quot;Timezones data&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-7.png&quot; alt=&quot;Timezones data&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The final step is to convert the value we see in &lt;strong&gt;Id&lt;/strong&gt; from the IANA code, to the format our computer needs to set the time zone.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$apiKey = '000000000000000000000000000000' #use a subscription key from your Azure Maps Account
-$restParams = @{
-    Method = 'Get'
-    Uri = &quot;https://atlas.microsoft.com/timezone/enumWindows/json?subscription-key=$apiKey&amp;amp;api-version=1.0&quot;
-    ContentType = 'Application/Json'
-}
-$tzList = Invoke-RestMethod @restParams
-$result = $tzList | Where-Object { $locData.TimeZones.id -in $_.IanaIds }
-Set-TimeZone -Id $result
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All we are doing above is getting a list of Windows time zone IDs and matching them to the IANA time zone ID. Once we have a match, using the native &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Set-TimeZone&lt;/code&gt; allows us to dynamically set our device time zone with relative ease!&lt;/p&gt;
-
-&lt;h2 id=&quot;setting-time-zone-from-public-ip-address&quot;&gt;Setting Time Zone from public IP address&lt;/h2&gt;
-
-&lt;p&gt;So what if you aren’t allowed to enable location services? Or what if you are provisioning virtual machines that don’t have access to the GPS data? Luckily, there is another way to get our location data - from the publicly facing IP address of the device.&lt;/p&gt;
-
-&lt;p&gt;For this example, we will use a free API from &lt;a href=&quot;https://ipinfo.io&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://ipinfo.io/&quot;&gt;https://ipinfo.io&lt;/a&gt;. You can use this API without registering, however, it is heavily rate-limited without providing an access token, so just register an account - it allows 50,000 API calls a month for free which is more than enough for this scenario.&lt;/p&gt;
-
-&lt;p&gt;Once you’ve registered and signed in, grab a copy of the access token from the dashboard - we will use it below.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$apiKey = '000000000000000000000000000000' # replace with access key from your ipinfo.io account
-$locData = Invoke-RestMethod &quot;https://ipinfo.io?token=$apiKey&quot; -ContentType 'Application/Json'
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If we look at the value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData&lt;/code&gt; we should see similar data from our first example.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/08/image-9.png&quot; title=&quot;$locData&quot;&gt;&lt;img src=&quot;/assets/images/2020/08/image-9.png&quot; alt=&quot;$locData&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Jackpot! The value of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$locData.timezone&lt;/code&gt; is a properly formatted IANA Id. We could reuse the code from the first example to match up the IANA Id to the Windows time zone Id - or we can save an API call and grab a copy of the results and compare them in the code. Let’s see how that would look.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$tzList = @{
-    #region snippet of the countr / iana code table
-    &quot;Africa/Abidjan&quot;      = &quot;Greenwich Standard Time&quot;
-    &quot;Africa/Accra&quot;        = &quot;Greenwich Standard Time&quot;
-    &quot;Africa/Addis_Ababa&quot;  = &quot;E. Africa Standard Time&quot;
-    &quot;Africa/Algiers&quot;      = &quot;W. Central Africa Standard Time&quot;
-    &quot;Africa/Asmera&quot;       = &quot;E. Africa Standard Time&quot;
-    &quot;Africa/Bamako&quot;       = &quot;Greenwich Standard Time&quot;
-    &quot;Africa/Bangui&quot;       = &quot;W. Central Africa Standard Time&quot;
-    &quot;Africa/Banjul&quot;       = &quot;Greenwich Standard Time&quot;
-    &quot;Africa/Bissau&quot;       = &quot;Greenwich Standard Time&quot;
-    &quot;Africa/Blantyre&quot;     = &quot;South Africa Standard&quot;
-    #endregion
-}
-$windowsId = $tzList.Get_Item($locData.timezone)
-if ($windowsId) {
-    $result = $windowsId
-}
-else {
-    $result = ($tzList.GetEnumerator() | Where-Object { $_.Key -like &quot;*$($locData.timezone)*&quot; }).Value
-}
-Write-Host &quot;Setting timezone to $result..&quot;
-Set-TimeZone -Id $result
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Obviously, that’s a LOT more code (cut for readability), but it does save us another API call, which if we are deploying to tens of thousands of devices could in the end save us being charged for API use!&lt;/p&gt;
-
-&lt;p&gt;I personally prefer and actually do use the second method for setting time zones as during my testing I’m invariably building VMs before I move to physical devices (sometimes I don’t even end up onto physical devices!), so being able to get a rough estimate of the location-based on public IP is much more reliable.&lt;/p&gt;
-
-&lt;p&gt;How you deploy this to your devices is up to personal preference and operational requirements of course. I’ve generally had success simply deploying as a configuration script where I am happy for it to only run once, however bundling this with a scheduled task to run once a week or once a month to maintain time zone reliability is another great option.&lt;/p&gt;
-
-&lt;p&gt;I’ve polished up the code from this article and provided both solutions as ready to deploy scripts, go check them out on my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Set-Timezone&quot;&gt;GitHub&lt;/a&gt; - just make sure to update the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$apiKey&lt;/code&gt; for either scenario you choose to utilize.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">Let me start off by saying I wish I didn’t have to write this post. Setting the correct time zone of a Windows device shouldn’t be this difficult, especially with all of the management possibilities provided to us with Intune and the entire endpoint management stack. But here we are!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/08/gpsdata.jpg" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/08/gpsdata.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><category term="Azure Image Builder" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><summary type="html">AIB is Microsoft's solution to configure and customize virtual machine images. The concept of it is pretty great.. pick a reference image from the public market place apply some customization built around HashiCorp's Packer hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.</summary></entry></feed>
