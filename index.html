@@ -1073,7 +1073,7 @@
 
 <p>Now that we have our reusable function to authenticate, give the query a name (I’ve called mine “Get-AuthenticationHeader”), and let’s create <strong>another</strong> blank query and fill the advanced editor with the following code..</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">GraphURL</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="err">_</span><span class="n">graphURL</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w">
 </span><span class="n">let</span><span class="w">
     </span><span class="n">AuthHeader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="c1">#"Get-AuthenticationHeader"(#"Tenant Id", #"Client Id", #"Client Secret", Resource, "client_credentials", "openid"),</span><span class="w">
     </span><span class="n">Options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1082,7 +1082,7 @@
             </span><span class="c1">#"Content-Type" = "Application/Json"</span><span class="w">
         </span><span class="p">]</span><span class="w">
     </span><span class="p">],</span><span class="w">
-    </span><span class="n">WebRequestContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Web.Contents</span><span class="p">(</span><span class="n">GraphURL</span><span class="p">,</span><span class="n">Options</span><span class="p">),</span><span class="w">
+    </span><span class="n">WebRequestContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Web.Contents</span><span class="p">(</span><span class="err">_</span><span class="n">graphURL</span><span class="p">,</span><span class="n">Options</span><span class="p">),</span><span class="w">
     </span><span class="n">JsonContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Json.Document</span><span class="p">(</span><span class="n">WebRequestContent</span><span class="p">),</span><span class="w">
     </span><span class="n">ParsedResults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JsonContent</span><span class="p">[</span><span class="n">value</span><span class="p">],</span><span class="w">
     </span><span class="n">Converted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Table.FromList</span><span class="p">(</span><span class="n">ParsedResults</span><span class="p">,</span><span class="w"> </span><span class="n">Splitter.SplitByNothing</span><span class="p">(),</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w"> </span><span class="n">null</span><span class="p">,</span><span class="w"> </span><span class="n">ExtraValues.Error</span><span class="p">),</span><span class="w">
@@ -1103,7 +1103,7 @@
 
 <p><a href="/assets/images/2021/08/PowerBI-FunctionInvoke.gif" title="Invoke-GraphRequest"><img src="/assets/images/2021/08/PowerBI-FunctionInvoke.gif" alt="Invoke-GraphRequest" /></a></p>
 
-<p>FANCY!!!!!!!!!</p>
+<p>FANCY!!</p>
 
 <p>Looking at the <em>code behind</em> that this invoked function creates show’s us how simple things are now that we have abstracted out the process into two unique functions..</p>
 
