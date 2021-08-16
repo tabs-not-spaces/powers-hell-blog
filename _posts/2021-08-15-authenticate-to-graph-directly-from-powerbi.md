@@ -24,6 +24,8 @@ tags:
 
 Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It's been a LONG time since I've dipped my toes into the headache that is PowerBI, but once I see a challenge, it's difficult for me to leave it alone...
 
+<!--more-->
+
 [I've actually written about this before]({% post_url 2018-05-15-working-with-graphapi-powerbi-the-easy-way %}) - back in 2018 I ran into the exact same problem - how do you authenticate to Graph to pull back data using a custom AAD application when PowerBI doesn't allow you to specifically define your authentication parameters?
 
 At the time, I wrote about building a "middleware" solution that involved an Azure function application that handled the authentication as well as the Graph queries and simply returned the results back to the report. That solution still works just fine, but if we want people that aren't nerds like me to actually use the reports, we ideally want a solution that has the authentication piece baked directly into the file.
