@@ -56,7 +56,7 @@ $requestBody = @{
     scope      = "openid"
     password   = 'MySuperSecetPassword'
 }
-$auth = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/$tenantId/oauth2/token" -Body $body
+$auth = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/$tenantId/oauth2/token" -Body $requestBody
 $auth
 ```
 
@@ -70,7 +70,7 @@ $reqestBody = @{
     grant_type    = "client_credentials"
     scope         = "openid"
 }
-$auth = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/$tenantId/oauth2/token" -Body $body
+$auth = Invoke-RestMethod -Method post -Uri "https://login.microsoftonline.com/$tenantId/oauth2/token" -Body $requestBody
 $auth
 ```
 
