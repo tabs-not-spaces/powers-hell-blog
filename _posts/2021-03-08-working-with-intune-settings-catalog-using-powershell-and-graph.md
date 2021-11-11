@@ -55,7 +55,7 @@ The first thing we need to do, as always, is authenticate to graph - At this poi
     TenantId = 'powers-hell.com'
     DeviceCode = $true
 }
-$AuthHeader = @{Authorization = (Get-MsalToken @params).CreateAuthorizationHeader()}</code></pre>
+$authHeaders = @{Authorization = (Get-MsalToken @params).CreateAuthorizationHeader()}</code></pre>
 
 Now that we've authenticated to graph, let's use the new graph endpoint **configurationPolicies** to have a look at how this new feature looks in the backend.
 
