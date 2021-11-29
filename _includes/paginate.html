@@ -1,15 +1,33 @@
 {% if paginator.total_pages > 1 %}
 <div class="pagination main-overlay max-w-5xl mx-auto py-4 sm:px-6 lg:px-8 drac-text-white drac-text-center" id="pagination">
     <div class="shadow-lg">
-        {% if paginator.previous_page %}
-        <a href="{{ paginator.previous_page_path | relative_url }}">&laquo; Prev</a> {% else %}
-        <a class="nothing">&laquo; Prev</a> {% endif %} {% for page in (1..paginator.total_pages) %} {% if page == paginator.page %}
-        <a class="active drac-text-cyan">{{ page }}</em>
-      {% elsif page == 1 %}
-      <a href="/">{{ page }}</a> {% else %}
-        <a href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{ page }}</a> {% endif %} {% endfor %} {% if paginator.next_page %}
-        <a href="{{ paginator.next_page_path | relative_url }}">Next &raquo;</a> {% else %}
-        <a class="nothing drac-text-black-secondary">Next &raquo;</a> {% endif %}
+    {% if paginator.page < 6 %}
+        {% assign start_range = 1 %} 
+        {% assign end_range = 5 %} 
+    {% else %} 
+        {% assign start_range = paginator.page | minus: 5 %} 
+        {% assign end_range = paginator.page | plus: 1 %}
+        {% if end_range > paginator.total_pages %}
+            {% assign end_range = paginator.total_pages %}
+        {% endif %}
+    {% endif %}
+    {% if paginator.previous_page %}
+        <a href="{{ paginator.previous_page_path | relative_url }}">&laquo; Prev</a> 
+    {% else %}
+        <a class="nothing">&laquo; Prev</a> {% endif %} 
+        {% for page in (start_range..end_range) %} 
+            {% if page == paginator.page %}
+                <a class="active drac-text-cyan">{{ page }}</em>
+            {% elsif page == 1 %}
+                <a href="/">{{ page }}</a> {% else %}
+                <a href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{ page }}</a> 
+            {% endif %} 
+        {% endfor %} 
+    {% if paginator.next_page %}
+        <a href="{{ paginator.next_page_path | relative_url }}">Next &raquo;</a> 
+    {% else %}
+        <a class="nothing drac-text-black-secondary">Next &raquo;</a> 
+    {% endif %}
     </div>
 </div>
 {% endif %}
