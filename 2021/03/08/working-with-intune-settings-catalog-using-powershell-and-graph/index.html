@@ -225,7 +225,7 @@
     TenantId = 'powers-hell.com'
     DeviceCode = $true
 }
-$AuthHeader = @{Authorization = (Get-MsalToken @params).CreateAuthorizationHeader()}</code></pre>
+$authHeaders = @{Authorization = (Get-MsalToken @params).CreateAuthorizationHeader()}</code></pre>
 
 <p>Now that we’ve authenticated to graph, let’s use the new graph endpoint <strong>configurationPolicies</strong> to have a look at how this new feature looks in the backend.</p>
 
