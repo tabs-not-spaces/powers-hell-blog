@@ -1,20 +1,21 @@
 {% if paginator.total_pages > 1 %}
 <div class="pagination main-overlay max-w-5xl mx-auto py-4 sm:px-6 lg:px-8 drac-text-white drac-text-center" id="pagination">
     <div class="shadow-lg">
-    {% if paginator.page < 6 %}
+    {% if paginator.page <= 4 %}
         {% assign start_range = 1 %} 
         {% assign end_range = 5 %} 
     {% else %} 
-        {% assign start_range = paginator.page | minus: 5 %} 
+        {% assign start_range = paginator.page | minus: 3 %} 
         {% assign end_range = paginator.page | plus: 1 %}
         {% if end_range > paginator.total_pages %}
+            {% assign start_range = paginator.total_pages | minus: 4 %}
             {% assign end_range = paginator.total_pages %}
         {% endif %}
     {% endif %}
-    {% if paginator.previous_page %}
+    {% if paginator.previous_page %} 
         <a href="{{ paginator.previous_page_path | relative_url }}">&laquo; Prev</a> 
     {% else %}
-        <a class="nothing">&laquo; Prev</a> {% endif %} 
+        <a class="nothing">&laquo; Prev</a> {% endif %}
         {% for page in (start_range..end_range) %} 
             {% if page == paginator.page %}
                 <a class="active drac-text-cyan">{{ page }}</em>
