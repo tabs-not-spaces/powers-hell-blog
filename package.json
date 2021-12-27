@@ -18,7 +18,7 @@
         "alpinejs": "^3.7.1",
         "github-markdown-dracula-css": "^4.0.3",
         "jquery": "^3.6.0",
-        "nightwind": "^1.1.11",
+        "nightwind": "^1.1.12",
         "postcss-custom-properties": "^11.0.0",
         "postcss-import": "^14.0.2",
         "postcss-nested": "^5.0.5"
