@@ -8,7 +8,7 @@
             "detail": "jekyll compose \"Your Exciting Title Here\"",
             "type": "shell",
             "command": [
-                "jekyll compose \"${input:Title}\""
+                "bundle exec jekyll compose \"${input:Title}\""
             ],
             "group": "build",
             "presentation": {
