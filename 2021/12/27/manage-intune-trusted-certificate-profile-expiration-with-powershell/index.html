@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang=" en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp; Microsoft Graph | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp; Microsoft Graph" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays? Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our trusted certificate policies and, as if by magic, send out alerts when the attached certificates are about to expire!" />
+<meta property="og:description" content="How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays? Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our trusted certificate policies and, as if by magic, send out alerts when the attached certificates are about to expire!" />
+<link rel="canonical" href="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/" />
+<meta property="og:url" content="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-12-27T04:36:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif" />
+<meta property="twitter:title" content="Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp; Microsoft Graph" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays? Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our trusted certificate policies and, as if by magic, send out alerts when the attached certificates are about to expire!","url":"https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/","@type":"BlogPosting","image":"https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif","headline":"Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp; Microsoft Graph","dateModified":"2021-12-27T04:36:00+00:00","datePublished":"2021-12-27T04:36:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
+    <script data-ad-client="ca-pub-3537558222002149" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SGKQTF5F0T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SGKQTF5F0T');
+</script>
+    <style type="text/css">
+        :root {
+            --dynamic-page-color: cyan;
+        }
+    </style>
+</head><body><div class="page-container">
+    <div class="">
+        <nav x-data="{ open: false }" class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 link-hover">
+                            <h2 class="drac-heading drac-heading-xl"><a href="/">Powers Hell</a></h2>
+                        </div>
+                        <div class="hidden md:block flex-shrink-0">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <div id="tagalign" class="drac-text drac-text-cyan drac-text-right drac-line-height">
+                                    great/power/is/great/fun >
+                                    <div class="cursor"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block flex-shrink-0">
+                        <div class="block md:hidden">
+    <div class="ml-3 items-center relative">
+        <a href="/"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/about"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/archives"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Archives</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/categories"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Categories</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="https://merch.powers-hell.com"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+    </div>
+</div>
+<div class="hidden md:block">
+    <a href="/"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+<a href="/about"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+<a href="https://merch.powers-hell.com"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
+
+
+
+                    </div>
+                    <div class="mr-2 flex md:hidden">
+                        <!-- Mobile menu button -->
+                        <button type="button"
+                            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm items-center justify-center p-2"
+                            aria-controls="mobile-menu" aria-expanded="false" @click="open = !open" ara-expanded="false"
+                            x-bind-aria-expanded="open.toString()">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'hidden':open, 'block': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'block':open, 'hidden': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="drac-bg-black md:hidden" x-show.transition="open">
+                <div class="px-2 py-3 space-y-1 sm:px-3 items-center">
+                    <div id="tagalign" class="ml-3 drac-text drac-text-cyan drac-line-height">
+                        great/power/is/great/fun >
+                        <div class="cursor"></div>
+                    </div>
+                    <div class="block md:hidden">
+    <div class="ml-3 items-center relative">
+        <a href="/"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/about"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/archives"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Archives</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/categories"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Categories</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="https://merch.powers-hell.com"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+    </div>
+</div>
+<div class="hidden md:block">
+    <a href="/"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+<a href="/about"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+<a href="https://merch.powers-hell.com"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
+
+
+
+                </div>
+            </div>
+        </nav>
+      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10"><div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <h1
+        class="drac-heading drac-heading-2xl drac-text-center drac-text-cyan">
+        
+        Manage Intune Trusted Certificate Profile Expiration with PowerShell & Microsoft Graph
+        
+    </h1>
+    
+</div></header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96 4xl:-mt-112">
+    <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+        <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+            <article class="markdown-body drac-text drac-line-height line-numbers">
+
+                <p class="post-date drac-text drac-text-xs"><font class="drac-text-black-secondary">Published:</font>
+                    <font class="drac-text-cyan"> 27 Dec 2021</font>
+                    <br/>
+                    <font class="drac-text-black-secondary">File under:</font>
+<font class="drac-text drac-text-xs">
+    <a href="/category/automation/" class="related">Automation</a>, <a href="/category/azure/" class="related">Azure</a>, <a href="/category/azure-functions/" class="related">Azure Functions</a>, <a href="/category/intune/" class="related">Intune</a>,  <a href="/category/powershell/" class="related">PowerShell</a></font></p>
+                
+                <span>
+          <a href="/assets/images/2021/12/get-certificateexpiry.gif" title="Hero Image"><img src="/assets/images/2021/12/get-certificateexpiry.gif" alt="Manage Intune Trusted Certificate Profile Expiration with PowerShell & Microsoft Graph"></a>
+        </span>  <p>How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays?</p>
+
+<p>Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our <strong>trusted certificate policies</strong> and, as if by magic, send out alerts when the attached certificates are about to expire!</p>
+
+<!--more-->
+
+<p>Ready? Let’s dive right in.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>At a high level, what we need to do here is very simple.</p>
+
+<p>All trusted certificate policies store the certificates in a <strong>base 64</strong> encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.</p>
+
+<h2 id="authentication">Authentication</h2>
+
+<p>Ah my favourite topic. Yes, as always, the first step to Intune automation is authentication. Go read my previous article on Graph authentication with PowerShell if you haven’t already.</p>
+
+<p>If you don’t have an AAD application registered yet, <a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app">go ahead and create one.</a>.<br />
+The minimum API permissions you will need are listed below..</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>API Permission Name</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DeviceManagementManagedDevices.Read.All</td>
+      <td>Application</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Make sure you grant admin consent for the above permission.<br />
+Next, generate a <strong>client secret</strong> and store it, along with the <strong>application ID</strong> for future use.</p>
+
+<p>Alright, got your AAD application registered? Let’s use that to authenticate.</p>
+
+<pre><code class="language-PowerShell">$tenantId = 'powers-hell.com'
+$clientId = 'e8984d96-a7b8-4ee0-a2ef-e42ddca2f3a2'
+$clientSecret = 'superSecretKey'
+
+$reqestBody = @{
+    resource      = 'https://graph.microsoft.com'
+    client_id     = $clientId
+    client_secret = $clientSecret
+    grant_type    = "client_credentials"
+    scope         = "openid"
+}
+
+$authParams = @{
+    Method  = 'Post'
+    Uri     = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+    Body    = $requestBody
+}
+$auth = Invoke-RestMethod @authParams
+</code></pre>
+
+<blockquote>
+  <p>NOTE: If you just want to play around with this example but don’t want to build out an AAD app registration just to try stuff out, feel free to use the “well known” intune AAD application. Just know it can only be used with interactive authentication.<br />
+<a href="% post_url 2021-07-18-authenticating-to-microsoft-graph-with-powershell-(2021) %">Read more about Graph authentication here.</a></p>
+</blockquote>
+
+<h2 id="finding-the-trusted-certificate-profiles">Finding the trusted certificate profiles</h2>
+
+<p>Now that we have our authentication sorted out, let’s query Graph for those trusted certificate policies.</p>
+
+<pre><code class="language-PowerShell">$authorizationHeader = @{
+    Authorization = "Bearer $($auth.accessToken)"
+}
+
+$requestBody = @{
+    Method      = 'Get'
+    Uri         = 'https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations'
+    Headers     = $authorizationHeader
+    ContentType = 'Application/Json'
+}
+$response = Invoke-RestMethod @requestBody
+$foundCertificates = $response.value | Where-Object { $_.'@odata.type' -like "#microsoft.graph.*TrustedRootCertificate" }
+$foundCertificates
+</code></pre>
+
+<p>What we are doing above is collecting all of the <strong>device configuration</strong> policies and removing all policies that do NOT adhere to our fuzzy filter of <strong>microsoft.graph.*TrustedRootCertificate</strong>. <br />
+This should allow us to capture ALL possible certificate policies regardless of operating system.</p>
+
+<p><a href="/assets/images/2021/12/foundCertificates.gif" title="Found Certificates"><img src="/assets/images/2021/12/foundCertificates.gif" alt="Found Certificates" /> </a></p>
+
+<h2 id="decrypting-the-certificate-content">Decrypting the certificate content</h2>
+
+<p>Now that we have our <strong>trusted certificate</strong> policies, let’s decrypt the certifate content and start analyzing it.</p>
+
+<p>Assuming we get a few results from the above example and we just wanted to look at the first one..</p>
+
+<pre><code class="language-PowerShell">$trustedRootCertificate = $foundCertificates[0]
+$decryptedRootCertificate = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($trustedRootCertificate.trustedRootCertificate))
+</code></pre>
+<p><a href="/assets/images/2021/12/foundCertificatesDecrypted.gif" title="Decrypted Certificates"><img src="/assets/images/2021/12/foundCertificatesDecrypted.gif" alt="Decrypted Certificates" /> </a></p>
+
+<h2 id="extracting-the-expiration-metadata">Extracting the expiration metadata</h2>
+
+<p>Now that we have the decrypted <strong>base 64</strong> encoded certificate, we can convert the content back to a <em>real certificate</em>..</p>
+
+<pre><code class="language-PowerShell">$formattedCertContent = ($decryptedRootCertificate -replace "-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----", "").Trim()
+$decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
+</code></pre>
+
+<p>As you should be able to see from the above code, we are simply removing the bounding strings from the bas64 string and converting the resultant encrypted string back into the .Net certificate class.</p>
+
+<p>Once we have that, we should be able to step through the metadata and find the expiry date data we were originally after..</p>
+
+<p><a href="/assets/images/2021/12/foundExpiryDate.gif" title="Found the expiry date!!"><img src="/assets/images/2021/12/foundExpiryDate.gif" alt="Found the expiry date!!" /></a></p>
+
+<h2 id="base64-vs-der">Base64 vs DER</h2>
+
+<p>“But wait!” I hear you scream. “What if my certificates weren’t exported as Base64 from my CA?!”.</p>
+
+<p>Firstly, congratulations on being difficult.<br />
+Secondly, of course there’s a way to handle that. Let’s look at that now.</p>
+
+<p>I’ve intentionally created a second certificate policy that uses a DER encrypted certificate, so let’s decode that using the same code as above and see what we get back..</p>
+
+<p><a href="/assets/images/2021/12/DerEncoded.gif" title="DER encoded certificate data.."><img src="/assets/images/2021/12/DerEncoded.gif" alt="DER encoded certificate data.." /></a></p>
+
+<p>Gross. That isn’t looking too great is it..</p>
+
+<p>Well, the good news is that even though it doesn’t look as nice as our base64 encoded example, it’s just as easy to build a certificate from!</p>
+
+<pre><code class="language-PowerShell">[byte[]]$decryptedDerCert = [System.Convert]::FromBase64String($trustedRootCertificate.trustedRootCertificate)
+$decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]($decryptedDerCert)
+</code></pre>
+
+<p><a href="/assets/images/2021/12/DerDecoded.gif" title="Decoded DER certificate"><img src="/assets/images/2021/12/DerDecoded.gif" alt="Decoded DER certificate" /></a></p>
+
+<h2 id="well-what-now">Well, what now?</h2>
+
+<p>Do something with it!</p>
+
+<p>Now that we know that we can expose the certificate metadata from the Intune configuration profile, it means we can use it to trigger certain actions..</p>
+
+<p>Take the following code as an example..</p>
+
+<pre><code class="language-PowerShell">#region config
+$config = @{
+    tenantId     = "powers-hell.com"
+    appId        = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    clientSecret = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    dayThreshold = 7
+}
+#endregion
+
+#region functions
+function Get-AuthHeader {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [string]$TenantId,
+        [parameter(Mandatory = $true)]
+        [string]$ApplicationId,
+        [parameter(Mandatory = $true)]
+        [string]$ClientSecret
+    )
+    $reqestBody = @{
+        resource      = 'https://graph.microsoft.com'
+        client_id     = $ApplicationId
+        client_secret = $clientSecret
+        grant_type    = "client_credentials"
+        scope         = "openid"
+    }
+
+    $authParams = @{
+        Method = 'Post'
+        Uri = "https://login.microsoftonline.com/$TenantId/oauth2/token"
+        Body = $requestBody
+    }
+    $auth = Invoke-RestMethod @authParams
+    $authorizationHeader = @{
+        Authorization = "Bearer $($auth.accessToken)"
+    }
+    return $authorizationHeader
+}
+
+function Get-TrustedCertificatesFromIntune {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [hashtable]$AuthHeader
+    )
+
+    try {
+        #region Query Graph
+        $baseUri = 'https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations'
+        $graphParams = @{
+            Method      = 'Get'
+            Uri         = $baseUri
+            Headers     = $AuthHeader
+            ContentType = 'Application/Json'
+        }
+        $result = Invoke-RestMethod @graphParams
+        $resultValue = $result.value.Count -gt 0 ? $result.value : $null
+        #endregion
+        #region Format the results
+        $foundCertificates = $resultValue | Where-Object { $_.'@odata.type' -like "#microsoft.graph.*TrustedRootCertificate" }
+        if ($foundCertificates.Count -gt 0) {
+            Write-Verbose "$($foundCertificates.Count) Trusted certificates found"
+            return $foundCertificates
+        }
+        #endregion
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+
+function Get-CertificateDataFromTrustedCertificatePolicy {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $True, ValueFromPipeline)]
+        [PSCustomObject]$TrustedRootCertificate
+    )
+    try {
+        $decryptedTRC = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($TrustedRootCertificate.trustedRootCertificate))
+        if ($decryptedTRC -match "-----BEGIN CERTIFICATE-----") {
+            #region base64 encoded certificate detected
+            Write-Verbose "Base64 encoded certificate detected.."
+            $formattedCertContent = ($decryptedTRC -replace "-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----", "").Trim()
+            $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
+            return $decryptedCertificate
+            #endregion
+        }
+        else {
+            #region der encoded certificate detected
+            Write-Verbose "Der encoded certificate detected.."
+            [byte[]]$decryptedDerTRC = [System.Convert]::FromBase64String($TrustedRootCertificate.trustedRootCertificate)
+            $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]($decryptedDerTRC)
+            return $decryptedCertificate
+            #endregion
+        }
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+#endregion
+
+#region auth
+$authHeader = Get-AuthHeader -TenantId $config.tenantId -ApplicationId $config.appId -ClientSecret $config.clientSecret
+#endregion
+
+#region grab certificate profiles
+$certificateProfiles = Get-TrustedCertificatesFromIntune -AuthHeader $authHeader
+#endregion
+
+#region grab certicate metadata
+$certificates = foreach ($cert in $certificateProfiles) {
+    Get-CertificateDataFromTrustedCertificatePolicy -TrustedRootCertificate $cert
+}
+#endregion
+
+#region grab certicate metadata and send alerts if certificate expires within set threshold
+$Expiringcertificates = foreach ($cert in $certificateProfiles) {
+    $certData = Get-CertificateDataFromTrustedCertificatePolicy -TrustedRootCertificate $cert
+    $daysRemaining = [math]::Round((($certData.NotAfter) - ([DateTime]::Now)).TotalDays)
+    if ($daysRemaining -lt $config.dayThreshold) {
+        Write-Host "$($cert.displayName) expires in $daysRemaining days ⚠️⚠️⚠️"
+        $certData
+    }
+}
+#endregion
+</code></pre>
+<p>Populating the <code class="language-plaintext highlighter-rouge">$config</code> variable with your app credentials and setting the date threshold will analyze any <strong>trusted certificate</strong> policies and advise you if any are due to expire.</p>
+
+<p><a href="/assets/images/2021/12/get-certificateexpiry.gif" title="Uhoh... certificates are about to expire"><img src="/assets/images/2021/12/get-certificateexpiry.gif" alt="Uhoh... certificates are about to expire" /></a></p>
+
+<p>Now that you have a working solution to monitor for expiring certificates, why don’t you try building it into an Azure Function that runs on a daily schedule? How about sending the results of the script out to a Teams webhook to notify your team in a more dynamic way?</p>
+
+<p>Isn’t automation cool?!</p>
+
+<p>As always, all code shown in this article is available on <a href="">GitHub</a></p>
+
+<p>For all of you that are lucky enough to get time off, have a safe break &amp; I’ll see you all again for a hopefully MUCH better 2022.</p>
+
+<p>— Ben</p>
+
+            </article>
+        </div>
+    </div><div class="main-overlay max-w-5xl mx-auto pb-4 overflow-hidden">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3537558222002149" crossorigin="anonymous"></script>
+    <!-- horizontal-ad-unit -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3537558222002149" data-ad-slot="4617860412" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-hr-bg-cyan" />
+    </div>
+    <h2 class="drac-heading drac-heading-xl drac-text-cyan">Related Posts</h2>
+    <ul class="related">
+        
+        <li><a href="/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/"><span class="drac-text-cyan">&raquo;</span> Create advanced dynamic groups with PowerShell & Azure Functions</a></li>
+        
+        <li><a href="/2018/09/04/getting-your-aad-tenant-id-without-authentication/"><span class="drac-text-cyan">&raquo;</span> Getting your AAD Tenant Id without authentication!</a></li>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/"><span class="drac-text-cyan">&raquo;</span> Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/"><span class="drac-text-cyan">&raquo;</span> Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell</a></li>
+        
+        <li><a href="/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/"><span class="drac-text-cyan">&raquo;</span> How to force Intune configuration scripts to re-run</a></li>
+        
+    </ul>
+</div>
+<div class="pagination main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center utterances">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-hr-bg-cyan" />
+    </div>
+    <script src="https://utteranc.es/client.js" repo="tabs-not-spaces/powers-hell-blog" issue-term="title" theme="github-dark" crossorigin="anonymous" async>
+    </script>
+</div></main>
+  </div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+    <svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path
+            d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z" />
+    </svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank"
+                            class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div></body>
+
+</html>

@@ -1,4 +1,288 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-12-14T23:49:35+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Authenticate to Graph directly from PowerBI!</title><link href="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/" rel="alternate" type="text/html" title="Authenticate to Graph directly from PowerBI!" /><published>2021-08-15T08:38:00+00:00</published><updated>2021-08-15T08:38:00+00:00</updated><id>https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi</id><content type="html" xml:base="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/">&lt;p&gt;Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It’s been a LONG time since I’ve dipped my toes into the headache that is PowerBI, but once I see a challenge, it’s difficult for me to leave it alone…&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-12-29T05:38:34+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp;amp; Microsoft Graph</title><link href="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/" rel="alternate" type="text/html" title="Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp;amp; Microsoft Graph" /><published>2021-12-27T04:36:00+00:00</published><updated>2021-12-27T04:36:00+00:00</updated><id>https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/">&lt;p&gt;How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays?&lt;/p&gt;
+
+&lt;p&gt;Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our &lt;strong&gt;trusted certificate policies&lt;/strong&gt; and, as if by magic, send out alerts when the attached certificates are about to expire!&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Ready? Let’s dive right in.&lt;/p&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;At a high level, what we need to do here is very simple.&lt;/p&gt;
+
+&lt;p&gt;All trusted certificate policies store the certificates in a &lt;strong&gt;base 64&lt;/strong&gt; encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.&lt;/p&gt;
+
+&lt;h2 id=&quot;authentication&quot;&gt;Authentication&lt;/h2&gt;
+
+&lt;p&gt;Ah my favourite topic. Yes, as always, the first step to Intune automation is authentication. Go read my previous article on Graph authentication with PowerShell if you haven’t already.&lt;/p&gt;
+
+&lt;p&gt;If you don’t have an AAD application registered yet, &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app&quot;&gt;go ahead and create one.&lt;/a&gt;.&lt;br /&gt;
+The minimum API permissions you will need are listed below..&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;API Permission Name&lt;/th&gt;
+      &lt;th&gt;Type&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DeviceManagementManagedDevices.Read.All&lt;/td&gt;
+      &lt;td&gt;Application&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Make sure you grant admin consent for the above permission.&lt;br /&gt;
+Next, generate a &lt;strong&gt;client secret&lt;/strong&gt; and store it, along with the &lt;strong&gt;application ID&lt;/strong&gt; for future use.&lt;/p&gt;
+
+&lt;p&gt;Alright, got your AAD application registered? Let’s use that to authenticate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$tenantId = 'powers-hell.com'
+$clientId = 'e8984d96-a7b8-4ee0-a2ef-e42ddca2f3a2'
+$clientSecret = 'superSecretKey'
+
+$reqestBody = @{
+    resource      = 'https://graph.microsoft.com'
+    client_id     = $clientId
+    client_secret = $clientSecret
+    grant_type    = &quot;client_credentials&quot;
+    scope         = &quot;openid&quot;
+}
+
+$authParams = @{
+    Method  = 'Post'
+    Uri     = &quot;https://login.microsoftonline.com/$tenantId/oauth2/token&quot;
+    Body    = $requestBody
+}
+$auth = Invoke-RestMethod @authParams
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;NOTE: If you just want to play around with this example but don’t want to build out an AAD app registration just to try stuff out, feel free to use the “well known” intune AAD application. Just know it can only be used with interactive authentication.&lt;br /&gt;
+&lt;a href=&quot;% post_url 2021-07-18-authenticating-to-microsoft-graph-with-powershell-(2021) %&quot;&gt;Read more about Graph authentication here.&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;finding-the-trusted-certificate-profiles&quot;&gt;Finding the trusted certificate profiles&lt;/h2&gt;
+
+&lt;p&gt;Now that we have our authentication sorted out, let’s query Graph for those trusted certificate policies.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$authorizationHeader = @{
+    Authorization = &quot;Bearer $($auth.accessToken)&quot;
+}
+
+$requestBody = @{
+    Method      = 'Get'
+    Uri         = 'https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations'
+    Headers     = $authorizationHeader
+    ContentType = 'Application/Json'
+}
+$response = Invoke-RestMethod @requestBody
+$foundCertificates = $response.value | Where-Object { $_.'@odata.type' -like &quot;#microsoft.graph.*TrustedRootCertificate&quot; }
+$foundCertificates
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What we are doing above is collecting all of the &lt;strong&gt;device configuration&lt;/strong&gt; policies and removing all policies that do NOT adhere to our fuzzy filter of &lt;strong&gt;microsoft.graph.*TrustedRootCertificate&lt;/strong&gt;. &lt;br /&gt;
+This should allow us to capture ALL possible certificate policies regardless of operating system.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/foundCertificates.gif&quot; title=&quot;Found Certificates&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/foundCertificates.gif&quot; alt=&quot;Found Certificates&quot; /&gt; &lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;decrypting-the-certificate-content&quot;&gt;Decrypting the certificate content&lt;/h2&gt;
+
+&lt;p&gt;Now that we have our &lt;strong&gt;trusted certificate&lt;/strong&gt; policies, let’s decrypt the certifate content and start analyzing it.&lt;/p&gt;
+
+&lt;p&gt;Assuming we get a few results from the above example and we just wanted to look at the first one..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$trustedRootCertificate = $foundCertificates[0]
+$decryptedRootCertificate = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($trustedRootCertificate.trustedRootCertificate))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/foundCertificatesDecrypted.gif&quot; title=&quot;Decrypted Certificates&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/foundCertificatesDecrypted.gif&quot; alt=&quot;Decrypted Certificates&quot; /&gt; &lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;extracting-the-expiration-metadata&quot;&gt;Extracting the expiration metadata&lt;/h2&gt;
+
+&lt;p&gt;Now that we have the decrypted &lt;strong&gt;base 64&lt;/strong&gt; encoded certificate, we can convert the content back to a &lt;em&gt;real certificate&lt;/em&gt;..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;$formattedCertContent = ($decryptedRootCertificate -replace &quot;-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----&quot;, &quot;&quot;).Trim()
+$decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you should be able to see from the above code, we are simply removing the bounding strings from the bas64 string and converting the resultant encrypted string back into the .Net certificate class.&lt;/p&gt;
+
+&lt;p&gt;Once we have that, we should be able to step through the metadata and find the expiry date data we were originally after..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/foundExpiryDate.gif&quot; title=&quot;Found the expiry date!!&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/foundExpiryDate.gif&quot; alt=&quot;Found the expiry date!!&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;base64-vs-der&quot;&gt;Base64 vs DER&lt;/h2&gt;
+
+&lt;p&gt;“But wait!” I hear you scream. “What if my certificates weren’t exported as Base64 from my CA?!”.&lt;/p&gt;
+
+&lt;p&gt;Firstly, congratulations on being difficult.&lt;br /&gt;
+Secondly, of course there’s a way to handle that. Let’s look at that now.&lt;/p&gt;
+
+&lt;p&gt;I’ve intentionally created a second certificate policy that uses a DER encrypted certificate, so let’s decode that using the same code as above and see what we get back..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/DerEncoded.gif&quot; title=&quot;DER encoded certificate data..&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/DerEncoded.gif&quot; alt=&quot;DER encoded certificate data..&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Gross. That isn’t looking too great is it..&lt;/p&gt;
+
+&lt;p&gt;Well, the good news is that even though it doesn’t look as nice as our base64 encoded example, it’s just as easy to build a certificate from!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;[byte[]]$decryptedDerCert = [System.Convert]::FromBase64String($trustedRootCertificate.trustedRootCertificate)
+$decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]($decryptedDerCert)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/DerDecoded.gif&quot; title=&quot;Decoded DER certificate&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/DerDecoded.gif&quot; alt=&quot;Decoded DER certificate&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;well-what-now&quot;&gt;Well, what now?&lt;/h2&gt;
+
+&lt;p&gt;Do something with it!&lt;/p&gt;
+
+&lt;p&gt;Now that we know that we can expose the certificate metadata from the Intune configuration profile, it means we can use it to trigger certain actions..&lt;/p&gt;
+
+&lt;p&gt;Take the following code as an example..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;#region config
+$config = @{
+    tenantId     = &quot;powers-hell.com&quot;
+    appId        = &quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;
+    clientSecret = &quot;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&quot;
+    dayThreshold = 7
+}
+#endregion
+
+#region functions
+function Get-AuthHeader {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [string]$TenantId,
+        [parameter(Mandatory = $true)]
+        [string]$ApplicationId,
+        [parameter(Mandatory = $true)]
+        [string]$ClientSecret
+    )
+    $reqestBody = @{
+        resource      = 'https://graph.microsoft.com'
+        client_id     = $ApplicationId
+        client_secret = $clientSecret
+        grant_type    = &quot;client_credentials&quot;
+        scope         = &quot;openid&quot;
+    }
+
+    $authParams = @{
+        Method = 'Post'
+        Uri = &quot;https://login.microsoftonline.com/$TenantId/oauth2/token&quot;
+        Body = $requestBody
+    }
+    $auth = Invoke-RestMethod @authParams
+    $authorizationHeader = @{
+        Authorization = &quot;Bearer $($auth.accessToken)&quot;
+    }
+    return $authorizationHeader
+}
+
+function Get-TrustedCertificatesFromIntune {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [hashtable]$AuthHeader
+    )
+
+    try {
+        #region Query Graph
+        $baseUri = 'https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations'
+        $graphParams = @{
+            Method      = 'Get'
+            Uri         = $baseUri
+            Headers     = $AuthHeader
+            ContentType = 'Application/Json'
+        }
+        $result = Invoke-RestMethod @graphParams
+        $resultValue = $result.value.Count -gt 0 ? $result.value : $null
+        #endregion
+        #region Format the results
+        $foundCertificates = $resultValue | Where-Object { $_.'@odata.type' -like &quot;#microsoft.graph.*TrustedRootCertificate&quot; }
+        if ($foundCertificates.Count -gt 0) {
+            Write-Verbose &quot;$($foundCertificates.Count) Trusted certificates found&quot;
+            return $foundCertificates
+        }
+        #endregion
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+
+function Get-CertificateDataFromTrustedCertificatePolicy {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $True, ValueFromPipeline)]
+        [PSCustomObject]$TrustedRootCertificate
+    )
+    try {
+        $decryptedTRC = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($TrustedRootCertificate.trustedRootCertificate))
+        if ($decryptedTRC -match &quot;-----BEGIN CERTIFICATE-----&quot;) {
+            #region base64 encoded certificate detected
+            Write-Verbose &quot;Base64 encoded certificate detected..&quot;
+            $formattedCertContent = ($decryptedTRC -replace &quot;-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----&quot;, &quot;&quot;).Trim()
+            $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
+            return $decryptedCertificate
+            #endregion
+        }
+        else {
+            #region der encoded certificate detected
+            Write-Verbose &quot;Der encoded certificate detected..&quot;
+            [byte[]]$decryptedDerTRC = [System.Convert]::FromBase64String($TrustedRootCertificate.trustedRootCertificate)
+            $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]($decryptedDerTRC)
+            return $decryptedCertificate
+            #endregion
+        }
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+#endregion
+
+#region auth
+$authHeader = Get-AuthHeader -TenantId $config.tenantId -ApplicationId $config.appId -ClientSecret $config.clientSecret
+#endregion
+
+#region grab certificate profiles
+$certificateProfiles = Get-TrustedCertificatesFromIntune -AuthHeader $authHeader
+#endregion
+
+#region grab certicate metadata
+$certificates = foreach ($cert in $certificateProfiles) {
+    Get-CertificateDataFromTrustedCertificatePolicy -TrustedRootCertificate $cert
+}
+#endregion
+
+#region grab certicate metadata and send alerts if certificate expires within set threshold
+$Expiringcertificates = foreach ($cert in $certificateProfiles) {
+    $certData = Get-CertificateDataFromTrustedCertificatePolicy -TrustedRootCertificate $cert
+    $daysRemaining = [math]::Round((($certData.NotAfter) - ([DateTime]::Now)).TotalDays)
+    if ($daysRemaining -lt $config.dayThreshold) {
+        Write-Host &quot;$($cert.displayName) expires in $daysRemaining days ⚠️⚠️⚠️&quot;
+        $certData
+    }
+}
+#endregion
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Populating the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$config&lt;/code&gt; variable with your app credentials and setting the date threshold will analyze any &lt;strong&gt;trusted certificate&lt;/strong&gt; policies and advise you if any are due to expire.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/get-certificateexpiry.gif&quot; title=&quot;Uhoh... certificates are about to expire&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/get-certificateexpiry.gif&quot; alt=&quot;Uhoh... certificates are about to expire&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now that you have a working solution to monitor for expiring certificates, why don’t you try building it into an Azure Function that runs on a daily schedule? How about sending the results of the script out to a Teams webhook to notify your team in a more dynamic way?&lt;/p&gt;
+
+&lt;p&gt;Isn’t automation cool?!&lt;/p&gt;
+
+&lt;p&gt;As always, all code shown in this article is available on &lt;a href=&quot;&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;For all of you that are lucky enough to get time off, have a safe break &amp;amp; I’ll see you all again for a hopefully MUCH better 2022.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerShell" /><category term="Azure" /><category term="Automation" /><category term="Azure Functions" /><category term="Intune" /><category term="PowerShell" /><category term="Azure" /><category term="Automation" /><category term="Azure Functions" /><category term="Intune" /><summary type="html">How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays? Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our trusted certificate policies and, as if by magic, send out alerts when the attached certificates are about to expire!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Authenticate to Graph directly from PowerBI!</title><link href="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/" rel="alternate" type="text/html" title="Authenticate to Graph directly from PowerBI!" /><published>2021-08-15T08:38:00+00:00</published><updated>2021-08-15T08:38:00+00:00</updated><id>https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi</id><content type="html" xml:base="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/">&lt;p&gt;Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It’s been a LONG time since I’ve dipped my toes into the headache that is PowerBI, but once I see a challenge, it’s difficult for me to leave it alone…&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -1915,217 +2199,4 @@ finally {
 
 &lt;p&gt;As always, the code referenced in this guide is available in &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Universal-Print-Printer-Install&quot;&gt;GitHub&lt;/a&gt; and I can be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Universal Print" /><category term="Intune" /><category term="PowerShell" /><category term="Universal Print" /><summary type="html">Over the last few weeks I've been playing with **Universal Print** - the cloud print solution developed by Microsoft and I honestly can't praise it enough.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/10/universalprint.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/10/universalprint.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Preparing custom image templates with Azure Image Builder &amp;amp; PowerShell</title><link href="https://powers-hell.com/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/" rel="alternate" type="text/html" title="Preparing custom image templates with Azure Image Builder &amp;amp; PowerShell" /><published>2020-09-20T10:44:14+00:00</published><updated>2020-09-20T10:44:14+00:00</updated><id>https://powers-hell.com/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell</id><content type="html" xml:base="https://powers-hell.com/2020/09/20/preparing-custom-image-templates-with-azure-image-builder-powershell/">&lt;p&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/virtual-machines/windows/image-builder-overview&quot;&gt;Azure Image Builder&lt;/a&gt; (AIB) is Microsoft’s solution to configure and customize virtual machine images. The concept of it is pretty great: Pick a reference image from the public market place, apply some customization built around &lt;a href=&quot;https://www.packer.io/&quot;&gt;HashiCorp’s Packer&lt;/a&gt;, hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;Now, here’s the problem - AIB is still very much in preview and is tricky to set up. There’s lots of &lt;a href=&quot;http://xenithit.blogspot.com/2020/06/using-azure-image-builder-and-azure.html&quot;&gt;great guides&lt;/a&gt; on how to set up your tenant to use AIB, but I wanted to try and simplify the initial configuration of your tenant so you can get past the “preview hurdles” and just get straight into building your image templates.&lt;/p&gt;
-
-&lt;p&gt;So, I went and published a “helper” module to do just that! &lt;a href=&quot;https://www.powershellgallery.com/packages/az.imagebuilder.tools&quot;&gt;Az.ImageBuilder.Tools&lt;/a&gt; is a module that will assist you with configuring your tenant to enable the features, custom roles and managed identities required to start playing with AIB.&lt;/p&gt;
-
-&lt;p&gt;Let’s dive right in - by the end of this guide, we will be able to:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Set up our tenant to use AIB and Shared Image Gallery (SIB)&lt;/li&gt;
-  &lt;li&gt;Build the AIB template from the Win10 EVD (multi session) image from the Azure Marketplace&lt;/li&gt;
-  &lt;li&gt;Add a customization script to pre-install software to our AIB template&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;All right - let’s get into it!&lt;/p&gt;
-
-&lt;h2 id=&quot;pre-requirements&quot;&gt;Pre-Requirements&lt;/h2&gt;
-
-&lt;h3 id=&quot;grab-the-modules&quot;&gt;Grab the modules&lt;/h3&gt;
-
-&lt;p&gt;First, let’s install the &lt;a href=&quot;https://www.powershellgallery.com/packages/az.imagebuilder.tools&quot;&gt;Az.ImageBuilder.Tools&lt;/a&gt; module - this will not only install my helper module, but all other required pre-req modules.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;Install-Module Az.ImageBuilder.Tools&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&quot;authenticate-to-your-tenant&quot;&gt;Authenticate to your tenant&lt;/h3&gt;
-
-&lt;p&gt;Make sure you are connected to your tenant!&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;
-#region Connect to Azure
-Connect-AzAccount
-$azContext = Get-AzContext
-$subscriptionID = $azContext.Subscription.Id
-#endregion
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&quot;enable-the-features-and-providers-required-for-aib--sig&quot;&gt;Enable the features and providers required for AIB / SIG&lt;/h3&gt;
-
-&lt;p&gt;This one is going to take a minute - run the below command and check back in 15..&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;Invoke-AIBProviderCheck&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Run the same command in 15~ minutes to verify the features and providers are registered. If you don’t want to do this step, add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-wait&lt;/code&gt; to the command. Once everything is ready, you should see the below.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/09/invoke-aibprovidercheck.gif&quot; title=&quot;Imvoke-AIBProvider&quot;&gt;&lt;img src=&quot;/assets/images/2020/09/invoke-aibprovidercheck.gif&quot; alt=&quot;Imvoke-AIBProvider&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;define-the-variables&quot;&gt;Define the variables&lt;/h2&gt;
-
-&lt;p&gt;You don’t need to set these up, but c’mon - this guide is clearly setting you up for an automated template process… so let’s go ahead and treat it like that.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;$resourceGroupName = 'AIB-ResourceGroup'
-$location = 'eastus'
-$imageTemplateName = 'Win10-20H1-EVD'
-$sharedGalleryName = 'SharedImageGallery'
-$imageDefinitionName = 'Win10EVD'
-$runOutputName = 'winClientR01'
-$imageConfig = @{
-    OsState   = 'generalized'
-    OsType    = 'Windows'
-    Publisher = 'MicrosoftWindowsDesktop'
-    Offer     = 'office-365'
-    Sku       = '20h1-evd-o365pp'
-    Version   = 'latest'
-}&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A few notes on the variables above:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The values in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$imageConfig&lt;/code&gt; are set specifically for the current build of the Win10 EVD image from the marketplace - don’t change those unless you know there is a new version.&lt;/li&gt;
-  &lt;li&gt;Everything else is fair game - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$resourceGroupName&lt;/code&gt; defines the name of the resource group you want to put the AIB / SIG resources into - if it doesn’t exist, don’t worry - the next step will sort that out.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;initialize-azure-image-builder-aib&quot;&gt;Initialize Azure Image Builder (AIB)&lt;/h2&gt;
-
-&lt;p&gt;Now we need to create the custom roles and managed identity - these are the steps that stop most people from moving ahead - no worry, I’ve sorted it out.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;$mIDParams = @{
-    AzureContext      = $azContext
-    ResourceGroupName = $resourceGroupName
-    Location          = $location
-    IdentityName      = 'aibIdentity'
-}
-$managedIdentity = Initialize-AzureImageBuilder @mIDParams&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This command will create the resource group if its missing, create a managed identity and apply custom roles required to work with AIB / SIG.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/09/initialize-azureImageBuilder.gif&quot; title=&quot;Initializa-AzureImageBuilder&quot;&gt;&lt;img src=&quot;/assets/images/2020/09/initialize-azureImageBuilder.gif&quot; alt=&quot;Initializa-AzureImageBuilder&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;create-the-shared-image-gallery-sig&quot;&gt;Create the Shared Image Gallery (SIG)&lt;/h2&gt;
-
-&lt;p&gt;AIB allows us to host our image templates as VHDs or in a &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/virtual-machines/windows/shared-image-galleries&quot;&gt;Shared Image Gallery&lt;/a&gt; - I won’t go into what SIG is here, but for the sake of clarity - SIG is a great solution to store and manage image templates.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;$azGalleryParams = @{
-    Name              = $sharedGalleryName
-    ResourceGroupName = $resourceGroupName
-    Location          = $location
-}
-New-AzGallery @azGalleryParams&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;prepare-the-source-image&quot;&gt;Prepare the source image&lt;/h2&gt;
-
-&lt;p&gt;Ok, we are going to set up the source image and the definitions - nothing too exciting here. The commands and their parameters should be self-explanatory.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;# create the source image
-$srcObjParams = @{
-    SourceTypePlatformImage = $true
-    Publisher               = $imageConfig.Publisher
-    Offer                   = $imageConfig.Offer
-    Sku                     = $imageConfig.Sku
-    Version                 = $imageConfig.Version
-}
-$srcPlatform = New-AzImageBuilderSourceObject @srcObjParams
-# create the image definition
-$imageDefParams = @{
-    GalleryName       = $sharedGalleryName
-    ResourceGroupName = $resourceGroupName
-    Location          = $location
-    Name              = $imageDefinitionName
-    OsState           = $imageconfig.OsState
-    OsType            = $imageConfig.OsType
-    Publisher         = ([mailaddress]$azContext.account.id).Host
-    Offer             = $imageConfig.Offer
-    Sku               = $imageConfig.Sku
-}
-New-AzGalleryImageDefinition @imageDefParams
-# create the distributor object
-$distObjParams = @{
-    SharedImageDistributor = $true
-    ArtifactTag            = @{ tag = 'dis-share' }
-    GalleryImageId         = &quot;/subscriptions/$subscriptionID/resourceGroups/$resourceGroupName/providers/Microsoft.Compute/galleries/$sharedGalleryName/images/$imageDefinitionName&quot;
-    ReplicationRegion      = $location
-    RunOutputName          = $runOutputName
-    ExcludeFromLatest      = $false
-}
-$disSharedImg = New-AzImageBuilderDistributorObject @distObjParams&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;add-customization&quot;&gt;Add customization&lt;/h2&gt;
-
-&lt;p&gt;Here’s the secret sauce - you can add as many customization objects as you want to this. It’s documented well - go check it out. But for now, I’ve hosted a simple PowerShell script on GitHub and I’m going to use that as my single customization step.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;# Add customizer step
-$imgCustomParams = @{
-    PowerShellCustomizer = $true
-    CustomizerName       = 'MountAppShareAndRunInstaller'
-    RunElevated          = $true
-    scriptUri            = 'https://raw.githubusercontent.com/tabs-not-spaces/Az.ImageBuilder.Tools/master/Samples/AppInstall.ps1'
-}
-$customizer = New-AzImageBuilderCustomizerObject @imgCustomParams&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;combine-all-the-ingredients&quot;&gt;Combine all the ingredients..&lt;/h2&gt;
-
-&lt;p&gt;Now we have our shared image gallery, source object, distributor object, image definition and customization steps - let’s add them all together and prep the template.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;# Create AIB Template
-$imgTemplateParams = @{
-    ImageTemplateName      = $imageTemplateName
-    ResourceGroupName      = $resourceGroupName
-    Source                 = $srcPlatform
-    Distribute             = $disSharedImg
-    Customize              = $customizer
-    Location               = $location
-    UserAssignedIdentityId = $managedIdentity.ResourceId
-}
-New-AzImageBuilderTemplate @ImgTemplateParams&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This is going to take a little while - around 10 minutes. Keep an eye on the status of the task with the following command.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;Get-AzImageBuilderTemplate -ImageTemplateName $imageTemplateName -ResourceGroupName $resourceGroupName&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;build-the-template&quot;&gt;Build the template&lt;/h2&gt;
-
-&lt;p&gt;Everything is ready - now we just need to kick off the build - again, this is going to take a while. From my experience, I’ve found it takes anywhere from 15 minutes to an Hour - it entirely depends on what customization options you are adding.&lt;/p&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;# Start the template build task
-# check back on the $job variable for the build status
-$job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name $imageTemplateName -AsJob&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;If your customization script stalls or is written in a way that can’t bomb out elegantly, you may find yourself in a situation where the build process stalls - the image builder template process will time out after 4 hours by default. This can be changed.&lt;/p&gt;
-
-&lt;p&gt;While this step is running, you can monitor the process in one of 3 ways.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;check on the status of the $job variable - while it’s running it’ll advise you. Same for when it’s completed.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/09/start-azimagebuildertemplate.gif&quot; title=&quot;Start-AzImageBuilderTemplate&quot;&gt;&lt;img src=&quot;/assets/images/2020/09/start-azimagebuildertemplate.gif&quot; alt=&quot;Start-AzImageBuilderTemplate&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Check the build status directly from the AIB API&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;Get-AIBBuildStatus -AzureContext $azContext -ResourceGroupName $resourceGroupName -ImageTemplateName $imageTemplateName&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/09/get-aibbuildstatus.gif&quot; title=&quot;Get-AIBBuildStatus&quot;&gt;&lt;img src=&quot;/assets/images/2020/09/get-aibbuildstatus.gif&quot; alt=&quot;Get-AIBBuildStatus&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Finally, you can check the &lt;strong&gt;VERY&lt;/strong&gt; verbose logs of packer - jump into your resource groups list - you’ll see a new resource group similarly named to the resource group you defined at the start of this guide.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/09/image-1.png&quot; title=&quot;AIB Resource Group&quot;&gt;&lt;img src=&quot;/assets/images/2020/09/image-1.png&quot; alt=&quot;AIB Resource Group&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Inside the storage account, there will be a container named &lt;strong&gt;packerlogs.&lt;/strong&gt; click through the packerlogs container and the internal randomly generated folder and monitor the &lt;strong&gt;customization.log&lt;/strong&gt; file. There’s &lt;a href=&quot;https://docs.microsoft.com/en-us/azure/virtual-machines/linux/image-builder-troubleshoot#customization-log&quot;&gt;good documentation&lt;/a&gt; on this, and it’s going to help you out if you need to troubleshoot your customization script.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Once your template is built - you are done! You now have a customized template that you can use to build out virtual machines… or if you are paying attention - session hosts for Windows Virtual Desktop!&lt;/p&gt;
-
-&lt;p&gt;Stay tuned for a post on how to build WVD session hosts using AIB and PowerShell!&lt;/p&gt;
-
-&lt;p&gt;As always, sample code used in this guide are available on &lt;a href=&quot;https://github.com/tabs-not-spaces/Az.ImageBuilder.Tools/tree/master/Samples&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><category term="Azure Image Builder" /><category term="PowerShell" /><category term="Automation" /><category term="WVD" /><summary type="html">AIB is Microsoft's solution to configure and customize virtual machine images. The concept of it is pretty great.. pick a reference image from the public market place apply some customization built around HashiCorp's Packer hit build and what you are left with is a fully customized template image that can be hosted in Azure as a managed image or a VHD file.</summary></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Universal Print" /><category term="Intune" /><category term="PowerShell" /><category term="Universal Print" /><summary type="html">Over the last few weeks I've been playing with **Universal Print** - the cloud print solution developed by Microsoft and I honestly can't praise it enough.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/10/universalprint.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/10/universalprint.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
