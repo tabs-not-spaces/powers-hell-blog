@@ -293,7 +293,7 @@ Now that you have a working solution to monitor for expiring certificates, why d
 
 Isn't automation cool?!
 
-As always, all code shown in this article is available on [GitHub]()
+As always, all code shown in this article is available on [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/CertificateExpiration)
 
 For all of you that are lucky enough to get time off, have a safe break & I'll see you all again for a hopefully MUCH better 2022.
 
