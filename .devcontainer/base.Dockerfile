@@ -37,6 +37,11 @@ RUN rm -rf /tmp/library-scripts
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
+RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y powershell \
+
 # [Optional] Uncomment this line to install additional gems.
 # RUN gem install <your-gem-names-here>
 
