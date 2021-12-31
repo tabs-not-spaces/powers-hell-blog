@@ -167,7 +167,7 @@ function Get-RemoteFileIfHashIsKnown {
 
 Thanks for sticking around for this one. I had a lot of fun figuring this out, and I hope it helps others out!
 
-As always, code referenced in this post is available on [GitHub]("").
+As always, code referenced in this post is available on [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/FIleHashValidation).
 
 For all of you that are lucky enough to get time off, have a safe break & I'll see you all again for a hopefully MUCH better 2022.
 
