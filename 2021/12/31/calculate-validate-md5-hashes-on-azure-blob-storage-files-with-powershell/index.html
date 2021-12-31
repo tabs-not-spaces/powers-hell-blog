@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang=" en" class="antialiased"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Calculate &amp; Validate MD5 hashes on Azure blob storage files with PowerShell | Powers Hell</title>
+<meta name="generator" content="Jekyll v4.2.1" />
+<meta property="og:title" content="Calculate &amp; Validate MD5 hashes on Azure blob storage files with PowerShell" />
+<meta name="author" content="Ben" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!" />
+<meta property="og:description" content="I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!" />
+<link rel="canonical" href="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/" />
+<meta property="og:url" content="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/" />
+<meta property="og:site_name" content="Powers Hell" />
+<meta property="og:image" content="https://powers-hell.com/assets/images/2021/12/getremotehashmatch.gif" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-12-31T00:39:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://powers-hell.com/assets/images/2021/12/getremotehashmatch.gif" />
+<meta property="twitter:title" content="Calculate &amp; Validate MD5 hashes on Azure blob storage files with PowerShell" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Ben"},"description":"I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!","url":"https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/","@type":"BlogPosting","image":"https://powers-hell.com/assets/images/2021/12/getremotehashmatch.gif","headline":"Calculate &amp; Validate MD5 hashes on Azure blob storage files with PowerShell","dateModified":"2021-12-31T00:39:00+00:00","datePublished":"2021-12-31T00:39:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/prism-dracula.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js" defer></script>
+    <script data-ad-client="ca-pub-3537558222002149" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SGKQTF5F0T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SGKQTF5F0T');
+</script>
+    <style type="text/css">
+        :root {
+            --dynamic-page-color: pink;
+        }
+    </style>
+</head><body><div class="page-container">
+    <div class="">
+        <nav x-data="{ open: false }" class="nav sticky drac-bg-blackBlack">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 px-4 sm:px-0">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 link-hover">
+                            <h2 class="drac-heading drac-heading-xl"><a href="/">Powers Hell</a></h2>
+                        </div>
+                        <div class="hidden md:block flex-shrink-0">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <div id="tagalign" class="drac-text drac-text-cyan drac-text-right drac-line-height">
+                                    great/power/is/great/fun >
+                                    <div class="cursor"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block flex-shrink-0">
+                        <div class="block md:hidden">
+    <div class="ml-3 items-center relative">
+        <a href="/"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/about"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/archives"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Archives</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/categories"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Categories</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="https://merch.powers-hell.com"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+    </div>
+</div>
+<div class="hidden md:block">
+    <a href="/"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+<a href="/about"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+<a href="https://merch.powers-hell.com"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
+
+
+
+                    </div>
+                    <div class="mr-2 flex md:hidden">
+                        <!-- Mobile menu button -->
+                        <button type="button"
+                            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm items-center justify-center p-2"
+                            aria-controls="mobile-menu" aria-expanded="false" @click="open = !open" ara-expanded="false"
+                            x-bind-aria-expanded="open.toString()">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'hidden':open, 'block': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" x-state:on="Menu open"
+                                x-state:off="Menu closed" :class="{ 'block':open, 'hidden': !(open) }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="drac-bg-black md:hidden" x-show.transition="open">
+                <div class="px-2 py-3 space-y-1 sm:px-3 items-center">
+                    <div id="tagalign" class="ml-3 drac-text drac-text-cyan drac-line-height">
+                        great/power/is/great/fun >
+                        <div class="cursor"></div>
+                    </div>
+                    <div class="block md:hidden">
+    <div class="ml-3 items-center relative">
+        <a href="/"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/about"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/archives"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Archives</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="/categories"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Categories</a>
+    </div>
+    <div class="ml-3 items-center relative">
+        <a href="https://merch.powers-hell.com"
+            class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+    </div>
+</div>
+<div class="hidden md:block">
+    <a href="/"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan hover:drac-text-white drac-btn-sm drac-m-sm">Home</a>
+<a href="/about"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">About</a>
+<a href="https://merch.powers-hell.com"
+    class="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-cyan drac-btn-sm drac-m-sm">Merch</a>
+</div>
+
+
+
+                </div>
+            </div>
+        </nav>
+      <div class="drac-bg-blackBlack pb-6 md:pb-24 lg:pb-28 xl:pb-8">
+        <header class="py-10"><div class="main-overlay max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <h1
+        class="drac-heading drac-heading-2xl drac-text-center drac-text-pink">
+        
+        Calculate & Validate MD5 hashes on Azure blob storage files with PowerShell
+        
+    </h1>
+    
+</div></header>
+      </div>
+      <div>
+        <svg class="wave" viewBox="0 0 1792 335" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path d="M 0 50 C 259 50 259 209 518 209 L 518 209 L 518 0 L 0 0 Z" stroke-width="0"></path>
+        <path d="M 517 209 C 800 209 800 96 1083 96 L 1083 96 L 1083 0 L 517 0 Z" stroke-width="0"></path>
+        <path d="M 1082 96 C 1437 96 1437 189 1792 189 L 1792 189 L 1792 0 L 1082 0 Z" stroke-width="0"></path>
+        </svg>
+      </div><main class="-mt-4 md:-mt-64 lg:-mt-72 xl:-mt-80 2xl:-mt-96 4xl:-mt-112">
+    <div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
+        <div class=" break-normal md:break-word drac-bg-black rounded-lg shadow-2xl px-5 py-6 sm:px-6">
+            <article class="markdown-body drac-text drac-line-height line-numbers">
+
+                <p class="post-date drac-text drac-text-xs"><font class="drac-text-black-secondary">Published:</font>
+                    <font class="drac-text-pink"> 31 Dec 2021</font>
+                    <br/>
+                    <font class="drac-text-black-secondary">File under:</font>
+<font class="drac-text drac-text-xs">
+    <a href="/category/automation/" class="related">Automation</a>, <a href="/category/azure/" class="related">Azure</a>,  <a href="/category/powershell/" class="related">PowerShell</a></font></p>
+                
+                <span>
+          <a href="/assets/images/2021/12/getremotehashmatch.gif" title="Hero Image"><img src="/assets/images/2021/12/getremotehashmatch.gif" alt="Calculate & Validate MD5 hashes on Azure blob storage files with PowerShell"></a>
+        </span>  <p>I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!</p>
+
+<!--more-->
+
+<p>The obvious answer to this task is to compare a known file hash value against the actual file. This is fairly trivial to do with PowerShell.</p>
+
+<pre><code class="language-PowerShell">Get-FileHash -Path C:\PathToYour\File.ext -Algorithm MD5
+</code></pre>
+
+<p>Running the above command will return the computed file hash of whatever you point it at. Comparing it to a known file hash will confirm if the file has been altered / corrupted in any way.</p>
+
+<p><a href="/assets/images/2021/12/getfilehash.gif" title="Get-FileHash"><img src="/assets/images/2021/12/getfilehash.gif" alt="Get-FileHash" /></a></p>
+
+<p>Here, I’ve run the command against a simple text file and have made a note of the file hash.</p>
+
+<p>Simple, right?</p>
+
+<p>Now, let’s go ahead and upload the same file to an Azure storage account.</p>
+
+<p>When you do this from the portal, a file hash is automatically computed and stored as an exposable piece of metadata against the file. In theory, knowing that nothing about the file has changed, the hash we computed locally should match the hash computed in Azure.</p>
+
+<p><a href="/assets/images/2021/12/contentmd5.png" title="content-md5"><img src="/assets/images/2021/12/contentmd5.png" alt="content-md5" /></a></p>
+
+<p>HANG ON A SECOND.. those two MD5 hash values don’t match! Did something happen during the upload process? Was the file corrupted?</p>
+
+<p>Not at all, thankfully!</p>
+
+<p>Azure stores the file hash value in the <strong>CONTENT-MD5</strong> tag as a <strong>base64 encoded representation of the binary MD5 hash value</strong>, whereas when we compute the MD5 value locally, the output of the hash is a <strong>hex representation of the binary hash value</strong>…</p>
+
+<p><a href="/assets/images/2021/12/what.webp" title="WHAT????"><img src="/assets/images/2021/12/what.webp" alt="WHAT????" /></a></p>
+
+<p>Don’t worry if that flew over your head. The simple answer it is IS technically the same value, we just need to figure out how to “de hex” the result from our initial PowerShell command and convert it to a base64 string.</p>
+
+<p>Thankfully, this is a fairly trivial process and I’ve found a <a href="https://galdin.dev/blog/md5-has-checks-on-azure-blob-storage-files/">great article</a> written by <a href="https://twitter.com/gldraphael">Galdin Raphael</a> discussing the EXACT situation I found myself facing. The only issue was that the code and tools mentioned in the article were for *nix environments..</p>
+
+<p>If we look at the solution proposed by Galdin, for anyone not experienced in using *nix based tools, it can look a little confusing..</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">md5sum</span> <span class="nt">--binary</span> <span class="nv">$filename</span> | <span class="nb">awk</span> <span class="s1">'{print $1}'</span> | xxd <span class="nt">-p</span> <span class="nt">-r</span> | <span class="nb">base64</span>
+</code></pre></div></div>
+
+<p>It is infact very simple. Let’s split each command out at the pipe and look at what’s happening.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>command</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">md5sum --binary $filename</code></td>
+      <td>This is the same result as running <code class="language-plaintext highlighter-rouge">Get-FileHash</code>. <br />This will return our hex representation of the MD5 hash</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">awk '{print $1}'</code></td>
+      <td>This is just stripping out everything except for the hash.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">xxd -p -r</code></td>
+      <td>This command is doing a “reverse” hex dump and outputting<br /> the result in plain text (Converting back FROM hex to binary).</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">base64</code></td>
+      <td>This command is encoding the binary result into base64</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>So now we know how to functionally do this, let’s write it out in PowerShell!</p>
+
+<pre><code class="language-PowerShell">function Get-ComputedMD5 {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$FilePath
+    )
+    try {
+        $rawMD5 = (Get-FileHash -Path $FilePath -Algorithm MD5).Hash
+        $hashBytes = [system.convert]::FromHexString($rawMD5)
+        return [system.convert]::ToBase64String($hashBytes)
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+</code></pre>
+
+<p>Pretty simple, isn’t it?!</p>
+
+<p>Now that we know <em>how</em> to reencode the file hashes, let’s look at how we could implement this in a real world scenario.</p>
+
+<h2 id="verify-the-file-hash-is-the-same-after-download">Verify the file hash is the same AFTER download</h2>
+
+<p>This example will use the <code class="language-plaintext highlighter-rouge">Get-ComputedMD5</code> example from above to grab the MD5 hash from the storage container, download the file and confirm the local file hash matches the remote hash. If there is any mismatch during the download, we will delete the file.</p>
+
+<pre><code class="language-PowerShell">function Get-RemoteFileAndConfirmHashValidationLocally {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [uri]$FileUrl,
+
+        [parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$OutputFolder
+    )
+
+    try {
+        $fileDownload = Invoke-WebRequest -Method Get -Uri $FileUrl
+        if ($fileDownload.StatusCode -ne 200) { throw [System.Net.WebException]::new('Failed to download content') }
+        $fileDownload.Content | Out-File "$OutputFolder\$($FileUrl.Segments[-1])"
+        $localHash = Get-ComputedMD5 -FilePath "$OutputFolder\$($FileUrl.Segments[-1])"
+        if ($localHash -ne $fileDownload.Headers['Content-MD5']) {throw [System.Net.WebException]::new('hash mismatch.')}
+    }
+    catch [System.Net.WebException] {
+        Write-Warning $_.Exception.Message
+        Remove-Item -Path "$OutputFolder\$($FileUrl.Segments[-1])"
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+</code></pre>
+
+<hr />
+
+<h2 id="bonus-round-verify-the-file-hash-is-the-same-before-download">BONUS ROUND: Verify the file hash is the same BEFORE download</h2>
+
+<p>This example doesn’t compute the hash, but assumes you already have the MD5 hash and simply want to make sure the file in the storage container matches.<br />
+A great way to confirm remote content hasn’t been tampered with!</p>
+
+<pre><code class="language-PowerShell">function Get-RemoteFileIfHashIsKnown {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [uri]$FileUrl,
+
+        [parameter(Mandatory = $true)]
+        [string]$MD5,
+
+        [parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$OutputFolder
+    )
+    try {
+        $hashCheck = Invoke-WebRequest -Method Head -Uri $FileUrl
+        if ($hashCheck.StatusCode -ne 200) { throw [System.Net.WebException]::new('Failed to get header content.') }
+
+        Write-Host "Remote Hash: " -ForegroundColor Cyan -NoNewline
+        Write-Host "$($hashCheck.Headers['Content-MD5'])" -ForegroundColor Green
+        Write-Host "Known Hash: " -ForegroundColor Cyan -NoNewline
+        Write-Host "$($MD5)" -ForegroundColor $(($hashCheck.Headers['Content-MD5'] -ne $MD5) ? "red" : "green")
+
+        if ($hashCheck.Headers['Content-MD5'] -ne $MD5) { throw [System.Net.WebException]::new("hash mismatch") }
+
+        Invoke-RestMethod -Method Get -Uri $FileUrl -OutFile "$OutputFolder\$($FileUrl.Segments[-1])"
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+</code></pre>
+
+<hr />
+
+<p>Thanks for sticking around for this one. I had a lot of fun figuring this out, and I hope it helps others out!</p>
+
+<p>As always, code referenced in this post is available on <a href="&quot;&quot;">GitHub</a>.</p>
+
+<p>For all of you that are lucky enough to get time off, have a safe break &amp; I’ll see you all again for a hopefully MUCH better 2022.</p>
+
+<p>— Ben</p>
+
+            </article>
+        </div>
+    </div><div class="main-overlay max-w-5xl mx-auto pb-4 overflow-hidden">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3537558222002149" crossorigin="anonymous"></script>
+    <!-- horizontal-ad-unit -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3537558222002149" data-ad-slot="4617860412" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+<div class="main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-hr-bg-pink" />
+    </div>
+    <h2 class="drac-heading drac-heading-xl drac-text-pink">Related Posts</h2>
+    <ul class="related">
+        
+        <li><a href="/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/"><span class="drac-text-pink">&raquo;</span> Manage Intune Trusted Certificate Profile Expiration with PowerShell & Microsoft Graph</a></li>
+        
+        <li><a href="/2018/09/04/getting-your-aad-tenant-id-without-authentication/"><span class="drac-text-pink">&raquo;</span> Getting your AAD Tenant Id without authentication!</a></li>
+        
+        <li><a href="/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/"><span class="drac-text-pink">&raquo;</span> Create advanced dynamic groups with PowerShell & Azure Functions</a></li>
+        
+        <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/"><span class="drac-text-pink">&raquo;</span> Working with Intune Settings Catalog using PowerShell and Graph</a></li>
+        
+        <li><a href="/2018/08/17/authenticate-to-microsoft-graph-in-powershell-in-two-lines-of-code/"><span class="drac-text-pink">&raquo;</span> Authenticate to Microsoft Graph in PowerShell in two lines of code!</a></li>
+        
+    </ul>
+</div>
+<div class="pagination main-overlay max-w-5xl mx-auto pb-12 px-4 sm:px-6 lg:px-8 drac-text-white drac-text-center utterances">
+    <div class="drac-box drac-mb-sm">
+        <hr class="drac-hr-bg-pink" />
+    </div>
+    <script src="https://utteranc.es/client.js" repo="tabs-not-spaces/powers-hell-blog" issue-term="title" theme="github-dark" crossorigin="anonymous" async>
+    </script>
+</div></main>
+  </div><script src="/assets/js/app.js"></script>
+<script src="/assets/js/prism.js"></script>
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css">
+</div>
+<div>
+    <svg class="wave" viewBox="0 0 1792 95.1" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path
+            d="M1792,95.1c0-27,0-54,0-80.9c-40.7-5.1-101.2-11-174.5-12.3c-185.3-3.3-260.9,26.8-411.8,42.6
+c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,179.2,3C104.9-5,42.2,4.5,0,14.1v80.9H1792z" />
+    </svg>
+    <footer class="main-overlay drac-bg-blackBlack flex flex-wrap items-center justify-between p-3 m-auto">
+        <div class="container mx-auto flex flex-col flex-wrap items-center justify-between">
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p class="drac-text-purple-cyan">
+                        Powers Hell © 2021
+                    </p>
+                </span>
+            </div>
+            <div class="flex mx-auto drac-text-white text-center">
+                <span>
+                    <p>
+                        made by
+                        <a href="https://twitter.com/powers_hell" target="_blank" class="drac-text-yellow">
+                            Ben
+                        </a>
+                        with
+                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank"
+                            class="drac-text-yellow-pink">
+                            code, coffee & beer
+                        </a>
+                        🍻
+                    </p>
+                </span>
+            </div>
+        </div>
+    </footer>
+</div></body>
+
+</html>

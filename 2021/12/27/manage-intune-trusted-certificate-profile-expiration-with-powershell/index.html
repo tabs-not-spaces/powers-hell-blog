@@ -204,7 +204,7 @@
 
 <p>At a high level, what we need to do here is very simple.</p>
 
-<p>All trusted certificate policies store the certificates in a <strong>base 64</strong> encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.</p>
+<p>All trusted certificate policies store the certificates in a <strong>base64</strong> encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.</p>
 
 <h2 id="authentication">Authentication</h2>
 
@@ -301,7 +301,7 @@ $decryptedRootCertificate = [System.Text.Encoding]::ASCII.GetString([System.Conv
 $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
 </code></pre>
 
-<p>As you should be able to see from the above code, we are simply removing the bounding strings from the bas64 string and converting the resultant encrypted string back into the .Net certificate class.</p>
+<p>As you should be able to see from the above code, we are simply removing the bounding strings from the base64 string and converting the resultant encrypted string back into the .Net certificate class.</p>
 
 <p>Once we have that, we should be able to step through the metadata and find the expiry date data we were originally after..</p>
 
@@ -474,8 +474,6 @@ $Expiringcertificates = foreach ($cert in $certificateProfiles) {
 
 <p>As always, all code shown in this article is available on <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/CertificateExpiration">GitHub</a></p>
 
-<p>For all of you that are lucky enough to get time off, have a safe break &amp; I’ll see you all again for a hopefully MUCH better 2022.</p>
-
 <p>— Ben</p>
 
             </article>
@@ -497,13 +495,13 @@ $Expiringcertificates = foreach ($cert in $certificateProfiles) {
         
         <li><a href="/2021/06/16/create-advanced-dynamic-groups-with-powershell-azure-functions/"><span class="drac-text-cyan">&raquo;</span> Create advanced dynamic groups with PowerShell & Azure Functions</a></li>
         
+        <li><a href="/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/"><span class="drac-text-cyan">&raquo;</span> Calculate & Validate MD5 hashes on Azure blob storage files with PowerShell</a></li>
+        
         <li><a href="/2018/09/04/getting-your-aad-tenant-id-without-authentication/"><span class="drac-text-cyan">&raquo;</span> Getting your AAD Tenant Id without authentication!</a></li>
         
         <li><a href="/2021/03/08/working-with-intune-settings-catalog-using-powershell-and-graph/"><span class="drac-text-cyan">&raquo;</span> Working with Intune Settings Catalog using PowerShell and Graph</a></li>
         
         <li><a href="/2018/05/17/monitor-changes-to-intune-using-azure-functions-graphapi-powershell/"><span class="drac-text-cyan">&raquo;</span> Monitor changes to Intune using Azure Functions, GraphAPI &#038; PowerShell</a></li>
-        
-        <li><a href="/2018/04/16/how-to-force-intune-configuration-scripts-to-re-run/"><span class="drac-text-cyan">&raquo;</span> How to force Intune configuration scripts to re-run</a></li>
         
     </ul>
 </div>

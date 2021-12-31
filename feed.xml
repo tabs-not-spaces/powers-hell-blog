@@ -1,4 +1,173 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-12-29T05:52:40+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp;amp; Microsoft Graph</title><link href="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/" rel="alternate" type="text/html" title="Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp;amp; Microsoft Graph" /><published>2021-12-27T04:36:00+00:00</published><updated>2021-12-27T04:36:00+00:00</updated><id>https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/">&lt;p&gt;How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays?&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2021-12-31T05:32:33+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Calculate &amp;amp; Validate MD5 hashes on Azure blob storage files with PowerShell</title><link href="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/" rel="alternate" type="text/html" title="Calculate &amp;amp; Validate MD5 hashes on Azure blob storage files with PowerShell" /><published>2021-12-31T00:39:00+00:00</published><updated>2021-12-31T00:39:00+00:00</updated><id>https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/">&lt;p&gt;I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;The obvious answer to this task is to compare a known file hash value against the actual file. This is fairly trivial to do with PowerShell.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;Get-FileHash -Path C:\PathToYour\File.ext -Algorithm MD5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running the above command will return the computed file hash of whatever you point it at. Comparing it to a known file hash will confirm if the file has been altered / corrupted in any way.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/getfilehash.gif&quot; title=&quot;Get-FileHash&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/getfilehash.gif&quot; alt=&quot;Get-FileHash&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Here, I’ve run the command against a simple text file and have made a note of the file hash.&lt;/p&gt;
+
+&lt;p&gt;Simple, right?&lt;/p&gt;
+
+&lt;p&gt;Now, let’s go ahead and upload the same file to an Azure storage account.&lt;/p&gt;
+
+&lt;p&gt;When you do this from the portal, a file hash is automatically computed and stored as an exposable piece of metadata against the file. In theory, knowing that nothing about the file has changed, the hash we computed locally should match the hash computed in Azure.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/contentmd5.png&quot; title=&quot;content-md5&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/contentmd5.png&quot; alt=&quot;content-md5&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;HANG ON A SECOND.. those two MD5 hash values don’t match! Did something happen during the upload process? Was the file corrupted?&lt;/p&gt;
+
+&lt;p&gt;Not at all, thankfully!&lt;/p&gt;
+
+&lt;p&gt;Azure stores the file hash value in the &lt;strong&gt;CONTENT-MD5&lt;/strong&gt; tag as a &lt;strong&gt;base64 encoded representation of the binary MD5 hash value&lt;/strong&gt;, whereas when we compute the MD5 value locally, the output of the hash is a &lt;strong&gt;hex representation of the binary hash value&lt;/strong&gt;…&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/2021/12/what.webp&quot; title=&quot;WHAT????&quot;&gt;&lt;img src=&quot;/assets/images/2021/12/what.webp&quot; alt=&quot;WHAT????&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Don’t worry if that flew over your head. The simple answer it is IS technically the same value, we just need to figure out how to “de hex” the result from our initial PowerShell command and convert it to a base64 string.&lt;/p&gt;
+
+&lt;p&gt;Thankfully, this is a fairly trivial process and I’ve found a &lt;a href=&quot;https://galdin.dev/blog/md5-has-checks-on-azure-blob-storage-files/&quot;&gt;great article&lt;/a&gt; written by &lt;a href=&quot;https://twitter.com/gldraphael&quot;&gt;Galdin Raphael&lt;/a&gt; discussing the EXACT situation I found myself facing. The only issue was that the code and tools mentioned in the article were for *nix environments..&lt;/p&gt;
+
+&lt;p&gt;If we look at the solution proposed by Galdin, for anyone not experienced in using *nix based tools, it can look a little confusing..&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;md5sum&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--binary&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{print $1}'&lt;/span&gt; | xxd &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; | &lt;span class=&quot;nb&quot;&gt;base64&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It is infact very simple. Let’s split each command out at the pipe and look at what’s happening.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;command&lt;/th&gt;
+      &lt;th&gt;Explanation&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;md5sum --binary $filename&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;This is the same result as running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Get-FileHash&lt;/code&gt;. &lt;br /&gt;This will return our hex representation of the MD5 hash&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awk '{print $1}'&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;This is just stripping out everything except for the hash.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;xxd -p -r&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;This command is doing a “reverse” hex dump and outputting&lt;br /&gt; the result in plain text (Converting back FROM hex to binary).&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base64&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;This command is encoding the binary result into base64&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;So now we know how to functionally do this, let’s write it out in PowerShell!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;function Get-ComputedMD5 {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$FilePath
+    )
+    try {
+        $rawMD5 = (Get-FileHash -Path $FilePath -Algorithm MD5).Hash
+        $hashBytes = [system.convert]::FromHexString($rawMD5)
+        return [system.convert]::ToBase64String($hashBytes)
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pretty simple, isn’t it?!&lt;/p&gt;
+
+&lt;p&gt;Now that we know &lt;em&gt;how&lt;/em&gt; to reencode the file hashes, let’s look at how we could implement this in a real world scenario.&lt;/p&gt;
+
+&lt;h2 id=&quot;verify-the-file-hash-is-the-same-after-download&quot;&gt;Verify the file hash is the same AFTER download&lt;/h2&gt;
+
+&lt;p&gt;This example will use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Get-ComputedMD5&lt;/code&gt; example from above to grab the MD5 hash from the storage container, download the file and confirm the local file hash matches the remote hash. If there is any mismatch during the download, we will delete the file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;function Get-RemoteFileAndConfirmHashValidationLocally {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [uri]$FileUrl,
+
+        [parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$OutputFolder
+    )
+
+    try {
+        $fileDownload = Invoke-WebRequest -Method Get -Uri $FileUrl
+        if ($fileDownload.StatusCode -ne 200) { throw [System.Net.WebException]::new('Failed to download content') }
+        $fileDownload.Content | Out-File &quot;$OutputFolder\$($FileUrl.Segments[-1])&quot;
+        $localHash = Get-ComputedMD5 -FilePath &quot;$OutputFolder\$($FileUrl.Segments[-1])&quot;
+        if ($localHash -ne $fileDownload.Headers['Content-MD5']) {throw [System.Net.WebException]::new('hash mismatch.')}
+    }
+    catch [System.Net.WebException] {
+        Write-Warning $_.Exception.Message
+        Remove-Item -Path &quot;$OutputFolder\$($FileUrl.Segments[-1])&quot;
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;bonus-round-verify-the-file-hash-is-the-same-before-download&quot;&gt;BONUS ROUND: Verify the file hash is the same BEFORE download&lt;/h2&gt;
+
+&lt;p&gt;This example doesn’t compute the hash, but assumes you already have the MD5 hash and simply want to make sure the file in the storage container matches.&lt;br /&gt;
+A great way to confirm remote content hasn’t been tampered with!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PowerShell&quot;&gt;function Get-RemoteFileIfHashIsKnown {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [uri]$FileUrl,
+
+        [parameter(Mandatory = $true)]
+        [string]$MD5,
+
+        [parameter(Mandatory = $true)]
+        [System.IO.FileInfo]$OutputFolder
+    )
+    try {
+        $hashCheck = Invoke-WebRequest -Method Head -Uri $FileUrl
+        if ($hashCheck.StatusCode -ne 200) { throw [System.Net.WebException]::new('Failed to get header content.') }
+
+        Write-Host &quot;Remote Hash: &quot; -ForegroundColor Cyan -NoNewline
+        Write-Host &quot;$($hashCheck.Headers['Content-MD5'])&quot; -ForegroundColor Green
+        Write-Host &quot;Known Hash: &quot; -ForegroundColor Cyan -NoNewline
+        Write-Host &quot;$($MD5)&quot; -ForegroundColor $(($hashCheck.Headers['Content-MD5'] -ne $MD5) ? &quot;red&quot; : &quot;green&quot;)
+
+        if ($hashCheck.Headers['Content-MD5'] -ne $MD5) { throw [System.Net.WebException]::new(&quot;hash mismatch&quot;) }
+
+        Invoke-RestMethod -Method Get -Uri $FileUrl -OutFile &quot;$OutputFolder\$($FileUrl.Segments[-1])&quot;
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Thanks for sticking around for this one. I had a lot of fun figuring this out, and I hope it helps others out!&lt;/p&gt;
+
+&lt;p&gt;As always, code referenced in this post is available on &lt;a href=&quot;&amp;quot;&amp;quot;&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For all of you that are lucky enough to get time off, have a safe break &amp;amp; I’ll see you all again for a hopefully MUCH better 2022.&lt;/p&gt;
+
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerShell" /><category term="Azure" /><category term="Automation" /><category term="PowerShell" /><category term="Azure" /><category term="Automation" /><summary type="html">I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/12/getremotehashmatch.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/12/getremotehashmatch.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp;amp; Microsoft Graph</title><link href="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/" rel="alternate" type="text/html" title="Manage Intune Trusted Certificate Profile Expiration with PowerShell &amp;amp; Microsoft Graph" /><published>2021-12-27T04:36:00+00:00</published><updated>2021-12-27T04:36:00+00:00</updated><id>https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2021/12/27/manage-intune-trusted-certificate-profile-expiration-with-powershell/">&lt;p&gt;How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays?&lt;/p&gt;
 
 &lt;p&gt;Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our &lt;strong&gt;trusted certificate policies&lt;/strong&gt; and, as if by magic, send out alerts when the attached certificates are about to expire!&lt;/p&gt;
 
@@ -10,7 +179,7 @@
 
 &lt;p&gt;At a high level, what we need to do here is very simple.&lt;/p&gt;
 
-&lt;p&gt;All trusted certificate policies store the certificates in a &lt;strong&gt;base 64&lt;/strong&gt; encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.&lt;/p&gt;
+&lt;p&gt;All trusted certificate policies store the certificates in a &lt;strong&gt;base64&lt;/strong&gt; encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.&lt;/p&gt;
 
 &lt;h2 id=&quot;authentication&quot;&gt;Authentication&lt;/h2&gt;
 
@@ -107,7 +276,7 @@ $decryptedRootCertificate = [System.Text.Encoding]::ASCII.GetString([System.Conv
 $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;As you should be able to see from the above code, we are simply removing the bounding strings from the bas64 string and converting the resultant encrypted string back into the .Net certificate class.&lt;/p&gt;
+&lt;p&gt;As you should be able to see from the above code, we are simply removing the bounding strings from the base64 string and converting the resultant encrypted string back into the .Net certificate class.&lt;/p&gt;
 
 &lt;p&gt;Once we have that, we should be able to step through the metadata and find the expiry date data we were originally after..&lt;/p&gt;
 
@@ -279,8 +448,6 @@ $Expiringcertificates = foreach ($cert in $certificateProfiles) {
 &lt;p&gt;Isn’t automation cool?!&lt;/p&gt;
 
 &lt;p&gt;As always, all code shown in this article is available on &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/CertificateExpiration&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;For all of you that are lucky enough to get time off, have a safe break &amp;amp; I’ll see you all again for a hopefully MUCH better 2022.&lt;/p&gt;
 
 &lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="PowerShell" /><category term="Azure" /><category term="Automation" /><category term="Azure Functions" /><category term="Intune" /><category term="PowerShell" /><category term="Azure" /><category term="Automation" /><category term="Azure Functions" /><category term="Intune" /><summary type="html">How do you remind yourself to renew your CA root certificates / subordinate certificates? Do you set a calendar reminder? Did the person who set those reminders up forget to share them with the team and now is on holidays? Fear not, for I have holiday gift for you - using nothing but PowerShell, we can interrogate our trusted certificate policies and, as if by magic, send out alerts when the attached certificates are about to expire!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/12/get-certificateexpiry.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Authenticate to Graph directly from PowerBI!</title><link href="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/" rel="alternate" type="text/html" title="Authenticate to Graph directly from PowerBI!" /><published>2021-08-15T08:38:00+00:00</published><updated>2021-08-15T08:38:00+00:00</updated><id>https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi</id><content type="html" xml:base="https://powers-hell.com/2021/08/15/authenticate-to-graph-directly-from-powerbi/">&lt;p&gt;Recently, one of my colleagues sent me a really cool Intune application patching report that they were working on and I wanted to see if I could make the data collection more automated / dynamic. Now, It’s been a LONG time since I’ve dipped my toes into the headache that is PowerBI, but once I see a challenge, it’s difficult for me to leave it alone…&lt;/p&gt;
 
@@ -2055,148 +2222,4 @@ Set-ComputerRegistryValues $regKeys
 
 &lt;p&gt;That’s it for now - if you’ve got any questions about this solution, please reach out to me on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;twitter&lt;/a&gt;, and as always, the code for this post can be found on my &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/AzureVPNAutoConnect&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices.</summary></entry><entry><title type="html">Deploying Universal Print Printers With PowerShell &amp;amp; Intune</title><link href="https://powers-hell.com/2020/10/25/deploying-universal-print-printers-with-powershell-intune/" rel="alternate" type="text/html" title="Deploying Universal Print Printers With PowerShell &amp;amp; Intune" /><published>2020-10-25T05:21:15+00:00</published><updated>2020-10-25T05:21:15+00:00</updated><id>https://powers-hell.com/2020/10/25/deploying-universal-print-printers-with-powershell-intune</id><content type="html" xml:base="https://powers-hell.com/2020/10/25/deploying-universal-print-printers-with-powershell-intune/">&lt;p&gt;Over the last few weeks I’ve been playing with &lt;strong&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-whatis&quot;&gt;Universal Print&lt;/a&gt;&lt;/strong&gt; - the cloud print solution developed by Microsoft and I honestly can’t praise it enough.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;Configuring the “infrastructure” for the solution took me less than 5 minutes.. Seriously - Grab a license (free during the public preview), install and configure a connector on a device with line-of-sight to your printer and finally set the printer shares in the Azure portal.&lt;/p&gt;
-
-&lt;p&gt;It was so easy I honestly don’t think I need to talk more about it - &lt;a href=&quot;https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-getting-started&quot;&gt;the steps are really well documented over on the Microsoft Docs page&lt;/a&gt;, so start there if you haven’t already set things up.&lt;/p&gt;
-
-&lt;p&gt;The one area that needs a little bit of polish is the way that printers get deployed to our end user devices. &lt;a href=&quot;https://docs.microsoft.com/en-us/universal-print/fundamentals/universal-print-intune-tool&quot;&gt;The current solution&lt;/a&gt; offered by Microsoft has two key requirements:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Deploy the &lt;strong&gt;Universal Print printer provisioning tool&lt;/strong&gt; via Intune (as a win32 package)&lt;/li&gt;
-  &lt;li&gt;Deploy a CSV file with a list of printers, along with a batch script to deploy the CSV file to a key location.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Once the two packages are deployed, printers will then install on the client devices &lt;strong&gt;upon the next reboot or logon event&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;There’s two things I don’t currently love about this solution and wanted to try and improve:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Is there a way we can make the printers install on the client devices without having to wait for a reboot or a logon event?&lt;/li&gt;
-  &lt;li&gt;Can we do this with PowerShell?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The answer to both of these statements was a resounding “of course we can!” What I was surprised to find was how simple it actually was.&lt;/p&gt;
-
-&lt;p&gt;This guide assumes you’ve already configured everything else - licensing, setting up the Universal Print connector etc. If you haven’t done that, go and sort that out.&lt;/p&gt;
-
-&lt;p&gt;Alright, let’s jump in - we are going to deploy this solution as a “proactive remediation” script via Intune, although there is nothing stopping you deploying as a standard PowerShell script, or as a packaged win32 application.&lt;/p&gt;
-
-&lt;h2 id=&quot;detection&quot;&gt;Detection&lt;/h2&gt;
-
-&lt;pre title=&quot;Detection Script&quot; class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region printer list
-$availablePrinters = @(
-    &quot;Printer A&quot;
-    &quot;Printer B&quot;
-    &quot;Printer C&quot;
-    &quot;Printer D&quot;
-)
-$notFound = 0
-#endregion
-#region check the printers exist
-try {
-    foreach ($p in $availablePrinters) {
-        if (!(Get-Printer -Name $p -ErrorAction SilentlyContinue)) {
-            $notFound ++
-        }
-    }
-}
-catch {
-    $errorMsg = $_.Exception.Message
-}
-finally {
-    if ($errorMsg) {
-        Write-Warning $errorMsg
-        exit 1
-    }
-    else {
-        if ($notFound) {
-            Write-Warning &quot;$notFound printers not found locally..&quot;
-            exit 1
-        }
-        else {
-            Write-Host &quot;All printers detected..&quot;
-            exit 0
-        }
-    }
-}
-#endregion&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The code above is pretty simple, simply list the names of the printers you want to make sure exist on the device - if any of them are missing, they will be flagged and the script will exit with a &lt;strong&gt;non-zero&lt;/strong&gt; exit code, which will alert Intune that the remediation script is required to run.&lt;/p&gt;
-
-&lt;h2 id=&quot;remediation&quot;&gt;Remediation&lt;/h2&gt;
-
-&lt;pre title=&quot;Remediation Script&quot; class=&quot;wp-block-code&quot;&gt;&lt;code lang=&quot;powershell&quot; class=&quot;language-powershell line-numbers&quot;&gt;#region printer list
-$availablePrinters = @(
-    [pscustomobject]@{
-        SharedID   = '2f8aa4d8-8c21-4d37-9506-3da446bcf9ea'
-        SharedName = 'Printer A'
-        IsDefault  = 'Yes'
-    }
-    [pscustomobject]@{
-        SharedID   = 'c288bc70-8e14-4c5b-9f82-428ecf3ab63a'
-        SharedName = 'Printer B'
-        IsDefault  = $null
-    }
-    [pscustomobject]@{
-        SharedID   = '478a29db-7bdd-46a7-a75e-e0d61167988c'
-        SharedName = 'Printer C'
-        IsDefault  = $null
-    }
-    [pscustomobject]@{
-        SharedID   = '896262c5-59ca-4b92-becf-074feb25fccc'
-        SharedName = 'Printer D'
-        IsDefault  = $null
-    }
-)
-#endregion
-try {
-    $configurationPath = &quot;$env:appdata\UniversalPrintPrinterProvisioning\Configuration&quot;
-    if (!(Test-Path $configurationPath -ErrorAction SilentlyContinue)) {
-        New-Item $configurationPath -ItemType Directory -Force | Out-Null
-    }
-    $printCfg = ($availablePrinters | ConvertTo-Csv -NoTypeInformation | ForEach-Object { $_ -replace '&quot;', &quot;&quot; } ) -join [System.Environment]::NewLine
-    $printCfg | Out-File &quot;$configurationPath\printers.csv&quot; -Encoding ascii -NoNewline
-    Start-Process &quot;${env:ProgramFiles(x86)}\UniversalPrintPrinterProvisioning\Exe\UPPrinterInstaller.exe&quot; -Wait -WindowStyle Hidden
-}
-catch {
-    $errorMsg = $_.Exception.Message
-}
-finally {
-    if ($errorMsg) {
-        Write-Warning $errorMsg
-        exit 1
-    }
-    else {
-        Write-Host &quot;Universal Printer Installer configured and launched. Printers should appear shortly..&quot;
-        exit 0
-    }
-}&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The remediation script is also quite simple, the &lt;strong&gt;$availablePrinters&lt;/strong&gt; array contains the details of each Universal Print printer that we need to map the printer to the device.&lt;/p&gt;
-
-&lt;p&gt;Head to &lt;strong&gt;Universal Print &amp;gt; Printer Shares&lt;/strong&gt; (In the Azure portal), select each printer share and make note of the &lt;strong&gt;Share ID&lt;/strong&gt; and the &lt;strong&gt;Name&lt;/strong&gt; of the share. For each printer, you will create a &lt;strong&gt;psCustomObject&lt;/strong&gt; containing the &lt;strong&gt;ShareID, SharedName&lt;/strong&gt; and whether or not you want this printer to be flagged as a &lt;em&gt;default&lt;/em&gt; printer or not.&lt;figure class=&quot;wp-block-image size-full&quot;&gt;&lt;/figure&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/assets/images/2020/10/image-1.png&quot; title=&quot;Printer A&quot;&gt;&lt;img src=&quot;/assets/images/2020/10/image-1.png&quot; alt=&quot;Printer A&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The rest of the script is also fairly straight forward. What we are doing is building out the “printers.csv” file that the &lt;strong&gt;Universal Print Printer Provisioning Service&lt;/strong&gt; uses to validate which printers to install.&lt;/p&gt;
-
-&lt;p&gt;The real &lt;em&gt;magic&lt;/em&gt; of the script (which isn’t really that magic) is on line 32. The print provisioning service that gets installed by the Universal Print installation media sits in the background and listens for a &lt;strong&gt;user logon&lt;/strong&gt; event. Once this event is found, the service triggers another executable - &lt;strong&gt;UPPrinterInstaller.exe&lt;/strong&gt; which looks for the *.csv file we have created, authenticates to Graph, validates the print share details and then kicks off a &lt;strong&gt;Web Services for Devices (WSD)&lt;/strong&gt; process to map the available printers.&lt;/p&gt;
-
-&lt;p&gt;Now, I’ll be the first to admit that the solution here is a little “kludgy” - I initially intended to reverse engineer the &lt;strong&gt;UPPrinterInstaller.exe&lt;/strong&gt; to identify exactly &lt;em&gt;how&lt;/em&gt; that WSD process works, however this works well enough - for now at least.&lt;/p&gt;
-
-&lt;h2 id=&quot;notes&quot;&gt;Notes&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;the Proactive Remediation detection and remediation scripts need to be run in the &lt;strong&gt;user context&lt;/strong&gt; as opposed to system - make sure you set that in the solution.&lt;/li&gt;
-  &lt;li&gt;The default printer value will &lt;strong&gt;NOT&lt;/strong&gt; work the way it is intended if you have the &lt;strong&gt;Let Windows manage my default printer&lt;/strong&gt; setting enabled (found within the &lt;strong&gt;Printers &amp;amp; scanners&lt;/strong&gt; section of settings). Which makes sense - but just be aware of that.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;I will continue to dig into this solution to try and make it a little more elegant - with the hopes that any advancements I make with the provisioning process might just make it into the official solution once it leaves Public Preview.&lt;/p&gt;
-
-&lt;p&gt;As always, the code referenced in this guide is available in &lt;a href=&quot;https://github.com/tabs-not-spaces/CodeDump/tree/master/Universal-Print-Printer-Install&quot;&gt;GitHub&lt;/a&gt; and I can be reached on &lt;a href=&quot;https://twitter.com/powers_hell&quot;&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Universal Print" /><category term="Intune" /><category term="PowerShell" /><category term="Universal Print" /><summary type="html">Over the last few weeks I've been playing with **Universal Print** - the cloud print solution developed by Microsoft and I honestly can't praise it enough.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2020/10/universalprint.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2020/10/universalprint.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;— Ben&lt;/p&gt;</content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html">One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices.</summary></entry></feed>
