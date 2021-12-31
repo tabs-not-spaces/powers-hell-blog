@@ -32,7 +32,7 @@ Ready? Let's dive right in.
 
 At a high level, what we need to do here is very simple.
 
-All trusted certificate policies store the certificates in a **base 64** encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.
+All trusted certificate policies store the certificates in a **base64** encoded string. If we can get access to the policy, we can decrypt the string and interrogate the certificate metadata for its expiry time. Luckily for us, using Microsoft Graph makes this process almost painless.
 
 ## Authentication
 
@@ -120,7 +120,7 @@ $formattedCertContent = ($decryptedRootCertificate -replace "-----BEGIN CERTIFIC
 $decryptedCertificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]([System.Convert]::FromBase64String($formattedCertContent))
 ```
 
-As you should be able to see from the above code, we are simply removing the bounding strings from the bas64 string and converting the resultant encrypted string back into the .Net certificate class.
+As you should be able to see from the above code, we are simply removing the bounding strings from the base64 string and converting the resultant encrypted string back into the .Net certificate class.
 
 Once we have that, we should be able to step through the metadata and find the expiry date data we were originally after..
 
@@ -294,7 +294,5 @@ Now that you have a working solution to monitor for expiring certificates, why d
 Isn't automation cool?!
 
 As always, all code shown in this article is available on [GitHub](https://github.com/tabs-not-spaces/CodeDump/tree/master/CertificateExpiration)
-
-For all of you that are lucky enough to get time off, have a safe break & I'll see you all again for a hopefully MUCH better 2022.
 
 — Ben
