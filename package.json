@@ -21,7 +21,7 @@
         "nightwind": "^1.1.11",
         "postcss-custom-properties": "^11.0.0",
         "postcss-import": "^14.0.2",
-        "postcss-nested": "^5.0.5"
+        "postcss-nested": "^5.0.6"
     },
     "devDependencies": {
         "@symfony/webpack-encore": "^1.7.0",
