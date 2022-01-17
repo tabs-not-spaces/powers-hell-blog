@@ -32,7 +32,7 @@
         "eslint": "^8.4.1",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-plugin-import": "^2.22.1",
-        "postcss-loader": "^5.2.0",
+        "postcss-loader": "^6.2.1",
         "tailwindcss": "^2.1.1"
     },
     "browserslist": [
