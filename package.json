@@ -15,7 +15,7 @@
     "dependencies": {
         "@dracula/dracula-ui": "^0.8.0",
         "@duckdoc/termynal": "^1.0.0",
-        "alpinejs": "^3.7.1",
+        "alpinejs": "^3.9.0",
         "github-markdown-dracula-css": "^4.0.3",
         "jquery": "^3.6.0",
         "nightwind": "^1.1.11",
