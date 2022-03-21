@@ -19,7 +19,7 @@
         "github-markdown-dracula-css": "^4.0.3",
         "jquery": "^3.6.0",
         "nightwind": "^1.1.11",
-        "postcss-custom-properties": "^11.0.0",
+        "postcss-custom-properties": "^12.1.5",
         "postcss-import": "^14.0.2",
         "postcss-nested": "^5.0.5"
     },
