@@ -31,7 +31,7 @@ jobs:
           ruby-version: 2.7
           
       - name: Cache npm 💾
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v3.0.3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}-${{ hashFiles('**/package-lock.json') }}
@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-node-
             
       - name: Cache bundle 💾
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v3.0.3
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}-${{ hashFiles('**/Gemfile.lock') }}
