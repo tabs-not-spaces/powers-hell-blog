@@ -1,9 +1,11 @@
+import { getDefaultOptions } from "../_lib/defaultOptions/index.js";
 import compareAsc from "../compareAsc/index.js";
 import differenceInMonths from "../differenceInMonths/index.js";
 import differenceInSeconds from "../differenceInSeconds/index.js";
-import defaultLocale from "../locale/en-US/index.js";
+import defaultLocale from "../_lib/defaultLocale/index.js";
 import toDate from "../toDate/index.js";
 import cloneObject from "../_lib/cloneObject/index.js";
+import assign from "../_lib/assign/index.js";
 import getTimezoneOffsetInMilliseconds from "../_lib/getTimezoneOffsetInMilliseconds/index.js";
 import requiredArgs from "../_lib/requiredArgs/index.js";
 var MINUTES_IN_DAY = 1440;
@@ -46,34 +48,6 @@ var MINUTES_IN_TWO_MONTHS = 86400;
  * | 20 secs ... 40 secs    | half a minute        |
  * | 40 secs ... 60 secs    | less than a minute   |
  * | 60 secs ... 90 secs    | 1 minute             |
- *
- * ### v2.0.0 breaking changes:
- *
- * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
- *
- * - The function was renamed from `distanceInWords ` to `formatDistance`
- *   to make its name consistent with `format` and `formatRelative`.
- *
- * - The order of arguments is swapped to make the function
- *   consistent with `differenceIn...` functions.
- *
- *   ```javascript
- *   // Before v2.0.0
- *
- *   distanceInWords(
- *     new Date(1986, 3, 4, 10, 32, 0),
- *     new Date(1986, 3, 4, 11, 32, 0),
- *     { addSuffix: true }
- *   ) //=> 'in about 1 hour'
- *
- *   // v2.0.0 onward
- *
- *   formatDistance(
- *     new Date(1986, 3, 4, 11, 32, 0),
- *     new Date(1986, 3, 4, 10, 32, 0),
- *     { addSuffix: true }
- *   ) //=> 'in about 1 hour'
- *   ```
  *
  * @param {Date|Number} date - the date
  * @param {Date|Number} baseDate - the date to compare with
@@ -119,10 +93,12 @@ var MINUTES_IN_TWO_MONTHS = 86400;
  * //=> 'pli ol 1 jaro'
  */
 
-export default function formatDistance(dirtyDate, dirtyBaseDate) {
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+export default function formatDistance(dirtyDate, dirtyBaseDate, options) {
+  var _ref, _options$locale;
+
   requiredArgs(2, arguments);
-  var locale = options.locale || defaultLocale;
+  var defaultOptions = getDefaultOptions();
+  var locale = (_ref = (_options$locale = options === null || options === void 0 ? void 0 : options.locale) !== null && _options$locale !== void 0 ? _options$locale : defaultOptions.locale) !== null && _ref !== void 0 ? _ref : defaultLocale;
 
   if (!locale.formatDistance) {
     throw new RangeError('locale must contain formatDistance property');
@@ -134,9 +110,10 @@ export default function formatDistance(dirtyDate, dirtyBaseDate) {
     throw new RangeError('Invalid time value');
   }
 
-  var localizeOptions = cloneObject(options);
-  localizeOptions.addSuffix = Boolean(options.addSuffix);
-  localizeOptions.comparison = comparison;
+  var localizeOptions = assign(cloneObject(options), {
+    addSuffix: Boolean(options === null || options === void 0 ? void 0 : options.addSuffix),
+    comparison: comparison
+  });
   var dateLeft;
   var dateRight;
 
@@ -154,7 +131,7 @@ export default function formatDistance(dirtyDate, dirtyBaseDate) {
   var months; // 0 up to 2 mins
 
   if (minutes < 2) {
-    if (options.includeSeconds) {
+    if (options !== null && options !== void 0 && options.includeSeconds) {
       if (seconds < 5) {
         return locale.formatDistance('lessThanXSeconds', 5, localizeOptions);
       } else if (seconds < 10) {
@@ -162,7 +139,7 @@ export default function formatDistance(dirtyDate, dirtyBaseDate) {
       } else if (seconds < 20) {
         return locale.formatDistance('lessThanXSeconds', 20, localizeOptions);
       } else if (seconds < 40) {
-        return locale.formatDistance('halfAMinute', null, localizeOptions);
+        return locale.formatDistance('halfAMinute', 0, localizeOptions);
       } else if (seconds < 60) {
         return locale.formatDistance('lessThanXMinutes', 1, localizeOptions);
       } else {

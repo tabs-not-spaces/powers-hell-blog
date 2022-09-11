@@ -28,13 +28,19 @@ class JavascriptMetaInfoPlugin {
 					parser.hooks.call.for("eval").tap("JavascriptMetaInfoPlugin", () => {
 						parser.state.module.buildInfo.moduleConcatenationBailout = "eval()";
 						parser.state.module.buildInfo.usingEval = true;
-						InnerGraph.bailout(parser.state);
+						const currentSymbol = InnerGraph.getTopLevelSymbol(parser.state);
+						if (currentSymbol) {
+							InnerGraph.addUsage(parser.state, null, currentSymbol);
+						} else {
+							InnerGraph.bailout(parser.state);
+						}
 					});
 					parser.hooks.finish.tap("JavascriptMetaInfoPlugin", () => {
 						let topLevelDeclarations =
 							parser.state.module.buildInfo.topLevelDeclarations;
 						if (topLevelDeclarations === undefined) {
-							topLevelDeclarations = parser.state.module.buildInfo.topLevelDeclarations = new Set();
+							topLevelDeclarations =
+								parser.state.module.buildInfo.topLevelDeclarations = new Set();
 						}
 						for (const name of parser.scope.definitions.asSet()) {
 							const freeInfo = parser.getFreeInfoFromVariable(name);

@@ -32,7 +32,6 @@ class HookWebpackError extends WebpackError {
 		this.hideStack = true;
 		this.details = `caused by plugins in ${hook}\n${error.stack}`;
 
-		Error.captureStackTrace(this, this.constructor);
 		this.stack += `\n-- inner error --\n${error.stack}`;
 	}
 }
@@ -52,7 +51,7 @@ module.exports.makeWebpackError = makeWebpackError;
 
 /**
  * @template T
- * @param {function(WebpackError=, T=): void} callback webpack error callback
+ * @param {function((WebpackError | null)=, T=): void} callback webpack error callback
  * @param {string} hook name of hook
  * @returns {Callback<T>} generic callback
  */

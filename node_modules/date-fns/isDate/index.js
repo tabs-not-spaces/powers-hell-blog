@@ -17,10 +17,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @description
  * Returns true if the given value is an instance of Date. The function works for dates transferred across iframes.
  *
- * ### v2.0.0 breaking changes:
- *
- * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
- *
  * @param {*} value - the value to check
  * @returns {boolean} true if the given value is a date
  * @throws {TypeError} 1 arguments required

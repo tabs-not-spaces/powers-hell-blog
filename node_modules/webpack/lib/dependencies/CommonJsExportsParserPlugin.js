@@ -192,14 +192,16 @@ class CommonJsExportsParserPlugin {
 		parser.hooks.call
 			.for("Object.defineProperty")
 			.tap("CommonJsExportsParserPlugin", expression => {
-				const expr = /** @type {import("estree").CallExpression} */ (expression);
+				const expr = /** @type {import("estree").CallExpression} */ (
+					expression
+				);
 				if (!parser.isStatementLevelExpression(expr)) return;
 				if (expr.arguments.length !== 3) return;
 				if (expr.arguments[0].type === "SpreadElement") return;
 				if (expr.arguments[1].type === "SpreadElement") return;
 				if (expr.arguments[2].type === "SpreadElement") return;
 				const exportsArg = parser.evaluateExpression(expr.arguments[0]);
-				if (!exportsArg || !exportsArg.isIdentifier()) return;
+				if (!exportsArg.isIdentifier()) return;
 				if (
 					exportsArg.identifier !== "exports" &&
 					exportsArg.identifier !== "module.exports" &&
@@ -208,7 +210,6 @@ class CommonJsExportsParserPlugin {
 					return;
 				}
 				const propertyArg = parser.evaluateExpression(expr.arguments[1]);
-				if (!propertyArg) return;
 				const property = propertyArg.asString();
 				if (typeof property !== "string") return;
 				enableStructuredExports();

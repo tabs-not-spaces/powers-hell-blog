@@ -67,6 +67,7 @@ class BulkUpdateDecorator extends Hash {
 	 */
 	digest(encoding) {
 		let digestCache;
+		const buffer = this.buffer;
 		if (this.hash === undefined) {
 			// short data for hash, we can use caching
 			const cacheKey = `${this.hashKey}-${encoding}`;
@@ -74,18 +75,18 @@ class BulkUpdateDecorator extends Hash {
 			if (digestCache === undefined) {
 				digestCache = digestCaches[cacheKey] = new Map();
 			}
-			const cacheEntry = digestCache.get(this.buffer);
+			const cacheEntry = digestCache.get(buffer);
 			if (cacheEntry !== undefined) return cacheEntry;
 			this.hash = this.hashFactory();
 		}
-		if (this.buffer.length > 0) {
-			this.hash.update(this.buffer);
+		if (buffer.length > 0) {
+			this.hash.update(buffer);
 		}
 		const digestResult = this.hash.digest(encoding);
 		const result =
 			typeof digestResult === "string" ? digestResult : digestResult.toString();
 		if (digestCache !== undefined) {
-			digestCache.set(this.buffer, result);
+			digestCache.set(buffer, result);
 		}
 		return result;
 	}
@@ -124,6 +125,9 @@ class DebugHash extends Hash {
 }
 
 let crypto = undefined;
+let createXXHash64 = undefined;
+let createMd4 = undefined;
+let BatchedHash = undefined;
 
 /**
  * Creates a hash by name or function
@@ -138,6 +142,25 @@ module.exports = algorithm => {
 		// TODO add non-cryptographic algorithm here
 		case "debug":
 			return new DebugHash();
+		case "xxhash64":
+			if (createXXHash64 === undefined) {
+				createXXHash64 = require("./hash/xxhash64");
+				if (BatchedHash === undefined) {
+					BatchedHash = require("./hash/BatchedHash");
+				}
+			}
+			return new BatchedHash(createXXHash64());
+		case "md4":
+			if (createMd4 === undefined) {
+				createMd4 = require("./hash/md4");
+				if (BatchedHash === undefined) {
+					BatchedHash = require("./hash/BatchedHash");
+				}
+			}
+			return new BatchedHash(createMd4());
+		case "native-md4":
+			if (crypto === undefined) crypto = require("crypto");
+			return new BulkUpdateDecorator(() => crypto.createHash("md4"), "md4");
 		default:
 			if (crypto === undefined) crypto = require("crypto");
 			return new BulkUpdateDecorator(

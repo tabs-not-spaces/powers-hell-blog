@@ -180,7 +180,9 @@ class JavascriptGenerator extends Generator {
 	 * @returns {void}
 	 */
 	sourceDependency(module, dependency, initFragments, source, generateContext) {
-		const constructor = /** @type {new (...args: any[]) => Dependency} */ (dependency.constructor);
+		const constructor = /** @type {new (...args: any[]) => Dependency} */ (
+			dependency.constructor
+		);
 		const template = generateContext.dependencyTemplates.get(constructor);
 		if (!template) {
 			throw new Error(
@@ -197,6 +199,7 @@ class JavascriptGenerator extends Generator {
 			runtime: generateContext.runtime,
 			runtimeRequirements: generateContext.runtimeRequirements,
 			concatenationScope: generateContext.concatenationScope,
+			codeGenerationResults: generateContext.codeGenerationResults,
 			initFragments
 		};
 

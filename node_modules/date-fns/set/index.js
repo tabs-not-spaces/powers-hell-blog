@@ -45,12 +45,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  *
  * @example
  * // Transform 1 September 2014 into 20 October 2015 in a single line:
- * var result = set(new Date(2014, 8, 20), { year: 2015, month: 9, date: 20 })
+ * const result = set(new Date(2014, 8, 20), { year: 2015, month: 9, date: 20 })
  * //=> Tue Oct 20 2015 00:00:00
  *
  * @example
  * // Set 12 PM to 1 September 2014 01:23:45 to 1 September 2014 12:00:00:
- * var result = set(new Date(2014, 8, 1, 1, 23, 45), { hours: 12 })
+ * const result = set(new Date(2014, 8, 1, 1, 23, 45), { hours: 12 })
  * //=> Mon Sep 01 2014 12:23:45
  */
 function set(dirtyDate, values) {

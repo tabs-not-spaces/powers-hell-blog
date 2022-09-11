@@ -16,7 +16,7 @@ const { UsageState } = require("../ExportsInfo");
 /** @typedef {import("../javascript/JavascriptParser")} JavascriptParser */
 /** @typedef {import("../util/runtime").RuntimeSpec} RuntimeSpec */
 
-/** @typedef {Map<TopLevelSymbol, Set<string | TopLevelSymbol> | true>} InnerGraph */
+/** @typedef {Map<TopLevelSymbol | null, Set<string | TopLevelSymbol> | true>} InnerGraph */
 /** @typedef {function(boolean | Set<string> | undefined): void} UsageCallback */
 
 /**
@@ -75,7 +75,7 @@ exports.isEnabled = parserState => {
 
 /**
  * @param {ParserState} state parser state
- * @param {TopLevelSymbol} symbol the symbol
+ * @param {TopLevelSymbol | null} symbol the symbol, or null for all symbols
  * @param {string | TopLevelSymbol | true} usage usage data
  * @returns {void}
  */
@@ -103,10 +103,9 @@ exports.addUsage = (state, symbol, usage) => {
  */
 exports.addVariableUsage = (parser, name, usage) => {
 	const symbol =
-		/** @type {TopLevelSymbol} */ (parser.getTagData(
-			name,
-			topLevelSymbolTag
-		)) || exports.tagTopLevelSymbol(parser, name);
+		/** @type {TopLevelSymbol} */ (
+			parser.getTagData(name, topLevelSymbolTag)
+		) || exports.tagTopLevelSymbol(parser, name);
 	if (symbol) {
 		exports.addUsage(parser.state, symbol, usage);
 	}
@@ -173,15 +172,35 @@ exports.inferDependencyUsage = state => {
 			}
 			if (isTerminal) {
 				nonTerminal.delete(key);
+
+				// For the global key, merge with all other keys
+				if (key === null) {
+					const globalValue = innerGraph.get(null);
+					if (globalValue) {
+						for (const [key, value] of innerGraph) {
+							if (key !== null && value !== true) {
+								if (globalValue === true) {
+									innerGraph.set(key, true);
+								} else {
+									const newSet = new Set(value);
+									for (const item of globalValue) {
+										newSet.add(item);
+									}
+									innerGraph.set(key, newSet);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 
 	/** @type {Map<Dependency, true | Set<string>>} */
 	for (const [symbol, callbacks] of usageCallbackMap) {
-		const usage = /** @type {true | Set<string> | undefined} */ (innerGraph.get(
-			symbol
-		));
+		const usage = /** @type {true | Set<string> | undefined} */ (
+			innerGraph.get(symbol)
+		);
 		for (const callback of callbacks) {
 			callback(usage === undefined ? false : usage);
 		}
@@ -249,10 +268,9 @@ exports.tagTopLevelSymbol = (parser, name) => {
 
 	parser.defineVariable(name);
 
-	const existingTag = /** @type {TopLevelSymbol} */ (parser.getTagData(
-		name,
-		topLevelSymbolTag
-	));
+	const existingTag = /** @type {TopLevelSymbol} */ (
+		parser.getTagData(name, topLevelSymbolTag)
+	);
 	if (existingTag) {
 		return existingTag;
 	}

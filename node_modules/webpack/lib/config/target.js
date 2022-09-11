@@ -5,14 +5,18 @@
 
 "use strict";
 
-const browserslistTargetHandler = require("./browserslistTargetHandler");
+const memoize = require("../util/memoize");
+
+const getBrowserslistTargetHandler = memoize(() =>
+	require("./browserslistTargetHandler")
+);
 
 /**
  * @param {string} context the context directory
  * @returns {string} default target
  */
 const getDefaultTarget = context => {
-	const browsers = browserslistTargetHandler.load(null, context);
+	const browsers = getBrowserslistTargetHandler().load(null, context);
 	return browsers ? "browserslist" : "web";
 };
 
@@ -55,6 +59,8 @@ const getDefaultTarget = context => {
  * @property {boolean | null} dynamicImport async import() is available
  * @property {boolean | null} dynamicImportInWorker async import() is available when creating a worker
  * @property {boolean | null} module ESM syntax is available (when in module)
+ * @property {boolean | null} optionalChaining optional chaining is available
+ * @property {boolean | null} templateLiteral template literal is available
  */
 
 ///** @typedef {PlatformTargetProperties | ApiTargetProperties | EcmaTargetProperties | PlatformTargetProperties & ApiTargetProperties | PlatformTargetProperties & EcmaTargetProperties | ApiTargetProperties & EcmaTargetProperties} TargetProperties */
@@ -78,6 +84,7 @@ const TARGETS = [
 		"Resolve features from browserslist. Will resolve browserslist config automatically. Only browser or node queries are supported (electron is not supported). Examples: 'browserslist:modern' to use 'modern' environment from browserslist config",
 		/^browserslist(?::(.+))?$/,
 		(rest, context) => {
+			const browserslistTargetHandler = getBrowserslistTargetHandler();
 			const browsers = browserslistTargetHandler.load(
 				rest ? rest.trim() : null,
 				context
@@ -162,6 +169,8 @@ You can also more options via the 'target' option: 'browserslist' / 'browserslis
 
 				globalThis: v(12),
 				const: v(6),
+				templateLiteral: v(4),
+				optionalChaining: v(14),
 				arrowFunction: v(6),
 				forOf: v(5),
 				destructuring: v(6),
@@ -201,6 +210,8 @@ You can also more options via the 'target' option: 'browserslist' / 'browserslis
 
 				globalThis: v(5),
 				const: v(1, 1),
+				templateLiteral: v(1, 1),
+				optionalChaining: v(8),
 				arrowFunction: v(1, 1),
 				forOf: v(0, 36),
 				destructuring: v(1, 1),
@@ -236,6 +247,8 @@ You can also more options via the 'target' option: 'browserslist' / 'browserslis
 
 				globalThis: v(0, 43),
 				const: v(0, 15),
+				templateLiteral: v(0, 13),
+				optionalChaining: v(0, 44),
 				arrowFunction: v(0, 15),
 				forOf: v(0, 13),
 				destructuring: v(0, 15),
@@ -255,6 +268,8 @@ You can also more options via the 'target' option: 'browserslist' / 'browserslis
 			if (v < 1000) v = v + 2009;
 			return {
 				const: v >= 2015,
+				templateLiteral: v >= 2015,
+				optionalChaining: v >= 2020,
 				arrowFunction: v >= 2015,
 				forOf: v >= 2015,
 				destructuring: v >= 2015,

@@ -22,10 +22,6 @@ var MILLISECONDS_IN_WEEK = 604800000;
  * @description
  * Get the number of calendar weeks between the given dates.
  *
- * ### v2.0.0 breaking changes:
- *
- * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
- *
  * @param {Date|Number} dateLeft - the later date
  * @param {Date|Number} dateRight - the earlier date
  * @param {Object} [options] - an object with options.
@@ -54,10 +50,10 @@ var MILLISECONDS_IN_WEEK = 604800000;
  * //=> 2
  */
 
-function differenceInCalendarWeeks(dirtyDateLeft, dirtyDateRight, dirtyOptions) {
+function differenceInCalendarWeeks(dirtyDateLeft, dirtyDateRight, options) {
   (0, _index3.default)(2, arguments);
-  var startOfWeekLeft = (0, _index.default)(dirtyDateLeft, dirtyOptions);
-  var startOfWeekRight = (0, _index.default)(dirtyDateRight, dirtyOptions);
+  var startOfWeekLeft = (0, _index.default)(dirtyDateLeft, options);
+  var startOfWeekRight = (0, _index.default)(dirtyDateRight, options);
   var timestampLeft = startOfWeekLeft.getTime() - (0, _index2.default)(startOfWeekLeft);
   var timestampRight = startOfWeekRight.getTime() - (0, _index2.default)(startOfWeekRight); // Round the number of days to the nearest integer
   // because the number of milliseconds in a week is not constant
