@@ -3,7 +3,7 @@ module.exports = {
     preflight: true,
     listStyleType: false,
   },
-  purge: [
+  content: [
     './**/*.html',
     './**/*.md',
     './_assets/**/*.js',
