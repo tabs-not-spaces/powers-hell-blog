@@ -17,6 +17,11 @@ c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,
                     <p class="drac-text-purple-cyan">
                         {{ site.title }} © {{ site.time | date: '%Y' }}
                     </p>
+                    <p class="footer-links drac-text-xs drac-text-yellow">
+                        <a href ="{{ site.github.repository_url }}/commit/{{ site.github.build_revision }}" target="_blank">
+                            {{ site.github.build_revision | slice: 0, 7 }}
+                        </a>
+                    </p>
                 </span>
             </div>
             <div class="flex mx-auto drac-text-white text-center">
@@ -27,7 +32,7 @@ c-297.5,31.2-285-56-548.1-16.1C536.2,46.6,452.1,77.6,335.5,43C294,30.7,251,10.8,
                             Ben
                         </a>
                         with
-                        <a href="https://github.com/tabs-not-spaces/powers-hell-blog" target="_blank"
+                        <a href="https://github.com/tabs-not-spaces" target="_blank"
                             class="drac-text-yellow-pink">
                             code, coffee & beer
                         </a>

@@ -1,0 +1,9 @@
+.footer-links a {
+    color: var(--yellow);
+  }
+.footer-links a:hover {
+    color: var(--black) !important;
+    background-color: var(--yellow) !important;
+    padding: 1px;
+    text-decoration: none;
+}
