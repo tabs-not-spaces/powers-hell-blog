@@ -1,4 +1,216 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2022-09-12T00:03:59+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Calculate &amp;amp; Validate MD5 hashes on Azure blob storage files with PowerShell</title><link href="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/" rel="alternate" type="text/html" title="Calculate &amp;amp; Validate MD5 hashes on Azure blob storage files with PowerShell" /><published>2021-12-31T00:39:00+00:00</published><updated>2021-12-31T00:39:00+00:00</updated><id>https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/"><![CDATA[<p>I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://powers-hell.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://powers-hell.com/" rel="alternate" type="text/html" /><updated>2022-09-19T01:58:18+00:00</updated><id>https://powers-hell.com/feed.xml</id><title type="html">Powers Hell</title><subtitle>great/power/is/great/fun &gt;</subtitle><entry><title type="html">Authenticate to Graph in Azure Functions with Managed Identites (Part 1)</title><link href="https://powers-hell.com/2022/09/12/authenticate-to-graph-in-azure-functions-with-managed-identites/" rel="alternate" type="text/html" title="Authenticate to Graph in Azure Functions with Managed Identites (Part 1)" /><published>2022-09-12T02:32:00+00:00</published><updated>2022-09-12T02:32:00+00:00</updated><id>https://powers-hell.com/2022/09/12/authenticate-to-graph-in-azure-functions-with-managed-identites</id><content type="html" xml:base="https://powers-hell.com/2022/09/12/authenticate-to-graph-in-azure-functions-with-managed-identites/"><![CDATA[<p>When creating Azure Functions, there has always been a way to create and use “managed identities” to securely and simply access resources within the resource group that the function app resides.</p>
+
+<p>With a little bit of PowerShell and a basic understanding of how API permissions are programmatically applied, we can use the managed identity to access Graph without needing to store credentials anywhere! Secure AND cool, right?</p>
+
+<!--more-->
+
+<p>In part 1 of a 2 part series, first, let’s spend some time understanding how to assign the Graph permissions to a managed identity.</p>
+
+<p>I was lucky enough to be accepted to speak at the recent <a href="https://psconf.eu/">PSConf.EU</a> 2022 conference in Austria, where I got to hang out with 350 of the most PowerShell obsessed people on the planet. It’s always been a highlight of my year to attend PSConf and this year was no different.</p>
+
+<p>While there I presented two talks - one on how <a href="https://www.youtube.com/watch?v=PkqLLW7DCMM">PowerShell &amp; “Code Reuse” can optimise and elevate your career</a>, and the other - which is of relevance to this article, was how to leverage PowerShell &amp; Azure Functions to build better dynamic groups in AAD.</p>
+
+<div class="video-container">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/n3jjq68leKs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;" allowfullscreen=""></iframe>
+</div>
+
+<p>One of the cool things that I ran into while writing the demos for this session was that I could leverage the <strong>Managed Identity</strong> authentication that is “automagically” configured for me to handle the authentication / authorization duties that are required for any calls to Graph.</p>
+
+<h2 id="so-what-is-a-managed-identity">So, what is a managed identity?</h2>
+
+<p>The simplest way to understand what a managed identity is is to think of it as a service account / service principal, but one that you NEVER need to know what the credentials are and will exist in your Azure tenant as long as the resource that generated the identity exists. For a deeper understanding of this - <a href="https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-managed-identities-work-vm">read the official documentation!</a></p>
+
+<p>Makes sense? Let’s make one then!</p>
+
+<h2 id="create-the-function-app--managed-identity">Create the Function app &amp; managed identity</h2>
+
+<p>I’ve already discussed fairly at length how to create an Azure Function, so I wont discuss it further, but for now, if you haven’t created a function app to play with, go do that first and then come back - I’ll wait right here..</p>
+
+<p>Back? Cool, let’s continue!</p>
+
+<p>Hop into the Azure Function app and select the <strong>Identity</strong> link in the side menu.</p>
+
+<p><a href="/assets/images/2022/09/managed-identities.png" title="Managed Identities"><img src="/assets/images/2022/09/managed-identities.png" alt="Managed Identities" /></a></p>
+
+<p>We are just going to focus on creating <strong>system assigned</strong> identities today, so just switch the feature <strong>ON</strong>, save the changes and accept the prompt that appears.</p>
+
+<p>After a few minutes we should have the identity created and available for us!</p>
+
+<p>Make a note of the name of the Function app name and the Managed Identity Id - we will need those for later.</p>
+
+<p><a href="/assets/images/2022/09/managed-identities2.png" title="Managed Identities"><img src="/assets/images/2022/09/managed-identities2.png" alt="Managed Identities" /></a></p>
+
+<h2 id="apply-the-graph-api-roles-to-the-managed-identity">Apply the Graph API roles to the managed identity</h2>
+
+<p>Let’s go and look at the managed identity. First head over to AAD &gt; Enterprise Applications. Change the <strong>Application type</strong> filter to <strong>Managed Identities</strong> and search for the identity via the name OR the Id. Once you’ve found the identity, open it up and head to <strong>Permissions</strong>.</p>
+
+<p>Here we should see the first wrinkle - currently there is no way to manage assigned API permissions of an enterprise application - so if we can’t do it from the UI, then let’s open up PowerShell to solve the problem!</p>
+
+<p>This is where I had hoped I could stop my research into this - surely a problem as basic as this has already been solved?! Well, as it turns out, the answer to that is… “kind of”.</p>
+
+<p>I found dozens of blog posts (<a href="https://baswijdenes.com/how-to-use-managed-identities-with-microsoft-graph-api/">here’s one that showed real promise…</a>) and solutions that have been written that leverage Microsoft’s old Azure PowerShell modules, but with the release of the new Az modules, none of these solutions work and even more frustatingly, the solutions written for the old modules do NOT migrate across - which leaves us stuck.</p>
+
+<p>Thankfully, once I realized what was required - It became easier to focus my search and I <a href="https://gotoguy.blog/2022/03/15/add-graph-application-permissions-to-managed-identity-using-graph-explorer/">found into a blog post</a> written by <a href="https://twitter.com/JanVidarElven">Jan Vidar Elven</a> that shows the native Graph calls required to interact with the managed identity AND how to manage the API permissions of the enterprise application!</p>
+
+<p>So let’s use with Jan has figured out to write a solution to add Graph roles to our identity!</p>
+
+<h4 id="authentication">Authentication</h4>
+
+<p>First let’s authenticate - to make this easy, let’s just use the Az.Accounts module so that we can have the correct scope and permissions to do the work we need to do.</p>
+
+<pre><code class="language-PowerShell">Connect-AzAccount
+$token = (Get-AzAccessToken -ResourceUrl "https://graph.microsoft.com").Token
+</code></pre>
+
+<p>Nice and simple - we just use our authenticated identity to Azure to generate an auth token scoped to Graph - which will let us make the Graph calls we will need to make.</p>
+
+<h4 id="grab-the-identity-objects">Grab the identity objects</h4>
+
+<p>Next, let’s get all of the identities we need..</p>
+
+<pre><code class="language-PowerShell">$baseUri = 'https://graph.microsoft.com/v1.0/servicePrincipals'
+$graphAppId = '00000003-0000-0000-c000-000000000000'
+$spSearchFiler = '"displayName:{0}" OR "appId:{1}"' -f $ApplicationName, $graphAppId
+$msiParams = @{
+    Method  = 'Get'
+    Uri     = '{0}?$search={1}' -f $baseUri, $spSearchFiler
+    Headers = @{Authorization = "Bearer $Token"; ConsistencyLevel = "eventual" }
+}
+$spList = (Invoke-RestMethod @msiParams).Value
+$msiId = ($spList | Where-Object { $_.displayName -eq $applicationName }).Id
+$graphId = ($spList | Where-Object { $_.appId -eq $graphAppId }).Id
+</code></pre>
+
+<p>This here is kind of cool - first we are grabbing a list of all service principal identities in our tenant - nothing super complicated. Then we cherry pick out the Managed Identity that we want as well as the unique Graph identity that exists in our tenant!</p>
+
+<h4 id="get-the-role-objects-from-graph">Get the role objects from Graph</h4>
+
+<p>Now that we have the identities we need, let’s prepare the roles / permissions. For this example, lets use a few common API permissions that people need..</p>
+
+<pre><code class="language-PowerShell">$roles = @(
+    "DeviceManagementApps.ReadWrite.All"
+    "DeviceManagementConfiguration.Read.All"
+    "DeviceManagementManagedDevices.Read.All"
+    "GroupMember.Read.All"
+)
+@graphRoleParams = @{
+    Method  = 'Get'
+    Uri     = "$baseUri/$($GraphId)/appRoles"
+    Headers = @{Authorization = "Bearer $Token"; ConsistencyLevel = "eventual" }
+}
+$graphRoles = (Invoke-RestMethod @graphRoleParams).Value | 
+        Where-Object {$_.value -in $GraphApiRole -and $_.allowedMemberTypes -Contains "Application"} |
+        Select-Object allowedMemberTypes, id, value
+</code></pre>
+<p>If we expand out the results of <code class="language-plaintext highlighter-rouge">$graphRoles</code> we can see all of the data we get back from the Graph application for each role - specifically all we really need is the Id of the role.</p>
+
+<p><a href="/assets/images/2022/09/approles.png" title="List of the app roles!"><img src="/assets/images/2022/09/approles.png" alt="List of the app roles!" /></a></p>
+
+<h4 id="apply-the-roles-to-the-managed-identity">Apply the roles to the Managed Identity</h4>
+
+<p>Finally once we have the role info, we need to build out a request to attach each role to the Managed Identity.</p>
+
+<pre><code class="language-PowerShell">$baseUri = 'https://graph.microsoft.com/v1.0/servicePrincipals'
+foreach ($role in $graphRoles) {
+    $postBody = @{
+        "principalId" = $msiId
+        "resourceId"  = $graphId
+        "appRoleId"   = $role.Id
+    }
+    $restParams = @{
+        Method      = "Post"
+        Uri         = "$baseUri/$($graphId/appRoleAssignedTo"
+        Body        = $postBody | ConvertTo-Json
+        Headers     = @{Authorization = "Bearer $token" }
+        ContentType = 'Application/Json'
+    }
+    $roleRequest = Invoke-RestMethod @restParams
+    $roleRequest
+}
+</code></pre>
+
+<p>Now if we go back to the Managed Identity in our AAD portal, we should see the permissions shown!</p>
+
+<p><a href="/assets/images/2022/09/assignedRoles.png" title="Assigned Roles in Portal"><img src="/assets/images/2022/09/assignedRoles.png" alt="Assigned Roles in Portal" /></a></p>
+
+<p>We can also validate this using PowerShell…</p>
+
+<pre><code class="language-PowerShell">$header = @{Authorization = "Bearer $token" }
+$roles = irm -Method get -Uri "$baseUri/$msiId/appRoleAssignments" -Headers $header
+</code></pre>
+
+<h4 id="put-it-all-together">Put it all together!</h4>
+
+<p>Now that we know the basic code to get all of this working, with a little bit of error handling, we should be able to build out a neat little function to help us with this work in the future!</p>
+
+<pre><code class="language-PowerShell">function Add-GraphApiRoleToMSI {
+    [cmdletbinding()]
+    param (
+        [parameter(Mandatory = $true)]
+        [string]$ApplicationName,
+
+        [parameter(Mandatory = $true)]
+        [string[]]$GraphApiRole,
+
+        [parameter(mandatory = $true)]
+        [string]$Token
+    )
+
+    $baseUri = 'https://graph.microsoft.com/v1.0/servicePrincipals'
+    $graphAppId = '00000003-0000-0000-c000-000000000000'
+    $spSearchFiler = '"displayName:{0}" OR "appId:{1}"' -f $ApplicationName, $graphAppId
+
+    try {
+        $msiParams = @{
+            Method  = 'Get'
+            Uri     = '{0}?$search={1}' -f $baseUri, $spSearchFiler
+            Headers = @{Authorization = "Bearer $Token"; ConsistencyLevel = "eventual" }
+        }
+        $spList = (Invoke-RestMethod @msiParams).Value
+        $msiId = ($spList | Where-Object { $_.displayName -eq $applicationName }).Id
+        $graphId = ($spList | Where-Object { $_.appId -eq $graphAppId }).Id
+        $msiItem = Invoke-RestMethod @msiParams -Uri "$($baseUri)/$($msiId)?`$expand=appRoleAssignments"
+
+        $graphRoles = (Invoke-RestMethod @msiParams -Uri "$baseUri/$($graphId)/appRoles").Value | 
+        Where-Object {$_.value -in $GraphApiRole -and $_.allowedMemberTypes -Contains "Application"} |
+        Select-Object allowedMemberTypes, id, value
+        foreach ($roleItem in $graphRoles) {
+            if ($roleItem.id -notIn $msiItem.appRoleAssignments.appRoleId) {
+                Write-Host "Adding role ($($roleItem.value)) to identity: $($applicationName).." -ForegroundColor Green
+                $postBody = @{
+                    "principalId" = $msiId
+                    "resourceId"  = $graphId
+                    "appRoleId"   = $roleItem.id
+                }
+                $postParams = @{
+                    Method      = 'Post'
+                    Uri         = "$baseUri/$graphId/appRoleAssignedTo"
+                    Body        = $postBody | ConvertTo-Json
+                    Headers     = $msiParams.Headers
+                    ContentType = 'Application/Json'
+                }
+                $result = Invoke-RestMethod @postParams
+                if ( $PSBoundParameters['Verbose'] -or $VerbosePreference -eq 'Continue' ) {
+                    $result
+                 }
+            }
+            else {
+                Write-Host "role ($($roleItem.value)) already found in $($applicationName).." -ForegroundColor Yellow
+            }
+        }
+        
+    }
+    catch {
+        Write-Warning $_.Exception.Message
+    }
+}
+</code></pre>
+
+<p>Now whenever you need to add Graph API permissions to a Managed Identity, you just call this function with an auth token, the name of the function app / Managed Identity and a list of permissions you want to apply!</p>
+
+<p>As always, the code for todays post is available on <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/GraphApiToMSI">GitHub</a>. Stay tuned for the next article where I will show you how to use what we have learned here to leverage Managed Identities to create graph calls in function apps!</p>
+
+<p><a href="https://twitter.com/powers_hell">— Ben</a></p>]]></content><author><name>Ben</name></author><category term="PowerShell" /><category term="Azure Functions" /><category term="Graph" /><category term="Authentication" /><category term="PowerShell" /><category term="Azure Functions" /><category term="Graph" /><category term="Authentication" /><summary type="html"><![CDATA[When creating Azure Functions, there has always been a way to create and use “managed identities” to securely and simply access resources within the resource group that the function app resides. With a little bit of PowerShell and a basic understanding of how API permissions are programmatically applied, we can use the managed identity to access Graph without needing to store credentials anywhere! Secure AND cool, right?]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2022/09/setRoles.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2022/09/setRoles.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Calculate &amp;amp; Validate MD5 hashes on Azure blob storage files with PowerShell</title><link href="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/" rel="alternate" type="text/html" title="Calculate &amp;amp; Validate MD5 hashes on Azure blob storage files with PowerShell" /><published>2021-12-31T00:39:00+00:00</published><updated>2021-12-31T00:39:00+00:00</updated><id>https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2021/12/31/calculate-validate-md5-hashes-on-azure-blob-storage-files-with-powershell/"><![CDATA[<p>I was recently asked to implement a solution to verify the integrity of a file stored in an Azure blob storage container. What started out as a frustrating task ended up being a really cool solution that I wanted to share with everyone!</p>
 
 <!--more-->
 
@@ -2018,208 +2230,4 @@ function Publish-ScriptToIntune {
 
 <p>As always, the code featured is available in my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/Publish-ScriptToIntune">GitHub</a> and I’m always up for a chat on <a href="https://twitter.com/powers_hell">Twitter</a>!</p>
 
-<p>— Ben</p>]]></content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><summary type="html"><![CDATA[I've recently been asked the question - "How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?" I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't "fat finger" your way into frustration!]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Set your Azure VPN connections to “Connect Automatically” with PowerShell</title><link href="https://powers-hell.com/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/" rel="alternate" type="text/html" title="Set your Azure VPN connections to “Connect Automatically” with PowerShell" /><published>2020-11-28T06:25:27+00:00</published><updated>2020-11-28T06:25:27+00:00</updated><id>https://powers-hell.com/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell</id><content type="html" xml:base="https://powers-hell.com/2020/11/28/set-your-azure-vpn-connections-to-connect-automatically-with-powershell/"><![CDATA[<p>One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices.</p>
-
-<!--more-->
-
-<p>My first suggestion was to simply use the built-in VPN client that comes with Windows 10. If we use this, we can utilize the native VPN policies within Intune which let us define everything we need - including setting the connection to automatically connect. The problem, as it turned out is the native VPN client has a limit of 25 route rules per connection - something that *shouldn’t* normally be a problem, but was insurmountable in this scenario.</p>
-
-<p>The next suggestion was to leverage the <a href="https://www.microsoft.com/en-us/p/azure-vpn-client/9np355qt2sqb" data-type="URL" data-id="https://www.microsoft.com/en-us/p/azure-vpn-client/9np355qt2sqb">Azure VPN Client</a> from the Microsoft store. This VPN client is designed to compliment the native VPN client and adds support for MFA as well as allowing connections from the native VPN interface.</p>
-
-<p>The only problem? There is no way to force the “connect automatically” setting in the native VPN client, thus the client’s major requirement was not met.</p>
-
-<p>Now, the end user can technically go in once the connection is deployed and set it themselves, but there has to be a more reliable way of doing this on behalf of the user - if it can be done via Intune for the native client, surely there has to be a way to enforce the setting? The answer, as always, is a resounding “of course!”.</p>
-
-<p>Before we begin, the first thing we need to do is convert the config files I was given by my network team into a format that we can silently push out.</p>
-
-<p>Once you’ve downloaded the Azure P2S config files, the next step is to manually import the config into the Azure VPN client (technically there is a way to do this using CLI parameters, however it’s frustratingly broken at the moment - I’ll talk about that another time!).</p>
-
-<p><a href="/assets/images/2020/11/VPNConnectionImport-1.gif" title="VPN Connection Import"><img src="/assets/images/2020/11/VPNConnectionImport-1.gif" alt="VPN Connection Import" /></a></p>
-
-<p>What this manual step does is creates the *.PBK file that the VPN client uses to “dial the connection”. Once we have that *.PBK file generated, we can capture the contents, and then deploy it out to other devices via Intune (or Configuration Manager) using a very simple PowerShell script.</p>
-
-<p>The *.PBK file is stored within the Azure VPN client folder structure in your local app data folder shown below - It’s always the same path which makes all of this very easy to automate!</p>
-
-<p><strong>%localappdata%\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState\rasphone.pbk</strong></p>
-
-<p>Open the *.pbk file in your favourite editor (that’s VSCode for everyone right?) and let’s move onto the code.</p>
-
-<pre class="wp-block-code" title="Deploy and configure VPN"><code lang="powershell" class="language-powershell line-numbers">
-#region Configuration
-$VPNName = 'Powers Hell VPN Connection'
-$VPNGUID = 'F3910F5AC434944F9335C187D7476DB4'
-$currentUser = (Get-CimInstance -ClassName WIn32_Process -Filter 'Name="explorer.exe"' | Invoke-CimMethod -MethodName GetOwner)[0]
-$objUser = New-Object System.Security.Principal.NTAccount($currentUser.user)
-$strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
-$requiredFolder = "C:\Users\$($currentUser.user)\AppData\Local\Packages\Microsoft.AzureVpn_8wekyb3d8bbwe\LocalState"
-$rasManKeyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config"
-#endregion
-#region PBK Configuration
-$PBKConfig - @"
-#Place your PBK contents here...
-"@
-#endregion
-#region Functions
-function Write-Log {
-    [cmdletbinding()]
-    param (
-        [string]$logMessage
-    )
-    Write-Host "[$(Get-Date -Format 'dd-MM-yyyy_HH:mm:ss')] $logMessage" -ForegroundColor Yellow
-}
-#endregion
-#region Deploy VPN
-if (!(Test-Path $RequiredFolder -ErrorAction SilentlyContinue)) {
-  New-Item $RequiredFolder -ItemType Directory | Out-Null
-  $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
-  Start-Transcript -Path $LogLocation -Force -Append
-
-  Write-Log "Required folder $RequiredFolder was created on the machine since it wasn't found."
-  New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-
-  Write-Log "File rasphone.pbk has been created in $RequiredFolder."
-  Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-
-  Write-Log "File rasphone.pbk has been populated with configuration details."
-  Stop-Transcript | Out-Null
-}
-else {
-  $LogLocation = "$RequiredFolder\NewAzureVPNConnectionLog_$(Get-Date -Format 'dd-MM-yyyy_HH_mm_ss').log"
-  Start-Transcript -Path $LogLocation -Force -Append
-
-  Write-Log "Folder $RequiredFolder already exists, that means that Azure VPN Client is already installed."
-  if (!(Test-Path "$RequiredFolder\rasphone.pbk" -ErrorAction SilentlyContinue)) {
-
-    Write-Log "File rasphone.pbk doesn't exist in $RequiredFolder."
-    New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-
-    Write-Log "File rasphone.pbk has been created in $RequiredFolder."
-    Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-
-    Write-Log "File rasphone.pbk has been populated with configuration details."
-    Stop-Transcript | Out-Null
-  }
-  else {
-    Write-Log "File rasphone.pbk already exists in $RequiredFolder."
-    Rename-Item -Path "$RequiredFolder\rasphone.pbk" -NewName "$RequiredFolder\rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss')"
-
-    Write-Log "File rasphone.pbk has been renamed to rasphone.pbk_$(Get-Date -Format 'ddMMyyyy-HHmmss'). This file contains old configuration if it will be required in the future (in case it is, just rename it back to rasphone.pbk)."
-    New-Item "$RequiredFolder\rasphone.pbk" -ItemType File | Out-Null
-
-    Write-Log "New rasphone.pbk file has been created in $RequiredFolder."
-    Set-Content "$RequiredFolder\rasphone.pbk" $PBKConfig
-
-    Write-Log "File rasphone.pbk has been populated with configuration details."
-    Stop-Transcript | Out-Null
-  }
-}
-#endregion</code></pre>
-
-<p>Not much to be said about the above code - all we are doing is pushing out the contents of the *.PBK file to the correct location on the target machines. There is only one important thing to note - I’ve specifically replaced the name and guid from the *.PBK file with variable names to allow me to set them in the configuration at the top of the script. You don’t need to do that yourself, but it makes the solution a little more “reusable”.</p>
-
-<p>You can see where they normally appear in the screenshot below (lines 1 &amp; 10).</p>
-
-<p><a href="/assets/images/2020/11/image.png" title="PBK Snippet"><img src="/assets/images/2020/11/image.png" alt="PBK Snippet" /></a></p>
-
-<p>Alright, we’ve deployed the VPN - but it still isn’t automatically connecting. Let’s go and figure that out.</p>
-
-<p>The key to this solution is found in the registry (as always). The auto connection settings can be found in the local machine hive path shown below.</p>
-
-<p><strong>HKLM:\SYSTEM\CurrentControlSet\Services\RasMan\Config</strong></p>
-
-<p><a href="/assets/images/2020/11/image-1.png" title="VPN Registry"><img src="/assets/images/2020/11/image-1.png" alt="VPN Registry" /></a></p>
-
-<p>As you can see above, for my corporate VPN connection, we are setting a few key values - namely:</p>
-
-<ul>
-  <li><strong>AutoTriggerDisabledProfilesList</strong> - A list of VPNs specifically set to not automatically connect (done manually by the user).</li>
-  <li><strong>AutoTriggerProfileEntryName</strong> - The Name of the VPN connection</li>
-  <li><strong>AutoTriggerProfileGUID</strong> - The HEX GUID of the VPN connection</li>
-  <li><strong>AutoTriggerProfilePhonebookPath</strong> - The path to the phonebook file</li>
-  <li><strong>UserSID</strong> - The SID of the user who has set the automatic connection.</li>
-</ul>
-
-<p>Once we understand what is required to set the connection, all we need to do is fill out the data and store it in the correct registry location!</p>
-
-<pre class="wp-block-code" title="Connect Automatically"><code lang="powershell" class="language-powershell line-numbers">
-#region Functions
-function Convert-HexToByte {
-  [cmdletbinding()]
-  param (
-    [string]$HexString
-  )
-  $splitString = ($HexString -replace '(..)','$1,').Trim(',')
-  [byte[]]$hexified = $splitString.Split(',') | ForEach-Object { "0x$_"}
-  return $hexified
-}
-function Set-ComputerRegistryValues {
-  param (
-      [Parameter(Mandatory = $true)]
-      [array]$RegistryInstance
-  )
-  try {
-      foreach ($key in $RegistryInstance) {
-          $keyPath = $key.Path
-          if (!(Test-Path $keyPath)) {
-              Write-Host "Registry path : $keyPath not found. Creating now." -ForegroundColor Green
-              New-Item -Path $key.Path -Force | Out-Null
-              Write-Host "Creating item property: $($key.Name)" -ForegroundColor Green
-              New-ItemProperty -Path $keyPath -Name $key.Name -Value $key.Value -Type $key.Type -Force
-          }
-          else {
-              Write-Host "Creating item property: $($key.Name)" -ForegroundColor Green
-              New-ItemProperty -Path $keyPath -Name $key.Name -Value $key.Value -Type $key.Type -Force
-          }
-      }
-  }
-  catch {
-      Throw $_.Exception.Message
-  }
-}
-#endregion
-#region Configure Always On
-[string[]]$autoDisable = (Get-ItemPropertyValue $rasManKeyPath -Name AutoTriggerDisabledProfilesList) | ForEach-Object { if ($_ -ne $VPNName) { $_ }}
-$regKeys = @(
-  @{
-    Path = $rasManKeyPath
-    Name = 'AutoTriggerDisabledProfilesList'
-    Value = [string[]]$autoDisable
-    Type = 'MultiString'
-  }
-  @{
-    Path = $rasManKeyPath
-    Name = 'AutoTriggerProfilePhonebookPath'
-    Value = "$RequiredFolder\rasphone.pbk"
-    Type = 'String'
-  }
-  @{
-    Path = $rasManKeyPath
-    Name = 'AutoTriggerProfileEntryName'
-    Value = $VPNName
-    Type = 'String'
-  }
-@{
-    Path = $rasManKeyPath
-    Name = 'UserSID'
-    Value = $sid
-    Type = 'String'
-  }
-@{
-    Path = $rasManKeyPath
-    Name = 'AutoTriggerProfileGUID'
-    Value = [Byte[]](Convert-HexToByte -HexString $VPNGUID)
-    Type = 'Binary'
-  }
-)
-Set-ComputerRegistryValues $regKeys
-#endregion</code></pre>
-
-<p>Again, most of this code is quite simple - all we are doing is entering some data into the registry.</p>
-
-<p>The only interesting thing of interest is how I’m converting the VPN GUID from the phonebook file into the Binary format required - which is done with the function <strong>Convert-HexToByte</strong> show above - that took me a little longer than I’m willing to admit!</p>
-
-<p>The other thing to be aware of is that deploying the VPN config can be done either in the User or System context - no admin privileges are required, however due to the registry keys being stored in the HKLM hive, admin privileges will be required to set the “connect automatically” section of this solution.</p>
-
-<p>That’s it for now - if you’ve got any questions about this solution, please reach out to me on <a href="https://twitter.com/powers_hell">twitter</a>, and as always, the code for this post can be found on my <a href="https://github.com/tabs-not-spaces/CodeDump/tree/master/AzureVPNAutoConnect">GitHub</a>.</p>
-
-<p>— Ben</p>]]></content><author><name>Ben</name></author><category term="Azure" /><category term="Intune" /><category term="PowerShell" /><category term="Intune" /><summary type="html"><![CDATA[One of my clients recently came to me asking for assistance to set up a new VPN solution. The requirements were quite simple - They were building out an Azure Point-To-Site VPN solution and needed me to come up with a way to deliver the connection to the end user devices.]]></summary></entry></feed>
+<p>— Ben</p>]]></content><author><name>Ben</name></author><category term="Azure" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><category term="Graph" /><category term="Intune" /><category term="PowerShell" /><summary type="html"><![CDATA[I've recently been asked the question - "How can I make sure that the scripts that I publish to Intune are always set to run as 64bit instead of the default 32bit?" I thought was a great question with a few simple solutions - so let's look at the two methods I've used in the past to make sure you don't "fat finger" your way into frustration!]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://powers-hell.com/assets/images/2021/01/scriptToGraph.gif" /><media:content medium="image" url="https://powers-hell.com/assets/images/2021/01/scriptToGraph.gif" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
