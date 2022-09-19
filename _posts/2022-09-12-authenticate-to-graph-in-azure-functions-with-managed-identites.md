@@ -74,7 +74,7 @@ I found dozens of blog posts ([here's one that showed real promise...](https://b
 
 Thankfully, once I realized what was required - It became easier to focus my search and I [found into a blog post](https://gotoguy.blog/2022/03/15/add-graph-application-permissions-to-managed-identity-using-graph-explorer/) written by [Jan Vidar Elven](https://twitter.com/JanVidarElven) that shows the native Graph calls required to interact with the managed identity AND how to manage the API permissions of the enterprise application!
 
-So let's use with Jan has figured out to write a solution to add Graph roles to our identity!
+So let's use what Jan has figured out to write a solution to add Graph roles to our identity!
 
 #### Authentication
 
