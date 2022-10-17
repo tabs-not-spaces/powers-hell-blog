@@ -41,7 +41,7 @@ GEM
     jekyll-dotenv (0.2.0)
       dotenv (~> 2.7)
       jekyll (~> 4)
-    jekyll-feed (0.16.0)
+    jekyll-feed (0.17.0)
       jekyll (>= 3.7, < 5.0)
     jekyll-github-metadata (2.15.0)
       jekyll (>= 3.4, < 5.0)
