@@ -118,7 +118,7 @@ $roles = @(
     "DeviceManagementManagedDevices.Read.All"
     "GroupMember.Read.All"
 )
-@graphRoleParams = @{
+$graphRoleParams = @{
     Method  = 'Get'
     Uri     = "$baseUri/$($GraphId)/appRoles"
     Headers = @{Authorization = "Bearer $Token"; ConsistencyLevel = "eventual" }
